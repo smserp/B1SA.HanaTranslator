@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34112.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "B1SA.HanaTranslator", "B1SA.HanaTranslator\B1SA.HanaTranslator.csproj", "{E097CAE0-BDBD-4955-96BE-F386BB46D409}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{28660498-E6A2-41C0-BF51-C6EC745FB2ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{615E3AD8-D2A1-4B12-8BD6-C9EFF6A3B8BC}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E097CAE0-BDBD-4955-96BE-F386BB46D409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E097CAE0-BDBD-4955-96BE-F386BB46D409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E097CAE0-BDBD-4955-96BE-F386BB46D409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E097CAE0-BDBD-4955-96BE-F386BB46D409}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F0839597-9BC5-4F35-BD53-7055D2C82C01}
+	EndGlobalSection
+EndGlobal
