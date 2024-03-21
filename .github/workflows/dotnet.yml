@@ -1,0 +1,53 @@
+# build & deploy package to nuget.org
+name: dotnet
+
+on:
+  # allow running the workflow manually from GitHub Action UI
+  workflow_dispatch:
+  
+  # run when label is created
+  #label:
+  #  types:
+  #    - created
+
+  # run when pushed to master
+  #push:
+  #  branches: [ "master" ]
+
+  # run when a new GitHub release is published
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+      #  source-url: https://nuget.pkg.github.com/smserp/index.json
+      #env:
+      #  NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Restore
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore 
+      
+    - name: Test
+      run: dotnet test --configuration Release --no-build --verbosity normal 
+      
+    - name: Package
+      run: dotnet pack --configuration Release
+    
+    #- name: Publish
+    #  run: dotnet nuget push B1SA.HanaTranslator\bin\Release\*.nupkg
+
+    - name: Publish
+      run: dotnet nuget push **\*.nupkg --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_TOKEN }}
