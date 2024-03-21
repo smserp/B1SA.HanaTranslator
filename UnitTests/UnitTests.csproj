@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyTitle>UnitTests</AssemblyTitle>
+    <Company>SMS</Company>
+    <Copyright>Copyright © SMS Business Software Solution GmbH</Copyright>
+    <Description>Unit Tests</Description>
+    <Product>UnitTests</Product>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Deterministic>false</Deterministic>
+    <ErrorReport>none</ErrorReport>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsCodedUITest>false</IsCodedUITest>
+    <IsTestProject>true</IsTestProject>
+    <LangVersion>11</LangVersion>
+    <Nullable>enable</Nullable>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <Platforms>x64</Platforms>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <TestProjectType>UnitTest</TestProjectType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <UseWindowsForms>true</UseWindowsForms>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <PathMap>$(MSBuildProjectDirectory)=.</PathMap>
+  </PropertyGroup>
+
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.2.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Properties\**" />
+    <EmbeddedResource Remove="Properties\**" />
+    <None Remove="Properties\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\B1SA.HanaTranslator\B1SA.HanaTranslator.csproj" />
+  </ItemGroup>
+
+</Project>
