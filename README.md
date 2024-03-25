@@ -19,7 +19,7 @@ SMS Fork
 - Switch from static file `config.txt` to non-static object configuration
 - Use ANTLR packages instead of local references (only the current release candidate supports .NET Standard 2.0)
 - Switch to the more unique and origin honouring namespace `B1SA.HanaTranslator`
-- Bumped version to `2.0.0`
+- Bumped version to `2.0.1`
 - And many more small improvements...
 
 ### Usage
