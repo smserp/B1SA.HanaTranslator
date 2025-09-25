@@ -132,7 +132,6 @@ namespace B1SA.HanaTranslator
         /// </summary>
         /// <param name="statements"></param>
         /// <param name="infoWriter"></param>
-        /// <param name="statementsCount"></param>
         /// <param name="translatedStatement"></param>
         private void TranslateStatements(IList<Statement> statements, TextWriter infoWriter, out Statement translatedStatement)
         {
@@ -161,7 +160,7 @@ namespace B1SA.HanaTranslator
         /// </summary>
         /// <param name="translated"></param>
         /// <param name="writer"></param>
-        /// <param name="varTokenizer"></param>
+        /// <param name="tokenizer"></param>
         private void PrintOutput(Statement translated, TextWriter writer, Tokenizer tokenizer)
         {
             if (translated == null) {

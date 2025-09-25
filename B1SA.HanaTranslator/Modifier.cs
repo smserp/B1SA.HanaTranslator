@@ -1017,7 +1017,7 @@ namespace B1SA.HanaTranslator
         /// Cover special cases
         /// </summary>
         /// <param name="leftExp"></param>
-        /// <param name="rigthExp"></param>
+        /// <param name="rightExp"></param>
         /// <returns>True if both expression should be string-concated, instead of aritmetic plus</returns>
         private bool IsStringConcatExpression(Expression leftExp, Expression rightExp)
         {
