@@ -1,5 +1,4 @@
 using B1SA.HanaTranslator;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests
 {
@@ -59,9 +58,9 @@ namespace UnitTests
             var output = translator.Translate(input, out var summary, out var statements, out var errors);
 
             Console.WriteLine($"SUMMARY:\n{summary}");
-            Console.WriteLine($"ERRORS: {errors}/{statements}");
-            Console.WriteLine($"INPUT: {input}");
-            Console.WriteLine($"OUTPUT: {output}");
+            Console.WriteLine($"ERRORS: {errors}/{statements}\n");
+            Console.WriteLine($"INPUT:\n{input}\n");
+            Console.WriteLine($"OUTPUT:\n{output}");
 
             Assert.IsTrue(errors == 0);
         }

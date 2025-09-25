@@ -20,13 +20,14 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>sap hana ansi mssql tsql sql migration convert translate</PackageTags>
     <ProjectUrl>http://github.com/smserp/B1SA.HanaTranslator</ProjectUrl>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Antlr3" Version="3.5.2-rc1" TreatAsUsed="true" />
-    <PackageReference Include="Antlr3.Runtime" Version="3.5.2-rc1" />
+    <PackageReference Include="Antlr3" Version="3.5.2-rc1" TreatAsUsed="true" NoWarn="NU5104" />
+    <PackageReference Include="Costura.Fody" Version="6.0.0" PrivateAssets="all" />
+    <ProjectReference Include="../Antlr3.Runtime/Antlr3.Runtime.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Antlr">

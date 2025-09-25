@@ -11,7 +11,7 @@ SMS Fork
   - The referenced ANTLR library & runtime to parse the SQL is licensed under the BSD license
 
 ### Changes
-- Targeting .NET Standard 2.0
+- Targeting .NET Standard 2.1
 - Removed UI
 - Removed the DB connectivity and with it all its references, but also the _CaseFixer_ feature
   - SQL identifiers are not enclosed in double quotes automatically, the correct case is in the responsibility of the library user!
@@ -19,7 +19,7 @@ SMS Fork
 - Switch from static file `config.txt` to non-static object configuration
 - Use ANTLR packages instead of local references (only the current release candidate supports .NET Standard 2.0)
 - Switch to the more unique and origin honouring namespace `B1SA.HanaTranslator`
-- Bumped version to `2.0.1`
+- Bumped version to `2.1.0`
 - And many more small improvements...
 
 ### Usage
