@@ -1,4 +1,4 @@
-﻿/*
+/*
  * [The "BSD licence"]
  * Copyright (c) 2005-2008 Terence Parr
  * All rights reserved.
@@ -32,9 +32,7 @@
 
 namespace Antlr.Runtime
 {
-    using NonSerialized = System.NonSerializedAttribute;
     using Regex = System.Text.RegularExpressions.Regex;
-    using Serializable = System.SerializableAttribute;
 
     [Serializable]
     public class CommonToken : IToken

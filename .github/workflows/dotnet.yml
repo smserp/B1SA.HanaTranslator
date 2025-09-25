@@ -47,4 +47,4 @@ jobs:
       run: dotnet pack --configuration Release
     
     - name: Publish
-      run: dotnet nuget push **\B1SA.*.nupkg --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_TOKEN }}
+      run: dotnet nuget push **\*.nupkg --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_TOKEN }}

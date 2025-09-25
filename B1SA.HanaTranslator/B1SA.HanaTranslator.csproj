@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!-- Workaround issues with non-portable code in Antlr.Runtime -->
+    <DefineConstants>$(DefineConstants);PORTABLE</DefineConstants>
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <ErrorReport>none</ErrorReport>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>11</LangVersion>
@@ -26,8 +32,6 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr3" Version="3.5.2-rc1" TreatAsUsed="true" NoWarn="NU5104" />
-    <PackageReference Include="Costura.Fody" Version="6.0.0" PrivateAssets="all" />
-    <ProjectReference Include="../Antlr3.Runtime/Antlr3.Runtime.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Antlr">
@@ -38,7 +42,6 @@
   <ItemGroup Label="docs">
     <None Include="../README.md" Pack="true" PackagePath="" />
   </ItemGroup>
-
 
   <ItemGroup>
     <EmbeddedResource Update="Resources.resx">

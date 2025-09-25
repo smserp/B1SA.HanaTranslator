@@ -1,4 +1,4 @@
-﻿/*
+/*
  * [The "BSD licence"]
  * Copyright (c) 2005-2008 Terence Parr
  * All rights reserved.
@@ -33,8 +33,6 @@
 namespace Antlr.Runtime
 {
     using System.Collections.Generic;
-    using CLSCompliant = System.CLSCompliantAttribute;
-    using ArgumentNullException = System.ArgumentNullException;
 
     /** <summary>
      *  The set of fields needed by an abstract recognizer to recognize input
@@ -57,7 +55,7 @@ namespace Antlr.Runtime
          */
         //public List<BitSet> following;
         public BitSet[] following;
-        [CLSCompliant( false )]
+
         public int _fsp;
 
         /** <summary>

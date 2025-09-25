@@ -1,4 +1,4 @@
-﻿/*
+/*
  * [The "BSD licence"]
  * Copyright (c) 2005-2008 Terence Parr
  * All rights reserved.
@@ -33,9 +33,6 @@
 namespace Antlr.Runtime
 {
     using Antlr.Runtime.Misc;
-    using CLSCompliant = System.CLSCompliantAttribute;
-    using NotSupportedException = System.NotSupportedException;
-    using IndexOutOfRangeException = System.IndexOutOfRangeException;
 
     /** A token stream that pulls tokens from the code source on-demand and
      *  without tracking a complete buffer of the tokens. This stream buffers
@@ -54,7 +51,6 @@ namespace Antlr.Runtime
      */
     public class UnbufferedTokenStream : LookaheadStream<IToken>, ITokenStream, ITokenStreamInformation
     {
-        [CLSCompliant(false)]
         protected ITokenSource tokenSource;
         protected int tokenIndex; // simple counter to set token index in tokens
 
