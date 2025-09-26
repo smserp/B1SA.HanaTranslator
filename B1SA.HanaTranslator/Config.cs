@@ -3,7 +3,12 @@ namespace B1SA.HanaTranslator
     public class Config
     {
         /// <summary>
-        /// Format the output HANA SQL string
+        /// If true, removes all existing "dbo" schema identifiers. Especially useful when developing for SAP Business One!
+        /// </summary>
+        public bool RemoveDboSchema { get; set; } = false;
+
+        /// <summary>
+        /// Format the output HANA SQL string (is not perfect, but better readable at all)
         /// </summary>
         public bool FormatOutput { get; set; } = false;
 

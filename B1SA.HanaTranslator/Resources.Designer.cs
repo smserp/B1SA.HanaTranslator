@@ -394,7 +394,7 @@ namespace B1SA.HanaTranslator {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Case fixing identifiers.
+        ///   Looks up a localized string similar to Fixing identifiers.
         /// </summary>
         internal static string MSG_CASEFIXING_STEP {
             get {

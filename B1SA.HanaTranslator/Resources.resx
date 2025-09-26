@@ -709,7 +709,7 @@
     <value>SAP HANA does not support setting seed number to RAND function</value>
   </data>
   <data name="MSG_CASEFIXING_STEP" xml:space="preserve">
-    <value>Case fixing identifiers</value>
+    <value>Fixing identifiers</value>
   </data>
   <data name="MSG_CONVERSION_STAGE" xml:space="preserve">
     <value>Conversion of TSQL queries into SQL Script:</value>

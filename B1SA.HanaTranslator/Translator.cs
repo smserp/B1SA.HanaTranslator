@@ -149,10 +149,47 @@ namespace B1SA.HanaTranslator
 
             StatusReporter.SetOutputQueries(translated, StatusReporter.GetCount());
 
+            FixStatements(translated, infoWriter);
             translatedStatement = translated;
 
             StatusReporter.Message("\n\n" + Resources.MSG_DIFFERENT_STATEMENTS_COUNT);
             StatusReporter.Finish();
+        }
+
+        /// <summary>
+        /// Call case fixing for given statements
+        /// </summary>
+        /// <param name="statement">Alreaedy translated statement that needs fixing</param>
+        /// <param name="infoWriter">Stream for info/summary, may be null.</param>
+        private void FixStatements(Statement statement, TextWriter infoWriter)
+        {
+            if (statement == null) { return; }
+
+            StatusReporter.SetStage(Resources.MSG_CASEFIXING_STEP);
+
+            if (statement is BlockStatement bs) {
+                foreach (var stmt in bs.Statements) {
+                    FixStatement(stmt, infoWriter);
+                }
+            }
+            else {
+                FixStatement(statement, infoWriter);
+            }
+        }
+
+        /// <summary>
+        /// Apply case fixing for given statement. Return new value for display warning
+        /// </summary>
+        /// <param name="statement">Statement for case fixing</param>
+        /// <param name="infoWriter">Writter for info/summary stream</param>
+        private void FixStatement(Statement statement, TextWriter infoWriter)
+        {
+            if (statement is not SqlStartStatement) {
+                var fixer = new IdentifierFixer(Configuration);
+
+                // scan & fix
+                fixer.Scan(statement);
+            }
         }
 
         /// <summary>

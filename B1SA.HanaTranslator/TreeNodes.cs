@@ -1423,6 +1423,7 @@ namespace B1SA.HanaTranslator
             asm.AddToken("$ACTION");
 
             if (Alias != null) {
+                asm.AddSpace();
                 asm.AddToken("AS");
                 asm.AddSpace();
                 asm.Add(Alias);
@@ -1633,6 +1634,10 @@ namespace B1SA.HanaTranslator
         {
             Query = query;
             Alias = alias;
+
+            // fix quoting
+            if (Alias == null) { return; }
+            //Alias.AutoChangeType();
         }
 
         override public void Assembly(Assembler asm)
@@ -1664,6 +1669,9 @@ namespace B1SA.HanaTranslator
             Alias = alias;
             TableSampleClause = tableSampleClause;
             Hints = hints;
+
+            if (Alias == null) { return; }
+            Alias.Type = Alias.Name == Alias.Name.ToUpperInvariant() ? IdentifierType.Plain : IdentifierType.Quoted;
         }
 
         override public void Assembly(Assembler asm)
@@ -1673,6 +1681,8 @@ namespace B1SA.HanaTranslator
                 asm.Add(DbObject);
             }
             if (Alias != null) {
+                asm.AddSpace();
+                asm.AddToken("AS");
                 asm.AddSpace();
                 asm.Add(Alias);
             }

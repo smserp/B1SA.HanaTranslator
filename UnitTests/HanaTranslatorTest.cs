@@ -10,21 +10,47 @@ namespace UnitTests
         {
             var translator = new Translator(new Config() {
                 TranslationComments = true,
-                FormatOutput = false
+                FormatOutput = true,
+                RemoveDboSchema = true
             });
 
             // test sql
             var input = """
-                select id, item, name, isnull(qty, 0) from [table] where id = {0}
+                select id, item, NAME, isnull(qty, 0) as qty from DB.dbo.[@table] as t0 where id = {0}
                 """;
 
             // finally translate
             var output = translator.Translate(input, out var summary, out var statements, out var errors);
 
-            Console.WriteLine($"SUMMARY:\n{summary}");
-            Console.WriteLine($"ERRORS: {errors}/{statements}");
-            Console.WriteLine($"INPUT: {input}");
-            Console.WriteLine($"OUTPUT: {output}");
+            //Console.WriteLine($"SUMMARY:\n{summary}");
+            Console.WriteLine($"SUCCESS: {statements - errors}/{statements}\n");
+            Console.WriteLine($"INPUT:\n{input}\n");
+            Console.WriteLine($"OUTPUT:\n{output}");
+
+            Assert.IsTrue(errors == 0);
+        }
+
+        [TestMethod]
+        public void SubQueryHanaTranslation()
+        {
+            var translator = new Translator(new Config() {
+                TranslationComments = true,
+                FormatOutput = true,
+                RemoveDboSchema = true
+            });
+
+            // test sql
+            var input = """
+                select * from (select t0.id, name, isnull(qty, 0) as qty from [@TABLE] as t0) t1 where id = {0}
+                """;
+
+            // finally translate
+            var output = translator.Translate(input, out var summary, out var statements, out var errors);
+
+            //Console.WriteLine($"SUMMARY:\n{summary}");
+            Console.WriteLine($"SUCCESS: {statements - errors}/{statements}\n");
+            Console.WriteLine($"INPUT:\n{input}\n");
+            Console.WriteLine($"OUTPUT:\n{output}");
 
             Assert.IsTrue(errors == 0);
         }
@@ -34,7 +60,8 @@ namespace UnitTests
         {
             var translator = new Translator(new Config() {
                 TranslationComments = true,
-                FormatOutput = true
+                FormatOutput = true,
+                RemoveDboSchema = true
             });
 
             // test sql
@@ -57,8 +84,8 @@ namespace UnitTests
             // finally translate
             var output = translator.Translate(input, out var summary, out var statements, out var errors);
 
-            Console.WriteLine($"SUMMARY:\n{summary}");
-            Console.WriteLine($"ERRORS: {errors}/{statements}\n");
+            //Console.WriteLine($"SUMMARY:\n{summary}");
+            Console.WriteLine($"SUCCESS: {statements - errors}/{statements}\n");
             Console.WriteLine($"INPUT:\n{input}\n");
             Console.WriteLine($"OUTPUT:\n{output}");
 

@@ -1,8 +1,12 @@
+using System.Text.RegularExpressions;
+
 namespace B1SA.HanaTranslator
 {
     #region Identifier
     public class Identifier : GrammarNode
     {
+        private static readonly Regex specialChar = new(""".*[@#$%&*-+/\!?^~ ].*""", RegexOptions.Compiled);
+
         public string Name { get; set; }
         public IdentifierType Type { get; set; }
 
@@ -17,23 +21,42 @@ namespace B1SA.HanaTranslator
 
         override public void Assembly(Assembler asm)
         {
+            // here we overwrite any decision made during scanning
+            AutoChangeType();
+
             asm.Begin(this);
-            switch (this.Type) {
+            switch (Type) {
                 case IdentifierType.Plain:
-                    asm.Add(this.Name);
+                    asm.Add(Name);
                     break;
                 case IdentifierType.Bracketed:
                     asm.AddToken("[");
-                    asm.Add(this.Name);
+                    asm.Add(Name);
                     asm.AddToken("]");
                     break;
                 case IdentifierType.Quoted:
                     asm.AddToken("\"");
-                    asm.Add(this.Name.Replace("\"", "\"\""));
+                    asm.Add(Name.Replace("\"", "\"\""));
                     asm.AddToken("\"");
                     break;
             }
             asm.End(this);
+        }
+
+        /// <summary>
+        /// Choose correct quoting type for identifier
+        /// </summary>
+        public void AutoChangeType()
+        {
+            if (specialChar.IsMatch(Name)) {
+                Type = IdentifierType.Quoted;
+            }
+            else if (Name == Name.ToUpperInvariant()) {
+                Type = IdentifierType.Plain;
+            }
+            else {
+                Type = IdentifierType.Quoted;
+            }
         }
     }
 
