@@ -176,7 +176,7 @@ namespace B1SA.HanaTranslator
                 asm.AddSpace();
                 asm.Add("(");
 
-                foreach (TableHint hint in Hints) {
+                foreach (var hint in Hints) {
                     asm.Add(hint);
                     if (hint != Hints.Last()) {
                         asm.Add(",");
@@ -325,7 +325,7 @@ namespace B1SA.HanaTranslator
 
             if (Params != null) {
                 asm.Add("(");
-                foreach (ExecParam param in Params) {
+                foreach (var param in Params) {
                     asm.Add(param);
                     if (param != Params.Last()) {
                         asm.Add(",");
@@ -506,8 +506,7 @@ namespace B1SA.HanaTranslator
 
         public ValuesClauseValues(List<Expression> record)
         {
-            Values = new List<List<Expression>>();
-            Values.Add(record);
+            Values = [record];
         }
 
         override public void Add(List<Expression> record)
@@ -520,7 +519,7 @@ namespace B1SA.HanaTranslator
             asm.Begin(this);
             if (Values != null) {
                 asm.AddToken("VALUES (");
-                foreach (Expression exp in Values[0]) {
+                foreach (var exp in Values[0]) {
                     asm.Add(exp);
                     if (exp != Values[0].Last()) {
                         asm.AddToken(",");
@@ -608,7 +607,7 @@ namespace B1SA.HanaTranslator
                     asm.AddSpace();
                     asm.AddToken("(");
 
-                    foreach (Identifier column in ColumnList) {
+                    foreach (var column in ColumnList) {
                         asm.Add(column);
                         if (column != ColumnList.Last()) {
                             asm.AddToken(",");
@@ -630,9 +629,9 @@ namespace B1SA.HanaTranslator
 
     public class UpdateStatement : WithSupportingStatement
     {
-        static int id = 0;
+        private static int id = 0;
 
-        int currentId;
+        private int currentId;
         public TopClause TopClause { get; set; }
         public TableSource TableSource { get; set; }
         public IList<SetItem> SetClause { get; set; }
@@ -671,7 +670,7 @@ namespace B1SA.HanaTranslator
             asm.AddSpace();
             asm.AddToken("SET");
             asm.AddSpace();
-            foreach (SetItem item in SetClause) {
+            foreach (var item in SetClause) {
                 asm.Add(item);
                 if (item != SetClause.Last()) {
                     asm.AddToken(",");
@@ -689,7 +688,7 @@ namespace B1SA.HanaTranslator
                 asm.AddToken("FROM");
                 asm.IncreaseIndentation();
                 asm.AddSpace();
-                foreach (TableSource table in FromClause) {
+                foreach (var table in FromClause) {
                     asm.Add(table);
                     if (table != FromClause.Last()) {
                         asm.Add(",");
@@ -806,7 +805,7 @@ namespace B1SA.HanaTranslator
     {
         public static string AssignmentToString(AssignmentType Assignment)
         {
-            string assignment = string.Empty;
+            var assignment = string.Empty;
             switch (Assignment) {
                 case AssignmentType.AddAssign:
                     assignment = "+";
@@ -876,8 +875,8 @@ namespace B1SA.HanaTranslator
         {
             // This is used in grammar to decide if a dbObject ends with something.WRITE.
             if (dbObject.Identifiers.Count >= 2) {
-                Identifier firstLast = dbObject.Identifiers[dbObject.Identifiers.Count - 1];
-                Identifier secondLast = dbObject.Identifiers[dbObject.Identifiers.Count - 2];
+                var firstLast = dbObject.Identifiers[dbObject.Identifiers.Count - 1];
+                var secondLast = dbObject.Identifiers[dbObject.Identifiers.Count - 2];
                 if (firstLast.Type == IdentifierType.Plain && firstLast.Name.ToLowerInvariant() == "write" &&
                     secondLast.Name != String.Empty) {
                     return true;
@@ -1169,7 +1168,7 @@ namespace B1SA.HanaTranslator
                 asm.AddToken("FROM");
                 asm.IncreaseIndentation();
                 asm.AddSpace();
-                foreach (TableSource table in FromClause) {
+                foreach (var table in FromClause) {
                     asm.Add(table);
                     if (table != FromClause.Last()) {
                         asm.AddToken(",");
@@ -1194,7 +1193,7 @@ namespace B1SA.HanaTranslator
                 asm.AddToken("GROUP BY");
                 asm.IncreaseIndentation();
                 asm.AddSpace();
-                foreach (GroupByItem item in GroupByClause) {
+                foreach (var item in GroupByClause) {
                     asm.Add(item);
                     if (item != GroupByClause.Last()) {
                         asm.AddToken(",");
@@ -1215,7 +1214,7 @@ namespace B1SA.HanaTranslator
                 asm.AddToken("ORDER BY");
                 asm.IncreaseIndentation();
                 asm.AddSpace();
-                foreach (OrderByItem item in OrderByClause) {
+                foreach (var item in OrderByClause) {
                     asm.Add(item);
                     if (item != OrderByClause.Last()) {
                         asm.Add(",");
@@ -1261,7 +1260,7 @@ namespace B1SA.HanaTranslator
                 asm.AddSpace();
             }
 
-            foreach (SelectItem item in SelectItems) {
+            foreach (var item in SelectItems) {
                 asm.Add(item);
                 if (item != SelectItems.Last()) {
                     asm.AddToken(", ");
@@ -1678,7 +1677,7 @@ namespace B1SA.HanaTranslator
                 asm.Add(Alias);
             }
             if (Hints != null) {
-                foreach (TableHint hint in Hints) {
+                foreach (var hint in Hints) {
                     asm.AddSpace();
                     asm.Add(hint);
                 }
@@ -1941,7 +1940,7 @@ namespace B1SA.HanaTranslator
         {
             asm.Begin(this);
             asm.AddToken("(");
-            foreach (GroupingSetItem item in SetItemList) {
+            foreach (var item in SetItemList) {
                 asm.Add(item);
                 if (item != SetItemList.Last()) {
                     asm.AddToken(", ");
@@ -1986,7 +1985,7 @@ namespace B1SA.HanaTranslator
             asm.Begin(this);
             asm.AddToken(RollupOrCube == RollupOrCube.ROLLUP ? "ROLLUP" : "CUBE");
             asm.AddToken("(");
-            foreach (CompositeElement elem in CompositeElements) {
+            foreach (var elem in CompositeElements) {
                 asm.Add(elem);
                 if (elem != CompositeElements.Last()) {
                     asm.AddToken(", ");
@@ -2051,7 +2050,7 @@ namespace B1SA.HanaTranslator
             asm.AddToken("GROUPING SETS");
             asm.AddSpace();
             asm.AddToken("(");
-            foreach (GroupingSet set in Sets) {
+            foreach (var set in Sets) {
                 asm.Add(set);
                 if (set != Sets.Last()) {
                     asm.AddToken(", ");
@@ -2093,7 +2092,7 @@ namespace B1SA.HanaTranslator
         {
             asm.Begin(this);
             asm.AddToken("(");
-            foreach (CompositeElement elem in List) {
+            foreach (var elem in List) {
                 asm.Add(elem);
                 if (elem != List.Last()) {
                     asm.AddToken(", ");

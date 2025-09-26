@@ -254,7 +254,7 @@ namespace B1SA.HanaTranslator
             asm.AddToken("IN");
             asm.AddSpace();
             asm.AddToken("(");
-            foreach (Expression exp in List) {
+            foreach (var exp in List) {
                 asm.Add(exp);
                 if (exp != List.Last()) {
                     asm.AddToken(",");
@@ -921,15 +921,15 @@ namespace B1SA.HanaTranslator
         override public void Assembly(Assembler asm)
         {
             asm.Begin(this);
-            StringLiteral dateToken = new StringLiteral(StringLiteralType.ASCII, string.Empty);
-            StringLiteral zeroLiteral = new StringLiteral(StringLiteralType.ASCII, "0");
+            var dateToken = new StringLiteral(StringLiteralType.ASCII, string.Empty);
+            var zeroLiteral = new StringLiteral(StringLiteralType.ASCII, "0");
             //if OriginalDate contains / separator, the original separator  will be replaced by - 
             //if OriginalDate is 8digit format without separator, separator will be added
             string[] date = null;
             string timeStamp = null;
             if (OriginalDate != null) {
-                string origDate = OriginalDate.Value.String.Trim(' ');
-                string[] ts = origDate.Split(' ');
+                var origDate = OriginalDate.Value.String.Trim(' ');
+                var ts = origDate.Split(' ');
 
                 if (ts.Length == 2) {
                     //also we have time stamp part
@@ -947,12 +947,12 @@ namespace B1SA.HanaTranslator
             if (date != null) {
                 switch (Operator) {
                     case DateFormatExpressionType.WithoutSeparator:
-                        for (int i = date.Length - 1; i >= 0; i--) {
+                        for (var i = date.Length - 1; i >= 0; i--) {
                             dateToken.String += (date[i].Length > 1 ? date[i] : zeroLiteral.String + date[i]);
                         }
                         break;
                     case DateFormatExpressionType.WithSeparator:
-                        for (int i = date.Length - 1; i >= 0; i--) {
+                        for (var i = date.Length - 1; i >= 0; i--) {
                             if (i >= 1) {
                                 dateToken.String += date[i] + "-";
                             }
@@ -1058,7 +1058,7 @@ namespace B1SA.HanaTranslator
             asm.Add(Name);
             asm.AddToken("(");
             if (Arguments != null) {
-                foreach (Expression exp in Arguments) {
+                foreach (var exp in Arguments) {
                     asm.Add(exp);
                     if (exp != Arguments.Last()) {
                         asm.AddToken(", ");
@@ -1075,8 +1075,8 @@ namespace B1SA.HanaTranslator
         /// <returns></returns>
         public bool ReturnsString()
         {
-            string name = Name.Name.ToUpper();
-            bool ret = false;
+            var name = Name.Name.ToUpper();
+            var ret = false;
 
             switch (name) {
                 case "RTRIM":
@@ -1519,7 +1519,7 @@ namespace B1SA.HanaTranslator
                 asm.Add(Target);
             }
             asm.IncreaseIndentation();
-            foreach (CaseWhenClause cls in WhenClauses) {
+            foreach (var cls in WhenClauses) {
                 asm.AddSpace();
                 asm.NewLine();
                 asm.Add(cls);
@@ -2031,7 +2031,7 @@ namespace B1SA.HanaTranslator
             if (PartitionByClause != null) {
                 asm.AddToken("PARTITION BY");
                 asm.AddSpace();
-                foreach (Expression exp in PartitionByClause) {
+                foreach (var exp in PartitionByClause) {
                     exp.Assembly(asm);
                     if (PartitionByClause.Last() != exp && PartitionByClause.Count > 0) {
                         asm.AddToken(",");
@@ -2043,7 +2043,7 @@ namespace B1SA.HanaTranslator
                 asm.AddSpace();
                 asm.AddToken("ORDER BY");
                 asm.AddSpace();
-                foreach (OrderByItem ordcls in OrderByClause) {
+                foreach (var ordcls in OrderByClause) {
                     asm.Begin(ordcls);
                     ordcls.Assembly(asm);
                     asm.End(ordcls);

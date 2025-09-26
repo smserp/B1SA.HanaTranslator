@@ -1,35 +1,3 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime
 {
     using ConditionalAttribute = System.Diagnostics.ConditionalAttribute;
@@ -50,12 +18,12 @@ namespace Antlr.Runtime
         {
         }
 
-        public Lexer( ICharStream input )
+        public Lexer(ICharStream input)
         {
             this.input = input;
         }
 
-        public Lexer( ICharStream input, RecognizerSharedState state )
+        public Lexer(ICharStream input, RecognizerSharedState state)
             : base(state)
         {
             this.input = input;
@@ -68,40 +36,30 @@ namespace Antlr.Runtime
         /// <remarks>
         /// <para>Setting this value replaces any previously set value, and overrides the original text.</para>
         /// </remarks>
-        public string Text
-        {
-            get
-            {
-                if ( state.text != null )
-                {
+        public string Text {
+            get {
+                if (state.text != null) {
                     return state.text;
                 }
-                return input.Substring( state.tokenStartCharIndex, CharIndex - state.tokenStartCharIndex );
+                return input.Substring(state.tokenStartCharIndex, CharIndex - state.tokenStartCharIndex);
             }
-            set
-            {
+            set {
                 state.text = value;
             }
         }
-        public int Line
-        {
-            get
-            {
+        public int Line {
+            get {
                 return input.Line;
             }
-            set
-            {
+            set {
                 input.Line = value;
             }
         }
-        public int CharPositionInLine
-        {
-            get
-            {
+        public int CharPositionInLine {
+            get {
                 return input.CharPositionInLine;
             }
-            set
-            {
+            set {
                 input.CharPositionInLine = value;
             }
         }
@@ -111,12 +69,10 @@ namespace Antlr.Runtime
         {
             base.Reset(); // reset all recognizer state variables
             // wack Lexer state variables
-            if ( input != null )
-            {
-                input.Seek( 0 ); // rewind the input
+            if (input != null) {
+                input.Seek(0); // rewind the input
             }
-            if ( state == null )
-            {
+            if (state == null) {
                 return; // no shared state work to do
             }
             state.token = null;
@@ -131,7 +87,7 @@ namespace Antlr.Runtime
         /** <summary>Return a token from this source; i.e., match a token on the char stream.</summary> */
         public virtual IToken NextToken()
         {
-            for ( ; ; )
+            for (; ; )
             {
                 state.token = null;
                 state.channel = TokenChannels.Default;
@@ -139,37 +95,30 @@ namespace Antlr.Runtime
                 state.tokenStartCharPositionInLine = input.CharPositionInLine;
                 state.tokenStartLine = input.Line;
                 state.text = null;
-                if ( input.LA( 1 ) == CharStreamConstants.EndOfFile )
-                {
+                if (input.LA(1) == CharStreamConstants.EndOfFile) {
                     return GetEndOfFileToken();
                 }
-                try
-                {
+                try {
                     ParseNextToken();
-                    if ( state.token == null )
-                    {
+                    if (state.token == null) {
                         Emit();
                     }
-                    else if ( state.token == Tokens.Skip )
-                    {
+                    else if (state.token == Tokens.Skip) {
                         continue;
                     }
                     return state.token;
                 }
-                catch (MismatchedRangeException mre)
-                {
+                catch (MismatchedRangeException mre) {
                     ReportError(mre);
                     // MatchRange() routine has already called recover()
                 }
-                catch (MismatchedTokenException mte)
-                {
+                catch (MismatchedTokenException mte) {
                     ReportError(mte);
                     // Match() routine has already called recover()
                 }
-                catch ( RecognitionException re )
-                {
-                    ReportError( re );
-                    Recover( re ); // throw out current char and try again
+                catch (RecognitionException re) {
+                    ReportError(re);
+                    Recover(re); // throw out current char and try again
                 }
             }
         }
@@ -179,7 +128,7 @@ namespace Antlr.Runtime
          */
         public virtual IToken GetEndOfFileToken()
         {
-            IToken eof = new CommonToken((ICharStream)input, CharStreamConstants.EndOfFile, TokenChannels.Default, input.Index, input.Index);
+            IToken eof = new CommonToken((ICharStream) input, CharStreamConstants.EndOfFile, TokenChannels.Default, input.Index, input.Index);
             eof.Line = Line;
             eof.CharPositionInLine = CharPositionInLine;
             return eof;
@@ -201,25 +150,20 @@ namespace Antlr.Runtime
         /** <summary>This is the lexer entry point that sets instance var 'token'</summary> */
         public abstract void mTokens();
 
-        public virtual ICharStream CharStream
-        {
-            get
-            {
+        public virtual ICharStream CharStream {
+            get {
                 return input;
             }
             /* Set the char stream and reset the lexer */
-            set
-            {
+            set {
                 input = null;
                 Reset();
                 input = value;
             }
         }
 
-        public override string SourceName
-        {
-            get
-            {
+        public override string SourceName {
+            get {
                 return input.SourceName;
             }
         }
@@ -231,7 +175,7 @@ namespace Antlr.Runtime
          *  than a single variable as this implementation does).
          *  </summary>
          */
-        public virtual void Emit( IToken token )
+        public virtual void Emit(IToken token)
         {
             state.token = token;
         }
@@ -251,28 +195,25 @@ namespace Antlr.Runtime
          */
         public virtual IToken Emit()
         {
-            IToken t = new CommonToken( input, state.type, state.channel, state.tokenStartCharIndex, CharIndex - 1 );
+            IToken t = new CommonToken(input, state.type, state.channel, state.tokenStartCharIndex, CharIndex - 1);
             t.Line = state.tokenStartLine;
             t.Text = state.text;
             t.CharPositionInLine = state.tokenStartCharPositionInLine;
-            Emit( t );
+            Emit(t);
             return t;
         }
 
-        public virtual void Match( string s )
+        public virtual void Match(string s)
         {
-            int i = 0;
-            while ( i < s.Length )
-            {
-                if ( input.LA( 1 ) != s[i] )
-                {
-                    if ( state.backtracking > 0 )
-                    {
+            var i = 0;
+            while (i < s.Length) {
+                if (input.LA(1) != s[i]) {
+                    if (state.backtracking > 0) {
                         state.failed = true;
                         return;
                     }
-                    MismatchedTokenException mte = new MismatchedTokenException(s[i], input, TokenNames);
-                    Recover( mte );
+                    var mte = new MismatchedTokenException(s[i], input, TokenNames);
+                    Recover(mte);
                     throw mte;
                 }
                 i++;
@@ -286,34 +227,30 @@ namespace Antlr.Runtime
             input.Consume();
         }
 
-        public virtual void Match( int c )
+        public virtual void Match(int c)
         {
-            if ( input.LA( 1 ) != c )
-            {
-                if ( state.backtracking > 0 )
-                {
+            if (input.LA(1) != c) {
+                if (state.backtracking > 0) {
                     state.failed = true;
                     return;
                 }
-                MismatchedTokenException mte = new MismatchedTokenException(c, input, TokenNames);
-                Recover( mte );  // don't really recover; just consume in lexer
+                var mte = new MismatchedTokenException(c, input, TokenNames);
+                Recover(mte);  // don't really recover; just consume in lexer
                 throw mte;
             }
             input.Consume();
             state.failed = false;
         }
 
-        public virtual void MatchRange( int a, int b )
+        public virtual void MatchRange(int a, int b)
         {
-            if ( input.LA( 1 ) < a || input.LA( 1 ) > b )
-            {
-                if ( state.backtracking > 0 )
-                {
+            if (input.LA(1) < a || input.LA(1) > b) {
+                if (state.backtracking > 0) {
                     state.failed = true;
                     return;
                 }
-                MismatchedRangeException mre = new MismatchedRangeException(a, b, input);
-                Recover( mre );
+                var mre = new MismatchedRangeException(a, b, input);
+                Recover(mre);
                 throw mre;
             }
             input.Consume();
@@ -321,15 +258,13 @@ namespace Antlr.Runtime
         }
 
         /** <summary>What is the index of the current character of lookahead?</summary> */
-        public virtual int CharIndex
-        {
-            get
-            {
+        public virtual int CharIndex {
+            get {
                 return input.Index;
             }
         }
 
-        public override void ReportError( RecognitionException e )
+        public override void ReportError(RecognitionException e)
         {
             /* TODO: not thought about recovery in lexer yet.
              *
@@ -342,71 +277,63 @@ namespace Antlr.Runtime
              * errorRecovery = true;
              */
 
-            DisplayRecognitionError( this.TokenNames, e );
+            DisplayRecognitionError(this.TokenNames, e);
         }
 
-        public override string GetErrorMessage( RecognitionException e, string[] tokenNames )
+        public override string GetErrorMessage(RecognitionException e, string[] tokenNames)
         {
             string msg = null;
-            if ( e is MismatchedTokenException )
-            {
-                MismatchedTokenException mte = (MismatchedTokenException)e;
-                msg = "mismatched character " + GetCharErrorDisplay( e.Character ) + " expecting " + GetCharErrorDisplay( mte.Expecting );
+            if (e is MismatchedTokenException) {
+                var mte = (MismatchedTokenException) e;
+                msg = "mismatched character " + GetCharErrorDisplay(e.Character) + " expecting " + GetCharErrorDisplay(mte.Expecting);
             }
-            else if ( e is NoViableAltException )
-            {
-                NoViableAltException nvae = (NoViableAltException)e;
+            else if (e is NoViableAltException) {
+                var nvae = (NoViableAltException) e;
                 // for development, can add "decision=<<"+nvae.grammarDecisionDescription+">>"
                 // and "(decision="+nvae.decisionNumber+") and
                 // "state "+nvae.stateNumber
-                msg = "no viable alternative at character " + GetCharErrorDisplay( e.Character );
+                msg = "no viable alternative at character " + GetCharErrorDisplay(e.Character);
             }
-            else if ( e is EarlyExitException )
-            {
-                EarlyExitException eee = (EarlyExitException)e;
+            else if (e is EarlyExitException) {
+                var eee = (EarlyExitException) e;
                 // for development, can add "(decision="+eee.decisionNumber+")"
-                msg = "required (...)+ loop did not match anything at character " + GetCharErrorDisplay( e.Character );
+                msg = "required (...)+ loop did not match anything at character " + GetCharErrorDisplay(e.Character);
             }
-            else if ( e is MismatchedNotSetException )
-            {
-                MismatchedNotSetException mse = (MismatchedNotSetException)e;
-                msg = "mismatched character " + GetCharErrorDisplay( e.Character ) + " expecting set " + mse.Expecting;
+            else if (e is MismatchedNotSetException) {
+                var mse = (MismatchedNotSetException) e;
+                msg = "mismatched character " + GetCharErrorDisplay(e.Character) + " expecting set " + mse.Expecting;
             }
-            else if ( e is MismatchedSetException )
-            {
-                MismatchedSetException mse = (MismatchedSetException)e;
-                msg = "mismatched character " + GetCharErrorDisplay( e.Character ) + " expecting set " + mse.Expecting;
+            else if (e is MismatchedSetException) {
+                var mse = (MismatchedSetException) e;
+                msg = "mismatched character " + GetCharErrorDisplay(e.Character) + " expecting set " + mse.Expecting;
             }
-            else if ( e is MismatchedRangeException )
-            {
-                MismatchedRangeException mre = (MismatchedRangeException)e;
-                msg = "mismatched character " + GetCharErrorDisplay( e.Character ) + " expecting set " +
-                      GetCharErrorDisplay( mre.A ) + ".." + GetCharErrorDisplay( mre.B );
+            else if (e is MismatchedRangeException) {
+                var mre = (MismatchedRangeException) e;
+                msg = "mismatched character " + GetCharErrorDisplay(e.Character) + " expecting set " +
+                      GetCharErrorDisplay(mre.A) + ".." + GetCharErrorDisplay(mre.B);
             }
-            else
-            {
-                msg = base.GetErrorMessage( e, tokenNames );
+            else {
+                msg = base.GetErrorMessage(e, tokenNames);
             }
             return msg;
         }
 
-        public virtual string GetCharErrorDisplay( int c )
+        public virtual string GetCharErrorDisplay(int c)
         {
-            string s = ( (char)c ).ToString();
-            switch ( c )
-            {
-            case TokenTypes.EndOfFile:
-                s = "<EOF>";
-                break;
-            case '\n':
-                s = "\\n";
-                break;
-            case '\t':
-                s = "\\t";
-                break;
-            case '\r':
-                s = "\\r";
-                break;
+            var s = ((char) c).ToString();
+            switch (c) {
+                case TokenTypes.EndOfFile:
+                    s = "<EOF>";
+                    break;
+                case '\n':
+                    s = "\\n";
+                    break;
+                case '\t':
+                    s = "\\t";
+                    break;
+                case '\r':
+                    s = "\\r";
+                    break;
             }
             return "'" + s + "'";
         }
@@ -418,7 +345,7 @@ namespace Antlr.Runtime
          *  to do sophisticated error recovery if you are in a fragment rule.
          *  </summary>
          */
-        public virtual void Recover( RecognitionException re )
+        public virtual void Recover(RecognitionException re)
         {
             //System.out.println("consuming char "+(char)input.LA(1)+" during recovery");
             //re.printStackTrace();
@@ -426,17 +353,17 @@ namespace Antlr.Runtime
         }
 
         [Conditional("ANTLR_TRACE")]
-        public virtual void TraceIn( string ruleName, int ruleIndex )
+        public virtual void TraceIn(string ruleName, int ruleIndex)
         {
-            string inputSymbol = ( (char)input.LT( 1 ) ) + " line=" + Line + ":" + CharPositionInLine;
-            base.TraceIn( ruleName, ruleIndex, inputSymbol );
+            var inputSymbol = ((char) input.LT(1)) + " line=" + Line + ":" + CharPositionInLine;
+            base.TraceIn(ruleName, ruleIndex, inputSymbol);
         }
 
         [Conditional("ANTLR_TRACE")]
-        public virtual void TraceOut( string ruleName, int ruleIndex )
+        public virtual void TraceOut(string ruleName, int ruleIndex)
         {
-            string inputSymbol = ( (char)input.LT( 1 ) ) + " line=" + Line + ":" + CharPositionInLine;
-            base.TraceOut( ruleName, ruleIndex, inputSymbol );
+            var inputSymbol = ((char) input.LT(1)) + " line=" + Line + ":" + CharPositionInLine;
+            base.TraceOut(ruleName, ruleIndex, inputSymbol);
         }
 
         protected virtual void ParseNextToken()

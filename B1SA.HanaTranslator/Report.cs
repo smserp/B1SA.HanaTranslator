@@ -1,10 +1,10 @@
 namespace B1SA.HanaTranslator
 {
-    class Report : Scanner
+    internal class Report : Scanner
     {
-        GrammarNode _OldNode = null;
-        GrammarNode _NewNode = null;
-        string _HTML = string.Empty;
+        private GrammarNode _OldNode = null;
+        private GrammarNode _NewNode = null;
+        private string _HTML = string.Empty;
         private Config config;
 
         public Report(Config configuration)
@@ -43,7 +43,7 @@ namespace B1SA.HanaTranslator
 
         public override bool Action(GrammarNode child)
         {
-            Stringifier str = new Stringifier(config);
+            var str = new Stringifier(config);
             if (child.ReplacedNode != null) {
                 FindOldNode(child.ReplacedNode);
             }
@@ -56,7 +56,7 @@ namespace B1SA.HanaTranslator
         }
         #endregion
 
-        GrammarNode FindOldNode(GrammarNode findNode)
+        private GrammarNode FindOldNode(GrammarNode findNode)
         {
             return _OldNode;
         }
@@ -75,7 +75,7 @@ namespace B1SA.HanaTranslator
         public virtual bool Action(DbObject child)
         {
             if (child.Identifiers != null) {
-                Stringifier str = new Stringifier(config);
+                var str = new Stringifier(config);
                 child.Assembly(str);
                 _HTML += str.Statement;
             }
@@ -161,7 +161,7 @@ namespace B1SA.HanaTranslator
             }
             if (child.FromClause != null) {
                 _HTML += " FROM ";
-                for (int i = 0; i < child.FromClause.Count; i++) {
+                for (var i = 0; i < child.FromClause.Count; i++) {
                     if (i > 0) {
                         _HTML += " ";
                     }
@@ -174,7 +174,7 @@ namespace B1SA.HanaTranslator
             }
             if (child.GroupByClause != null) {
                 _HTML += " GROUP BY ";
-                for (int i = 0; i < child.GroupByClause.Count; i++) {
+                for (var i = 0; i < child.GroupByClause.Count; i++) {
                     if (i > 0) {
                         _HTML += ",";
                     }
@@ -186,11 +186,11 @@ namespace B1SA.HanaTranslator
                 Scan(child.HavingClause);
             }
             if (child.OrderByClause != null) {
-                Stringifier str = new Stringifier(config);
+                var str = new Stringifier(config);
                 str.AddSpace();
                 str.Add("ORDER BY");
                 str.AddSpace();
-                foreach (OrderByItem item in child.OrderByClause) {
+                foreach (var item in child.OrderByClause) {
                     str.Add(item);
                     if (item != child.OrderByClause.Last()) {
                         str.Add(",");
@@ -218,7 +218,7 @@ namespace B1SA.HanaTranslator
             }
 
             if (child.SelectItems != null) {
-                for (int i = 0; i < child.SelectItems.Count; i++) {
+                for (var i = 0; i < child.SelectItems.Count; i++) {
                     if (i > 0) {
                         _HTML += ",";
                     }
@@ -257,7 +257,7 @@ namespace B1SA.HanaTranslator
         public virtual bool Action(TableWildcardSelectItem child)
         {
             if (child.Table != null) {
-                for (int i = 0; i < child.Table.Identifiers.Count; i++) {
+                for (var i = 0; i < child.Table.Identifiers.Count; i++) {
                     if (i > 0) {
                         _HTML += ",";
                     }

@@ -1,42 +1,9 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime.Misc
 {
-    using ArgumentException = System.ArgumentException;
+    using ArgumentOutOfRangeException = ArgumentOutOfRangeException;
     using Debug = System.Diagnostics.Debug;
-    using InvalidOperationException = System.InvalidOperationException;
-    using NotSupportedException = System.NotSupportedException;
-    using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
+    using InvalidOperationException = InvalidOperationException;
+    using NotSupportedException = NotSupportedException;
 
     /** <summary>
      * A lookahead queue that knows how to mark/release locations in the buffer for
@@ -62,30 +29,25 @@ namespace Antlr.Runtime.Misc
         /** Track object returned by nextElement upon end of stream;
          *  Return it later when they ask for LT passed end of input.
          */
-        T _eof = null;
+        private T _eof = null;
 
         /** <summary>Track the last mark() call result value for use in rewind().</summary> */
-        int _lastMarker;
+        private int _lastMarker;
 
         /** <summary>tracks how deep mark() calls are nested</summary> */
-        int _markDepth;
+        private int _markDepth;
 
-        public T EndOfFile
-        {
-            get
-            {
+        public T EndOfFile {
+            get {
                 return _eof;
             }
-            protected set
-            {
+            protected set {
                 _eof = value;
             }
         }
 
-        public T PreviousElement
-        {
-            get
-            {
+        public T PreviousElement {
+            get {
                 return _previousElement;
             }
         }
@@ -113,11 +75,10 @@ namespace Antlr.Runtime.Misc
          * </summary> */
         public override T Dequeue()
         {
-            T o = this[0];
+            var o = this[0];
             _p++;
             // have we hit end of buffer and not backtracking?
-            if ( _p == _data.Count && _markDepth == 0 )
-            {
+            if (_p == _data.Count && _markDepth == 0) {
                 _previousElement = o;
                 // if so, it's an opportunity to start filling at index 0 again
                 Clear(); // size goes to 0, but retains memory
@@ -139,57 +100,50 @@ namespace Antlr.Runtime.Misc
          *  ahead.  If we need 1 element, (p+1-1)==p must be &lt; data.size().
          *  </summary>
          */
-        protected virtual void SyncAhead( int need )
+        protected virtual void SyncAhead(int need)
         {
-            int n = ( _p + need - 1 ) - _data.Count + 1; // how many more elements we need?
-            if ( n > 0 )
-                Fill( n );                 // out of elements?
+            var n = (_p + need - 1) - _data.Count + 1; // how many more elements we need?
+            if (n > 0)
+                Fill(n);                 // out of elements?
         }
 
         /** <summary>add n elements to buffer</summary> */
-        public virtual void Fill( int n )
+        public virtual void Fill(int n)
         {
-            for ( int i = 0; i < n; i++ )
-            {
-                T o = NextElement();
-                if ( IsEndOfFile(o) )
+            for (var i = 0; i < n; i++) {
+                var o = NextElement();
+                if (IsEndOfFile(o))
                     _eof = o;
 
-                _data.Add( o );
+                _data.Add(o);
             }
         }
 
         /** <summary>Size of entire stream is unknown; we only know buffer size from FastQueue</summary> */
-        public override int Count
-        {
-            get
-            {
-                throw new System.NotSupportedException( "streams are of unknown size" );
+        public override int Count {
+            get {
+                throw new NotSupportedException("streams are of unknown size");
             }
         }
 
-        public virtual T LT( int k )
+        public virtual T LT(int k)
         {
-            if ( k == 0 )
-            {
+            if (k == 0) {
                 return null;
             }
-            if ( k < 0 )
-            {
+            if (k < 0) {
                 return LB(-k);
             }
 
-            SyncAhead( k );
+            SyncAhead(k);
             if ((_p + k - 1) > _data.Count)
                 return _eof;
 
             return this[k - 1];
         }
 
-        public virtual int Index
-        {
-            get
-            {
+        public virtual int Index {
+            get {
                 return _currentElementIndex;
             }
         }
@@ -201,7 +155,7 @@ namespace Antlr.Runtime.Misc
             return _lastMarker;
         }
 
-        public virtual void Release( int marker )
+        public virtual void Release(int marker)
         {
             if (_markDepth == 0)
                 throw new InvalidOperationException();
@@ -209,10 +163,10 @@ namespace Antlr.Runtime.Misc
             _markDepth--;
         }
 
-        public virtual void Rewind( int marker )
+        public virtual void Rewind(int marker)
         {
             _markDepth--;
-            int delta = _p - marker;
+            var delta = _p - marker;
             _currentElementIndex -= delta;
             _p = marker;
         }
@@ -220,7 +174,7 @@ namespace Antlr.Runtime.Misc
         public virtual void Rewind()
         {
             // rewind but do not release marker
-            int delta = _p - _lastMarker;
+            var delta = _p - _lastMarker;
             _currentElementIndex -= delta;
             _p = _lastMarker;
         }
@@ -236,12 +190,12 @@ namespace Antlr.Runtime.Misc
          * {@link #consume} or {@link #LT} for {@code k>0}.
          *  </remarks>
          */
-        public virtual void Seek( int index )
+        public virtual void Seek(int index)
         {
             if (index < 0)
                 throw new ArgumentOutOfRangeException("index");
 
-            int delta = _currentElementIndex - index;
+            var delta = _currentElementIndex - index;
             if (_p - delta < 0)
                 throw new NotSupportedException("can't seek before the beginning of this stream's buffer");
 
@@ -253,7 +207,7 @@ namespace Antlr.Runtime.Misc
         {
             Debug.Assert(k > 0);
 
-            int index = _p - k;
+            var index = _p - k;
             if (index == -1)
                 return _previousElement;
 

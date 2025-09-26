@@ -10,9 +10,9 @@ namespace B1SA.HanaTranslator
         protected bool onlyTokenInput = false;
         private readonly Config config;
         private readonly string inputQuery;
-        private Dictionary<string, TokenHandler> tokenPatterns = new Dictionary<string, TokenHandler>();
+        private Dictionary<string, TokenHandler> tokenPatterns = [];
 
-        protected List<TokenMatch> tokenValueMatch = new List<TokenMatch>();
+        protected List<TokenMatch> tokenValueMatch = [];
 
         private VariableTokenizer varTokenHandler = new VariableTokenizer();
         private IdentifierTokenizer idTokenHandler = new IdentifierTokenizer();

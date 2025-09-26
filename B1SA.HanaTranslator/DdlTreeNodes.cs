@@ -53,7 +53,7 @@ namespace B1SA.HanaTranslator
                 asm.AddSpace();
                 asm.AddToken("(");
                 if (Definitions.Count != 0) {
-                    foreach (CreateTableDefinition def in Definitions) {
+                    foreach (var def in Definitions) {
                         if (def is TableConstraint) {
                             asm.AddSpace();
                             asm.AddToken("CONSTRAINT");
@@ -119,7 +119,7 @@ namespace B1SA.HanaTranslator
             }
             if (Modifiers != null) {
                 asm.AddSpace();
-                foreach (ColumnDefinitionModifier mod in Modifiers) {
+                foreach (var mod in Modifiers) {
                     asm.Add(mod);
                     if (mod != Modifiers.Last()) {
                         asm.AddSpace();
@@ -467,7 +467,7 @@ namespace B1SA.HanaTranslator
             asm.AddSpace();
             if (Columns.Count != 0) {
                 asm.AddToken("(");
-                foreach (OrderedColumn col in Columns) {
+                foreach (var col in Columns) {
                     asm.Add(col);
                     if (col != Columns.Last()) {
                         asm.AddToken(",");
@@ -834,7 +834,7 @@ namespace B1SA.HanaTranslator
                 }
                 else {
                     asm.AddToken("(");
-                    foreach (CreateTableDefinition def in Definitions) {
+                    foreach (var def in Definitions) {
                         asm.Add(def);
                         if (def != Definitions.Last()) {
                             asm.AddToken(",");
@@ -870,7 +870,7 @@ namespace B1SA.HanaTranslator
                 }
                 else {
                     asm.AddToken("(");
-                    foreach (DropAlterTableDefinition def in Definitions) {
+                    foreach (var def in Definitions) {
                         asm.Add(def);
                         if (def != Definitions.Last()) {
                             asm.AddToken(",");
@@ -1094,7 +1094,7 @@ namespace B1SA.HanaTranslator
                 asm.AddSpace();
                 asm.AddToken("TABLE");
                 asm.AddSpace();
-                foreach (DbObjectTableSource table in TableSources) {
+                foreach (var table in TableSources) {
                     asm.Add(table);
                     if (table != TableSources.Last()) {
                         asm.AddToken(",");
@@ -1163,7 +1163,7 @@ namespace B1SA.HanaTranslator
 
             if (IndexColumns != null && IndexColumns.Count > 0) {
                 asm.AddToken("(");
-                foreach (OrderedColumn col in IndexColumns) {
+                foreach (var col in IndexColumns) {
                     asm.Add(col);
                     if (col != IndexColumns.Last()) {
                         asm.AddToken(",");
@@ -1372,7 +1372,7 @@ namespace B1SA.HanaTranslator
 
             if (Columns != null) {
                 asm.Add("(");
-                foreach (Identifier col in Columns) {
+                foreach (var col in Columns) {
                     asm.Add(col);
                     if (col != Columns.Last()) {
                         asm.Add(", ");
@@ -1461,7 +1461,7 @@ namespace B1SA.HanaTranslator
             asm.Add(Name);
             asm.AddSpace();
             asm.AddToken("AS TABLE (");
-            foreach (CreateTableDefinition def in Definitions) {
+            foreach (var def in Definitions) {
                 asm.Add(def);
                 if (def != Definitions.Last()) {
                     asm.AddToken(", ");
@@ -1619,7 +1619,7 @@ namespace B1SA.HanaTranslator
             if (Parameters != null) {
                 asm.AddSpace();
                 asm.AddToken("(");
-                foreach (ProcedureParameter param in Parameters) {
+                foreach (var param in Parameters) {
                     asm.Add(param);
                     if (param != Parameters.Last()) {
                         asm.AddToken(", ");
@@ -1785,7 +1785,7 @@ namespace B1SA.HanaTranslator
         public override void Assembly(Assembler asm)
         {
             asm.Begin(this);
-            foreach (DbObject name in Names) {
+            foreach (var name in Names) {
                 asm.AddToken("DROP PROCEDURE");
                 asm.AddSpace();
                 asm.Add(name);
@@ -1838,7 +1838,7 @@ namespace B1SA.HanaTranslator
                     break;
             }
             asm.AddSpace();
-            foreach (TriggerDmlOperationType type in TriggerDmlOperations) {
+            foreach (var type in TriggerDmlOperations) {
                 switch (type) {
                     case TriggerDmlOperationType.INSERT:
                         asm.AddToken("INSERT");

@@ -1,35 +1,3 @@
-/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime
 {
     using System.Collections.Generic;
@@ -42,7 +10,7 @@ namespace Antlr.Runtime
      *  for automatic error recovery.
      *  </summary>
      */
-    [System.Serializable]
+    [Serializable]
     public sealed class BitSet : ICloneable
     {
         private const int BITS = 64;    // number of bits / long
@@ -58,116 +26,111 @@ namespace Antlr.Runtime
         private const int MOD_MASK = BITS - 1;
 
         /** <summary>The actual data bits</summary> */
-        ulong[] _bits;
+        private ulong[] _bits;
 
         /** <summary>Construct a bitset of size one word (64 bits)</summary> */
         public BitSet()
-            : this( BITS )
+            : this(BITS)
         {
         }
 
         /** <summary>Construction from a static array of longs</summary> */
-        public BitSet( ulong[] bits )
+        public BitSet(ulong[] bits)
         {
             _bits = bits;
         }
 
         /** <summary>Construction from a list of integers</summary> */
-        public BitSet( IEnumerable<int> items )
+        public BitSet(IEnumerable<int> items)
             : this()
         {
-            foreach ( int i in items )
-                Add( i );
+            foreach (var i in items)
+                Add(i);
         }
 
         /** <summary>Construct a bitset given the size</summary>
          *  <param name="nbits">The size of the bitset in bits</param>
          */
-        public BitSet( int nbits )
+        public BitSet(int nbits)
         {
-            _bits = new ulong[( ( nbits - 1 ) >> LOG_BITS ) + 1];
+            _bits = new ulong[((nbits - 1) >> LOG_BITS) + 1];
         }
 
-        public static BitSet Of( int el )
+        public static BitSet Of(int el)
         {
-            BitSet s = new BitSet( el + 1 );
-            s.Add( el );
+            var s = new BitSet(el + 1);
+            s.Add(el);
             return s;
         }
 
-        public static BitSet Of( int a, int b )
+        public static BitSet Of(int a, int b)
         {
-            BitSet s = new BitSet( Math.Max( a, b ) + 1 );
-            s.Add( a );
-            s.Add( b );
+            var s = new BitSet(Math.Max(a, b) + 1);
+            s.Add(a);
+            s.Add(b);
             return s;
         }
 
-        public static BitSet Of( int a, int b, int c )
+        public static BitSet Of(int a, int b, int c)
         {
-            BitSet s = new BitSet();
-            s.Add( a );
-            s.Add( b );
-            s.Add( c );
+            var s = new BitSet();
+            s.Add(a);
+            s.Add(b);
+            s.Add(c);
             return s;
         }
 
-        public static BitSet Of( int a, int b, int c, int d )
+        public static BitSet Of(int a, int b, int c, int d)
         {
-            BitSet s = new BitSet();
-            s.Add( a );
-            s.Add( b );
-            s.Add( c );
-            s.Add( d );
+            var s = new BitSet();
+            s.Add(a);
+            s.Add(b);
+            s.Add(c);
+            s.Add(d);
             return s;
         }
 
         /** <summary>return this | a in a new set</summary> */
-        public BitSet Or( BitSet a )
+        public BitSet Or(BitSet a)
         {
-            if ( a == null )
-            {
+            if (a == null) {
                 return this;
             }
-            BitSet s = (BitSet)this.Clone();
-            s.OrInPlace( a );
+            var s = (BitSet) this.Clone();
+            s.OrInPlace(a);
             return s;
         }
 
         /** <summary>or this element into this set (grow as necessary to accommodate)</summary> */
-        public void Add( int el )
+        public void Add(int el)
         {
-            int n = WordNumber( el );
-            if ( n >= _bits.Length )
-            {
-                GrowToInclude( el );
+            var n = WordNumber(el);
+            if (n >= _bits.Length) {
+                GrowToInclude(el);
             }
-            _bits[n] |= BitMask( el );
+            _bits[n] |= BitMask(el);
         }
 
         /** <summary>Grows the set to a larger number of bits.</summary>
          *  <param name="bit">element that must fit in set</param>
          */
-        public void GrowToInclude( int bit )
+        public void GrowToInclude(int bit)
         {
-            int newSize = Math.Max( _bits.Length << 1, NumWordsToHold( bit ) );
+            var newSize = Math.Max(_bits.Length << 1, NumWordsToHold(bit));
             SetSize(newSize);
         }
 
-        public void OrInPlace( BitSet a )
+        public void OrInPlace(BitSet a)
         {
-            if ( a == null )
-            {
+            if (a == null) {
                 return;
             }
             // If this is smaller than a, grow this first
-            if ( a._bits.Length > _bits.Length )
-            {
-                SetSize( a._bits.Length );
+            if (a._bits.Length > _bits.Length) {
+                SetSize(a._bits.Length);
             }
-            int min = Math.Min( _bits.Length, a._bits.Length );
-            for ( int i = min - 1; i >= 0; i-- )
-            {
+            var min = Math.Min(_bits.Length, a._bits.Length);
+            for (var i = min - 1; i >= 0; i--) {
                 _bits[i] |= a._bits[i];
             }
         }
@@ -175,34 +138,30 @@ namespace Antlr.Runtime
         /** <summary>Sets the size of a set.</summary>
          *  <param name="nwords">how many words the new set should be</param>
          */
-        private void SetSize( int nwords )
+        private void SetSize(int nwords)
         {
             Array.Resize(ref _bits, nwords);
         }
 
-        private static ulong BitMask( int bitNumber )
+        private static ulong BitMask(int bitNumber)
         {
-            int bitPosition = bitNumber & MOD_MASK; // bitNumber mod BITS
+            var bitPosition = bitNumber & MOD_MASK; // bitNumber mod BITS
             return 1UL << bitPosition;
         }
 
         public object Clone()
         {
-            return new BitSet( (ulong[])_bits.Clone() );
+            return new BitSet((ulong[]) _bits.Clone());
         }
 
         public int Size()
         {
-            int deg = 0;
-            for ( int i = _bits.Length - 1; i >= 0; i-- )
-            {
-                ulong word = _bits[i];
-                if ( word != 0L )
-                {
-                    for ( int bit = BITS - 1; bit >= 0; bit-- )
-                    {
-                        if ( ( word & ( 1UL << bit ) ) != 0 )
-                        {
+            var deg = 0;
+            for (var i = _bits.Length - 1; i >= 0; i--) {
+                var word = _bits[i];
+                if (word != 0L) {
+                    for (var bit = BITS - 1; bit >= 0; bit--) {
+                        if ((word & (1UL << bit)) != 0) {
                             deg++;
                         }
                     }
@@ -213,47 +172,38 @@ namespace Antlr.Runtime
 
         public override int GetHashCode()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public override bool Equals( object other )
+        public override bool Equals(object other)
         {
-            if ( other == null || !( other is BitSet ) )
-            {
+            if (other == null || !(other is BitSet)) {
                 return false;
             }
 
-            BitSet otherSet = (BitSet)other;
+            var otherSet = (BitSet) other;
 
-            int n = Math.Min( this._bits.Length, otherSet._bits.Length );
+            var n = Math.Min(this._bits.Length, otherSet._bits.Length);
 
             // for any bits in common, compare
-            for ( int i = 0; i < n; i++ )
-            {
-                if ( this._bits[i] != otherSet._bits[i] )
-                {
+            for (var i = 0; i < n; i++) {
+                if (this._bits[i] != otherSet._bits[i]) {
                     return false;
                 }
             }
 
             // make sure any extra bits are off
 
-            if ( this._bits.Length > n )
-            {
-                for ( int i = n + 1; i < this._bits.Length; i++ )
-                {
-                    if ( this._bits[i] != 0 )
-                    {
+            if (this._bits.Length > n) {
+                for (var i = n + 1; i < this._bits.Length; i++) {
+                    if (this._bits[i] != 0) {
                         return false;
                     }
                 }
             }
-            else if ( otherSet._bits.Length > n )
-            {
-                for ( int i = n + 1; i < otherSet._bits.Length; i++ )
-                {
-                    if ( otherSet._bits[i] != 0 )
-                    {
+            else if (otherSet._bits.Length > n) {
+                for (var i = n + 1; i < otherSet._bits.Length; i++) {
+                    if (otherSet._bits[i] != 0) {
                         return false;
                     }
                 }
@@ -262,41 +212,38 @@ namespace Antlr.Runtime
             return true;
         }
 
-        public bool Member( int el )
+        public bool Member(int el)
         {
-            if ( el < 0 )
-            {
+            if (el < 0) {
                 return false;
             }
-            int n = WordNumber( el );
-            if ( n >= _bits.Length )
+            var n = WordNumber(el);
+            if (n >= _bits.Length)
                 return false;
-            return ( _bits[n] & BitMask( el ) ) != 0;
+            return (_bits[n] & BitMask(el)) != 0;
         }
 
         // remove this element from this set
-        public void Remove( int el )
+        public void Remove(int el)
         {
-            int n = WordNumber( el );
-            if ( n < _bits.Length )
-            {
-                _bits[n] &= ~BitMask( el );
+            var n = WordNumber(el);
+            if (n < _bits.Length) {
+                _bits[n] &= ~BitMask(el);
             }
         }
 
         public bool IsNil()
         {
-            for ( int i = _bits.Length - 1; i >= 0; i-- )
-            {
-                if ( _bits[i] != 0 )
+            for (var i = _bits.Length - 1; i >= 0; i--) {
+                if (_bits[i] != 0)
                     return false;
             }
             return true;
         }
 
-        private static int NumWordsToHold( int el )
+        private static int NumWordsToHold(int el)
         {
-            return ( el >> LOG_BITS ) + 1;
+            return (el >> LOG_BITS) + 1;
         }
 
         public int NumBits()
@@ -320,55 +267,48 @@ namespace Antlr.Runtime
 
         public int[] ToArray()
         {
-            int[] elems = new int[Size()];
-            int en = 0;
-            for ( int i = 0; i < ( _bits.Length << LOG_BITS ); i++ )
-            {
-                if ( Member( i ) )
-                {
+            var elems = new int[Size()];
+            var en = 0;
+            for (var i = 0; i < (_bits.Length << LOG_BITS); i++) {
+                if (Member(i)) {
                     elems[en++] = i;
                 }
             }
             return elems;
         }
 
-        private static int WordNumber( int bit )
+        private static int WordNumber(int bit)
         {
             return bit >> LOG_BITS; // bit / BITS
         }
 
         public override string ToString()
         {
-            return ToString( null );
+            return ToString(null);
         }
 
-        public string ToString( string[] tokenNames )
+        public string ToString(string[] tokenNames)
         {
-            StringBuilder buf = new StringBuilder();
-            string separator = ",";
-            bool havePrintedAnElement = false;
-            buf.Append( '{' );
+            var buf = new StringBuilder();
+            var separator = ",";
+            var havePrintedAnElement = false;
+            buf.Append('{');
 
-            for ( int i = 0; i < ( _bits.Length << LOG_BITS ); i++ )
-            {
-                if ( Member( i ) )
-                {
-                    if ( i > 0 && havePrintedAnElement )
-                    {
-                        buf.Append( separator );
+            for (var i = 0; i < (_bits.Length << LOG_BITS); i++) {
+                if (Member(i)) {
+                    if (i > 0 && havePrintedAnElement) {
+                        buf.Append(separator);
                     }
-                    if ( tokenNames != null )
-                    {
-                        buf.Append( tokenNames[i] );
+                    if (tokenNames != null) {
+                        buf.Append(tokenNames[i]);
                     }
-                    else
-                    {
-                        buf.Append( i );
+                    else {
+                        buf.Append(i);
                     }
                     havePrintedAnElement = true;
                 }
             }
-            buf.Append( '}' );
+            buf.Append('}');
             return buf.ToString();
         }
     }

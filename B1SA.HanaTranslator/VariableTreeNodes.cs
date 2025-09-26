@@ -91,7 +91,7 @@ namespace B1SA.HanaTranslator
 
     public class OpenCursorStatement : Statement
     {
-        CursorSource Source { get; set; }
+        private CursorSource Source { get; set; }
 
         public OpenCursorStatement(CursorSource source)
         {
@@ -141,7 +141,7 @@ namespace B1SA.HanaTranslator
 
     public class CursorProperty : GrammarNode
     {
-        CursorPropertyType Type { get; set; }
+        private CursorPropertyType Type { get; set; }
 
         public CursorProperty(CursorPropertyType type)
         {
@@ -167,9 +167,9 @@ namespace B1SA.HanaTranslator
 
     public class FetchCursorStatement : Statement
     {
-        List<FetchCursorOption> Options { get; set; }
-        CursorSource Source { get; set; }
-        List<VariableExpression> VariableList;
+        private List<FetchCursorOption> Options { get; set; }
+        private CursorSource Source { get; set; }
+        private List<VariableExpression> VariableList;
 
         public FetchCursorStatement(List<FetchCursorOption> options, CursorSource source, List<VariableExpression> variableList)
         {
@@ -188,7 +188,7 @@ namespace B1SA.HanaTranslator
                 asm.AddSpace();
                 asm.AddToken("INTO");
                 asm.AddSpace();
-                foreach (VariableExpression var in VariableList) {
+                foreach (var var in VariableList) {
                     asm.Add(var);
                     if (var != VariableList.Last()) {
                         asm.AddToken(",");
@@ -216,7 +216,7 @@ namespace B1SA.HanaTranslator
 
     public class DeallocateStatement : Statement
     {
-        CursorSource Source { get; set; }
+        private CursorSource Source { get; set; }
 
         public DeallocateStatement(CursorSource source)
         {
@@ -226,7 +226,7 @@ namespace B1SA.HanaTranslator
 
     public class CloseStatement : Statement
     {
-        CursorSource Source { get; set; }
+        private CursorSource Source { get; set; }
 
         public CloseStatement(CursorSource source)
         {
@@ -407,7 +407,7 @@ namespace B1SA.HanaTranslator
             asm.Begin(this);
             asm.AddToken("SELECT");
             asm.AddSpace();
-            foreach (SelectVariableItem item in Items) {
+            foreach (var item in Items) {
                 asm.Add(item.Expression);
                 if (item != Items.Last()) {
                     asm.AddToken(", ");
@@ -416,7 +416,7 @@ namespace B1SA.HanaTranslator
             asm.AddSpace();
             asm.AddToken("INTO");
             asm.AddSpace();
-            foreach (SelectVariableItem item in Items) {
+            foreach (var item in Items) {
                 asm.Add(item.Variable);
                 if (item != Items.Last()) {
                     asm.AddToken(", ");
@@ -426,7 +426,7 @@ namespace B1SA.HanaTranslator
             if (FromClause != null) {
                 asm.AddToken("FROM");
                 asm.AddSpace();
-                foreach (TableSource table in FromClause) {
+                foreach (var table in FromClause) {
                     asm.Add(table);
                     if (table != FromClause.Last()) {
                         asm.AddToken(",");

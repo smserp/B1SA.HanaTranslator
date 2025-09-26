@@ -1,10 +1,6 @@
-﻿namespace Antlr.Runtime.Misc
+namespace Antlr.Runtime.Misc
 {
     using System.Text.RegularExpressions;
-
-#if PORTABLE
-    using System;
-#endif
 
     internal static class RegexOptionsHelper
     {
@@ -12,12 +8,7 @@
 
         static RegexOptionsHelper()
         {
-#if !PORTABLE
             Compiled = RegexOptions.Compiled;
-#else
-            if (!Enum.TryParse("Compiled", out Compiled))
-                Compiled = RegexOptions.None;
-#endif
         }
     }
 }

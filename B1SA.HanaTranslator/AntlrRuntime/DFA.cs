@@ -1,46 +1,9 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime
 {
-    using ArgumentNullException = System.ArgumentNullException;
+    using ArgumentNullException = ArgumentNullException;
     using ConditionalAttribute = System.Diagnostics.ConditionalAttribute;
-    using IDebugEventListener = Antlr.Runtime.Debug.IDebugEventListener;
 
-#if !PORTABLE
-    using Console = System.Console;
-#endif
-
-    public delegate int SpecialStateTransitionHandler( DFA dfa, int s, IIntStream input );
+    public delegate int SpecialStateTransitionHandler(DFA dfa, int s, IIntStream input);
 
     /** <summary>A DFA implemented as a set of transition tables.</summary>
      *
@@ -77,15 +40,13 @@ namespace Antlr.Runtime
         {
         }
 
-        public DFA( SpecialStateTransitionHandler specialStateTransition )
+        public DFA(SpecialStateTransitionHandler specialStateTransition)
         {
             this.SpecialStateTransition = specialStateTransition ?? SpecialStateTransitionDefault;
         }
 
-        public virtual string Description
-        {
-            get
-            {
+        public virtual string Description {
+            get {
                 return "n/a";
             }
         }
@@ -97,33 +58,29 @@ namespace Antlr.Runtime
          *  an exception upon error.
          *  </summary>
          */
-        public virtual int Predict( IIntStream input )
+        public virtual int Predict(IIntStream input)
         {
             if (input == null)
                 throw new ArgumentNullException("input");
 
             DfaDebugMessage("Enter DFA.Predict for decision {0}", decisionNumber);
 
-            int mark = input.Mark(); // remember where decision started in input
-            int s = 0; // we always start at s0
-            try
-            {
-                while (true)
-                {
-                    DfaDebugMessage("DFA {0} state {1} LA(1)={2}({3}), index={4}", decisionNumber, s, (char)input.LA(1), input.LA(1), input.Index);
+            var mark = input.Mark(); // remember where decision started in input
+            var s = 0; // we always start at s0
+            try {
+                while (true) {
+                    DfaDebugMessage("DFA {0} state {1} LA(1)={2}({3}), index={4}", decisionNumber, s, (char) input.LA(1), input.LA(1), input.Index);
 
                     int specialState = special[s];
-                    if ( specialState >= 0 )
-                    {
+                    if (specialState >= 0) {
                         DfaDebugMessage("DFA {0} state {1} is special state {2}", decisionNumber, s, specialState);
 
-                        s = SpecialStateTransition( this, specialState, input );
+                        s = SpecialStateTransition(this, specialState, input);
 
                         DfaDebugMessage("DFA {0} returns from special state {1} to {2}", decisionNumber, specialState, s);
 
-                        if ( s == -1 )
-                        {
-                            NoViableAlt( s, input );
+                        if (s == -1) {
+                            NoViableAlt(s, input);
                             return 0;
                         }
 
@@ -131,25 +88,21 @@ namespace Antlr.Runtime
                         continue;
                     }
 
-                    if ( accept[s] >= 1 )
-                    {
+                    if (accept[s] >= 1) {
                         DfaDebugMessage("accept; predict {0} from state {1}", accept[s], s);
                         return accept[s];
                     }
 
                     // look for a normal char transition
-                    char c = (char)input.LA( 1 ); // -1 == \uFFFF, all tokens fit in 65000 space
-                    if ( c >= min[s] && c <= max[s] )
-                    {
+                    var c = (char) input.LA(1); // -1 == \uFFFF, all tokens fit in 65000 space
+                    if (c >= min[s] && c <= max[s]) {
                         int snext = transition[s][c - min[s]]; // move to next state
-                        if ( snext < 0 )
-                        {
+                        if (snext < 0) {
                             // was in range but not a normal transition
                             // must check EOT, which is like the else clause.
                             // eot[s]>=0 indicates that an EOT edge goes to another
                             // state.
-                            if ( eot[s] >= 0 )
-                            {
+                            if (eot[s] >= 0) {
                                 // EOT Transition to accept state?
                                 DfaDebugMessage("EOT transition");
                                 s = eot[s];
@@ -162,7 +115,7 @@ namespace Antlr.Runtime
                                 continue;
                             }
 
-                            NoViableAlt( s, input );
+                            NoViableAlt(s, input);
                             return 0;
                         }
 
@@ -171,8 +124,7 @@ namespace Antlr.Runtime
                         continue;
                     }
 
-                    if ( eot[s] >= 0 )
-                    {
+                    if (eot[s] >= 0) {
                         // EOT Transition?
                         DfaDebugMessage("EOT transition");
                         s = eot[s];
@@ -180,8 +132,7 @@ namespace Antlr.Runtime
                         continue;
                     }
 
-                    if ( c == unchecked( (char)TokenTypes.EndOfFile ) && eof[s] >= 0 )
-                    {
+                    if (c == unchecked((char) TokenTypes.EndOfFile) && eof[s] >= 0) {
                         // EOF Transition to accept state?
                         DfaDebugMessage("accept via EOF; predict {0} from {1}", accept[eof[s]], eof[s]);
                         return accept[eof[s]];
@@ -190,63 +141,42 @@ namespace Antlr.Runtime
                     // not in range and not EOF/EOT, must be invalid symbol
                     DfaDebugInvalidSymbol(s);
 
-                    NoViableAlt( s, input );
+                    NoViableAlt(s, input);
                     return 0;
                 }
             }
-            finally
-            {
-                input.Rewind( mark );
+            finally {
+                input.Rewind(mark);
             }
         }
 
         [Conditional("DEBUG_DFA")]
-        private void DfaDebugMessage(string format, params object[] args)
-        {
-#if !PORTABLE
-            Console.Error.WriteLine(format, args);
-#endif
-        }
+        private void DfaDebugMessage(string format, params object[] args) { }
 
         [Conditional("DEBUG_DFA")]
-        private void DfaDebugInvalidSymbol(int s)
+        private void DfaDebugInvalidSymbol(int s) { }
+
+        protected virtual void NoViableAlt(int s, IIntStream input)
         {
-#if !PORTABLE
-            Console.Error.WriteLine("min[{0}]={1}", s, min[s]);
-            Console.Error.WriteLine("max[{0}]={1}", s, max[s]);
-            Console.Error.WriteLine("eot[{0}]={1}", s, eot[s]);
-            Console.Error.WriteLine("eof[{0}]={1}", s, eof[s]);
-
-            for (int p = 0; p < transition[s].Length; p++)
-                Console.Error.Write(transition[s][p] + " ");
-
-            Console.Error.WriteLine();
-#endif
-        }
-
-        protected virtual void NoViableAlt( int s, IIntStream input )
-        {
-            if ( recognizer.state.backtracking > 0 )
-            {
+            if (recognizer.state.backtracking > 0) {
                 recognizer.state.failed = true;
                 return;
             }
-            NoViableAltException nvae =
-                new NoViableAltException( Description,
+            var nvae =
+                new NoViableAltException(Description,
                                          decisionNumber,
                                          s,
-                                         input );
-            Error( nvae );
+                                         input);
+            Error(nvae);
             throw nvae;
         }
 
         /** <summary>A hook for debugging interface</summary> */
-        public virtual void Error( NoViableAltException nvae )
+        public virtual void Error(NoViableAltException nvae)
         {
         }
 
-        public SpecialStateTransitionHandler SpecialStateTransition
-        {
+        public SpecialStateTransitionHandler SpecialStateTransition {
             get;
             private set;
         }
@@ -255,7 +185,7 @@ namespace Antlr.Runtime
         //    return -1;
         //}
 
-        static int SpecialStateTransitionDefault( DFA dfa, int s, IIntStream input )
+        private static int SpecialStateTransitionDefault(DFA dfa, int s, IIntStream input)
         {
             return -1;
         }
@@ -267,47 +197,41 @@ namespace Antlr.Runtime
          *  compile. :(
          *  </summary>
          */
-        public static short[] UnpackEncodedString( string encodedString )
+        public static short[] UnpackEncodedString(string encodedString)
         {
             // walk first to find how big it is.
-            int size = 0;
-            for ( int i = 0; i < encodedString.Length; i += 2 )
-            {
+            var size = 0;
+            for (var i = 0; i < encodedString.Length; i += 2) {
                 size += encodedString[i];
             }
-            short[] data = new short[size];
-            int di = 0;
-            for ( int i = 0; i < encodedString.Length; i += 2 )
-            {
-                char n = encodedString[i];
-                char v = encodedString[i + 1];
+            var data = new short[size];
+            var di = 0;
+            for (var i = 0; i < encodedString.Length; i += 2) {
+                var n = encodedString[i];
+                var v = encodedString[i + 1];
                 // add v n times to data
-                for ( int j = 1; j <= n; j++ )
-                {
-                    data[di++] = (short)v;
+                for (var j = 1; j <= n; j++) {
+                    data[di++] = (short) v;
                 }
             }
             return data;
         }
 
         /** <summary>Hideous duplication of code, but I need different typed arrays out :(</summary> */
-        public static char[] UnpackEncodedStringToUnsignedChars( string encodedString )
+        public static char[] UnpackEncodedStringToUnsignedChars(string encodedString)
         {
             // walk first to find how big it is.
-            int size = 0;
-            for ( int i = 0; i < encodedString.Length; i += 2 )
-            {
+            var size = 0;
+            for (var i = 0; i < encodedString.Length; i += 2) {
                 size += encodedString[i];
             }
-            char[] data = new char[size];
-            int di = 0;
-            for ( int i = 0; i < encodedString.Length; i += 2 )
-            {
-                char n = encodedString[i];
-                char v = encodedString[i + 1];
+            var data = new char[size];
+            var di = 0;
+            for (var i = 0; i < encodedString.Length; i += 2) {
+                var n = encodedString[i];
+                var v = encodedString[i + 1];
                 // add v n times to data
-                for ( int j = 1; j <= n; j++ )
-                {
+                for (var j = 1; j <= n; j++) {
                     data[di++] = v;
                 }
             }
@@ -317,7 +241,7 @@ namespace Antlr.Runtime
         [Conditional("ANTLR_DEBUG")]
         protected virtual void DebugRecognitionException(RecognitionException ex)
         {
-            IDebugEventListener dbg = recognizer.DebugListener;
+            var dbg = recognizer.DebugListener;
             if (dbg != null)
                 dbg.RecognitionException(ex);
         }

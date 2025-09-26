@@ -1,48 +1,9 @@
-﻿/*
- * [The "BSD license"]
- * Copyright (c) 2011 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2011 Sam Harwell, Tunnel Vision Laboratories, LLC
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime
 {
     using Antlr.Runtime.Tree;
 
-    using ArgumentNullException = System.ArgumentNullException;
-    using Exception = System.Exception;
-    using NotSupportedException = System.NotSupportedException;
-
-#if !PORTABLE
-    using SecurityCriticalAttribute = System.Security.SecurityCriticalAttribute;
-    using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
-    using StreamingContext = System.Runtime.Serialization.StreamingContext;
-#endif
+    using Exception = Exception;
+    using NotSupportedException = NotSupportedException;
 
     /** <summary>The root of the ANTLR exception hierarchy.</summary>
      *
@@ -76,7 +37,7 @@ namespace Antlr.Runtime
      *  figure out a fancy report.
      *  </remarks>
      */
-    [System.Serializable]
+    [Serializable]
     public class RecognitionException : Exception
     {
         /** <summary>What input stream did the error occur in?</summary> */
@@ -176,251 +137,173 @@ namespace Antlr.Runtime
         {
             this._input = input;
             this._k = k;
-            if (input != null)
-            {
+            if (input != null) {
                 this._index = input.Index + k - 1;
-                if (input is ITokenStream)
-                {
-                    this._token = ((ITokenStream)input).LT(k);
+                if (input is ITokenStream) {
+                    this._token = ((ITokenStream) input).LT(k);
                     this._line = _token.Line;
                     this._charPositionInLine = _token.CharPositionInLine;
                 }
 
-                ITreeNodeStream tns = input as ITreeNodeStream;
-                if (tns != null)
-                {
+                var tns = input as ITreeNodeStream;
+                if (tns != null) {
                     ExtractInformationFromTreeNodeStream(tns, k);
                 }
-                else
-                {
-                    ICharStream charStream = input as ICharStream;
-                    if (charStream != null)
-                    {
-                        int mark = input.Mark();
-                        try
-                        {
-                            for (int i = 0; i < k - 1; i++)
+                else {
+                    var charStream = input as ICharStream;
+                    if (charStream != null) {
+                        var mark = input.Mark();
+                        try {
+                            for (var i = 0; i < k - 1; i++)
                                 input.Consume();
 
                             this._c = input.LA(1);
-                            this._line = ((ICharStream)input).Line;
-                            this._charPositionInLine = ((ICharStream)input).CharPositionInLine;
+                            this._line = ((ICharStream) input).Line;
+                            this._charPositionInLine = ((ICharStream) input).CharPositionInLine;
                         }
-                        finally
-                        {
+                        finally {
                             input.Rewind(mark);
                         }
                     }
-                    else
-                    {
+                    else {
                         this._c = input.LA(k);
                     }
                 }
             }
         }
 
-#if !PORTABLE
-        protected RecognitionException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-                throw new ArgumentNullException("info");
-
-            _index = info.GetInt32("Index");
-            _c = info.GetInt32("C");
-            _line = info.GetInt32("Line");
-            _charPositionInLine = info.GetInt32("CharPositionInLine");
-            _approximateLineInfo = info.GetBoolean("ApproximateLineInfo");
-        }
-#endif
-
         /** <summary>Return the token type or char of the unexpected input element</summary> */
-        public virtual int UnexpectedType
-        {
-            get
-            {
-                if ( _input is ITokenStream )
-                {
+        public virtual int UnexpectedType {
+            get {
+                if (_input is ITokenStream) {
                     return _token.Type;
                 }
 
-                ITreeNodeStream treeNodeStream = _input as ITreeNodeStream;
-                if ( treeNodeStream != null )
-                {
-                    ITreeAdaptor adaptor = treeNodeStream.TreeAdaptor;
-                    return adaptor.GetType( _node );
+                var treeNodeStream = _input as ITreeNodeStream;
+                if (treeNodeStream != null) {
+                    var adaptor = treeNodeStream.TreeAdaptor;
+                    return adaptor.GetType(_node);
                 }
 
                 return _c;
             }
         }
 
-        public bool ApproximateLineInfo
-        {
-            get
-            {
+        public bool ApproximateLineInfo {
+            get {
                 return _approximateLineInfo;
             }
-            protected set
-            {
+            protected set {
                 _approximateLineInfo = value;
             }
         }
 
-        public IIntStream Input
-        {
-            get
-            {
+        public IIntStream Input {
+            get {
                 return _input;
             }
-            protected set
-            {
+            protected set {
                 _input = value;
             }
         }
 
-        public int Lookahead
-        {
-            get
-            {
+        public int Lookahead {
+            get {
                 return _k;
             }
         }
 
-        public IToken Token
-        {
-            get
-            {
+        public IToken Token {
+            get {
                 return _token;
             }
-            set
-            {
+            set {
                 _token = value;
             }
         }
 
-        public object Node
-        {
-            get
-            {
+        public object Node {
+            get {
                 return _node;
             }
-            protected set
-            {
+            protected set {
                 _node = value;
             }
         }
 
-        public int Character
-        {
-            get
-            {
+        public int Character {
+            get {
                 return _c;
             }
-            protected set
-            {
+            protected set {
                 _c = value;
             }
         }
 
-        public int Index
-        {
-            get
-            {
+        public int Index {
+            get {
                 return _index;
             }
-            protected set
-            {
+            protected set {
                 _index = value;
             }
         }
 
-        public int Line
-        {
-            get
-            {
+        public int Line {
+            get {
                 return _line;
             }
-            set
-            {
+            set {
                 _line = value;
             }
         }
 
-        public int CharPositionInLine
-        {
-            get
-            {
+        public int CharPositionInLine {
+            get {
                 return _charPositionInLine;
             }
-            set
-            {
+            set {
                 _charPositionInLine = value;
             }
         }
-
-#if !PORTABLE
-        [SecurityCritical]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-                throw new ArgumentNullException("info");
-
-            base.GetObjectData(info, context);
-            info.AddValue("Index", _index);
-            info.AddValue("C", _c);
-            info.AddValue("Line", _line);
-            info.AddValue("CharPositionInLine", _charPositionInLine);
-            info.AddValue("ApproximateLineInfo", _approximateLineInfo);
-        }
-#endif
 
         protected virtual void ExtractInformationFromTreeNodeStream(ITreeNodeStream input)
         {
             this._node = input.LT(1);
 
             object positionNode = null;
-            IPositionTrackingStream positionTrackingStream = input as IPositionTrackingStream;
-            if (positionTrackingStream != null)
-            {
+            var positionTrackingStream = input as IPositionTrackingStream;
+            if (positionTrackingStream != null) {
                 positionNode = positionTrackingStream.GetKnownPositionElement(false);
-                if (positionNode == null)
-                {
+                if (positionNode == null) {
                     positionNode = positionTrackingStream.GetKnownPositionElement(true);
                     this._approximateLineInfo = positionNode != null;
                 }
             }
 
-            ITokenStreamInformation streamInformation = input as ITokenStreamInformation;
-            if (streamInformation != null)
-            {
-                IToken lastToken = streamInformation.LastToken;
-                IToken lastRealToken = streamInformation.LastRealToken;
-                if (lastRealToken != null)
-                {
+            var streamInformation = input as ITokenStreamInformation;
+            if (streamInformation != null) {
+                var lastToken = streamInformation.LastToken;
+                var lastRealToken = streamInformation.LastRealToken;
+                if (lastRealToken != null) {
                     this._token = lastRealToken;
                     this._line = lastRealToken.Line;
                     this._charPositionInLine = lastRealToken.CharPositionInLine;
                     this._approximateLineInfo = lastRealToken.Equals(lastToken);
                 }
             }
-            else
-            {
-                ITreeAdaptor adaptor = input.TreeAdaptor;
-                IToken payload = adaptor.GetToken(positionNode ?? _node);
-                if (payload != null)
-                {
+            else {
+                var adaptor = input.TreeAdaptor;
+                var payload = adaptor.GetToken(positionNode ?? _node);
+                if (payload != null) {
                     this._token = payload;
-                    if (payload.Line <= 0)
-                    {
+                    if (payload.Line <= 0) {
                         // imaginary node; no line/pos info; scan backwards
-                        int i = -1;
-                        object priorNode = input.LT(i);
-                        while (priorNode != null)
-                        {
-                            IToken priorPayload = adaptor.GetToken(priorNode);
-                            if (priorPayload != null && priorPayload.Line > 0)
-                            {
+                        var i = -1;
+                        var priorNode = input.LT(i);
+                        while (priorNode != null) {
+                            var priorPayload = adaptor.GetToken(priorNode);
+                            if (priorPayload != null && priorPayload.Line > 0) {
                                 // we found the most recent real line / pos info
                                 this._line = priorPayload.Line;
                                 this._charPositionInLine = priorPayload.CharPositionInLine;
@@ -429,36 +312,30 @@ namespace Antlr.Runtime
                             }
 
                             --i;
-                            try
-                            {
+                            try {
                                 priorNode = input.LT(i);
                             }
-                            catch (NotSupportedException)
-                            {
+                            catch (NotSupportedException) {
                                 priorNode = null;
                             }
                         }
                     }
-                    else
-                    {
+                    else {
                         // node created from real token
                         this._line = payload.Line;
                         this._charPositionInLine = payload.CharPositionInLine;
                     }
                 }
-                else if (this._node is Tree.ITree)
-                {
-                    this._line = ((Tree.ITree)this._node).Line;
-                    this._charPositionInLine = ((Tree.ITree)this._node).CharPositionInLine;
-                    if (this._node is CommonTree)
-                    {
-                        this._token = ((CommonTree)this._node).Token;
+                else if (this._node is ITree) {
+                    this._line = ((ITree) this._node).Line;
+                    this._charPositionInLine = ((ITree) this._node).CharPositionInLine;
+                    if (this._node is CommonTree) {
+                        this._token = ((CommonTree) this._node).Token;
                     }
                 }
-                else
-                {
-                    int type = adaptor.GetType(this._node);
-                    string text = adaptor.GetText(this._node);
+                else {
+                    var type = adaptor.GetType(this._node);
+                    var text = adaptor.GetText(this._node);
                     this._token = new CommonToken(type, text);
                 }
             }
@@ -466,16 +343,14 @@ namespace Antlr.Runtime
 
         protected virtual void ExtractInformationFromTreeNodeStream(ITreeNodeStream input, int k)
         {
-            int mark = input.Mark();
-            try
-            {
-                for (int i = 0; i < k - 1; i++)
+            var mark = input.Mark();
+            try {
+                for (var i = 0; i < k - 1; i++)
                     input.Consume();
 
                 ExtractInformationFromTreeNodeStream(input);
             }
-            finally
-            {
+            finally {
                 input.Rewind(mark);
             }
         }

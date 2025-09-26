@@ -1,35 +1,3 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime.Tree
 {
     using System.Collections.Generic;
@@ -43,56 +11,44 @@ namespace Antlr.Runtime.Tree
      *  that is more meaningful (specific) and holds a String to display for a node.
      *  </summary>
      */
-    [System.Serializable]
+    [Serializable]
     public class ParseTree : BaseTree
     {
         public object payload;
         public List<IToken> hiddenTokens;
 
-        public ParseTree( object label )
+        public ParseTree(object label)
         {
             this.payload = label;
         }
 
         #region Properties
-        public override string Text
-        {
-            get
-            {
+        public override string Text {
+            get {
                 return ToString();
             }
-            set
-            {
+            set {
             }
         }
-        public override int TokenStartIndex
-        {
-            get
-            {
+        public override int TokenStartIndex {
+            get {
                 return 0;
             }
-            set
-            {
+            set {
             }
         }
-        public override int TokenStopIndex
-        {
-            get
-            {
+        public override int TokenStopIndex {
+            get {
                 return 0;
             }
-            set
-            {
+            set {
             }
         }
-        public override int Type
-        {
-            get
-            {
+        public override int Type {
+            get {
                 return 0;
             }
-            set
-            {
+            set {
             }
         }
         #endregion
@@ -104,11 +60,9 @@ namespace Antlr.Runtime.Tree
 
         public override string ToString()
         {
-            if ( payload is IToken )
-            {
-                IToken t = (IToken)payload;
-                if ( t.Type == TokenTypes.EndOfFile )
-                {
+            if (payload is IToken) {
+                var t = (IToken) payload;
+                if (t.Type == TokenTypes.EndOfFile) {
                     return "<EOF>";
                 }
                 return t.Text;
@@ -123,18 +77,16 @@ namespace Antlr.Runtime.Tree
          */
         public virtual string ToStringWithHiddenTokens()
         {
-            StringBuilder buf = new StringBuilder();
-            if ( hiddenTokens != null )
-            {
-                for ( int i = 0; i < hiddenTokens.Count; i++ )
-                {
-                    IToken hidden = (IToken)hiddenTokens[i];
-                    buf.Append( hidden.Text );
+            var buf = new StringBuilder();
+            if (hiddenTokens != null) {
+                for (var i = 0; i < hiddenTokens.Count; i++) {
+                    var hidden = (IToken) hiddenTokens[i];
+                    buf.Append(hidden.Text);
                 }
             }
-            string nodeText = this.ToString();
-            if ( !nodeText.Equals( "<EOF>" ) )
-                buf.Append( nodeText );
+            var nodeText = this.ToString();
+            if (!nodeText.Equals("<EOF>"))
+                buf.Append(nodeText);
             return buf.ToString();
         }
 
@@ -145,22 +97,20 @@ namespace Antlr.Runtime.Tree
          */
         public virtual string ToInputString()
         {
-            StringBuilder buf = new StringBuilder();
-            ToStringLeaves( buf );
+            var buf = new StringBuilder();
+            ToStringLeaves(buf);
             return buf.ToString();
         }
 
-        protected virtual void ToStringLeaves( StringBuilder buf )
+        protected virtual void ToStringLeaves(StringBuilder buf)
         {
-            if ( payload is IToken )
-            { // leaf node token?
-                buf.Append( this.ToStringWithHiddenTokens() );
+            if (payload is IToken) { // leaf node token?
+                buf.Append(this.ToStringWithHiddenTokens());
                 return;
             }
-            for ( int i = 0; Children != null && i < Children.Count; i++ )
-            {
-                ParseTree t = (ParseTree)Children[i];
-                t.ToStringLeaves( buf );
+            for (var i = 0; Children != null && i < Children.Count; i++) {
+                var t = (ParseTree) Children[i];
+                t.ToStringLeaves(buf);
             }
         }
     }

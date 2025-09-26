@@ -13,14 +13,14 @@ namespace B1SA.HanaTranslator
 
         public GrammarNodeInfo ChildInfo { get; private set; }
 
-        List<MethodInfo> _MethodsAction = new List<MethodInfo>();
-        List<MethodInfo> _MethodsPreAction = new List<MethodInfo>();
-        List<MethodInfo> _MethodsPostAction = new List<MethodInfo>();
+        private List<MethodInfo> _MethodsAction = [];
+        private List<MethodInfo> _MethodsPreAction = [];
+        private List<MethodInfo> _MethodsPostAction = [];
         public Scanner()
         {
-            foreach (MethodInfo method in GetType().GetMethods()) {
+            foreach (var method in GetType().GetMethods()) {
                 if (method.Name == METHOD_ACTION) {
-                    ParameterInfo[] paramInfo = method.GetParameters();
+                    var paramInfo = method.GetParameters();
 
                     if (paramInfo.Length == 1) {
                         _MethodsAction.Add(method);
@@ -30,7 +30,7 @@ namespace B1SA.HanaTranslator
                     }
                 }
                 else if (method.Name == METHOD_POST_ACTION) {
-                    ParameterInfo[] paramInfo = method.GetParameters();
+                    var paramInfo = method.GetParameters();
 
                     if (paramInfo.Length == 1) {
                         _MethodsPostAction.Add(method);
@@ -40,7 +40,7 @@ namespace B1SA.HanaTranslator
                     }
                 }
                 else if (method.Name == METHOD_PRE_ACTION) {
-                    ParameterInfo[] paramInfo = method.GetParameters();
+                    var paramInfo = method.GetParameters();
 
                     if (paramInfo.Length == 1) {
                         _MethodsPreAction.Add(method);
@@ -54,7 +54,7 @@ namespace B1SA.HanaTranslator
 
         public static List<Type> GetTypes(Type t)
         {
-            List<Type> set = new List<Type>();
+            var set = new List<Type>();
             if (t.IsPrimitive) {
                 if (!set.Contains(t)) {
                     set.Add(t);
@@ -77,8 +77,8 @@ namespace B1SA.HanaTranslator
 
         public bool CallAction(GrammarNode obj, CallActionType type)
         {
-            Type objType = obj.GetType();
-            List<Type> objTypes = GetTypes(objType);
+            var objType = obj.GetType();
+            var objTypes = GetTypes(objType);
             List<MethodInfo> list;
             switch (type) {
                 case CallActionType.PreActionType:
@@ -92,8 +92,8 @@ namespace B1SA.HanaTranslator
                     break;
             }
 
-            foreach (Type t in objTypes) {
-                MethodInfo mi = list.Find(s => s.GetParameters()[0].ParameterType == t);
+            foreach (var t in objTypes) {
+                var mi = list.Find(s => s.GetParameters()[0].ParameterType == t);
                 if (mi != null) {
                     object[] paramArray = { obj };
                     return (bool) mi.Invoke(this, paramArray);
@@ -110,7 +110,7 @@ namespace B1SA.HanaTranslator
         {
             Console.Write(cntNode + ".");
 
-            for (int i = 0; i < level; ++i) {
+            for (var i = 0; i < level; ++i) {
                 Console.Write("  ");
             }
 
@@ -143,7 +143,7 @@ namespace B1SA.HanaTranslator
 
         public virtual void ScanChildren(GrammarNode node)
         {
-            foreach (KeyValuePair<GrammarNode, GrammarNodeInfo> g in node.Children) {
+            foreach (var g in node.Children) {
                 ++level;
                 ChildInfo = g.Value;
                 Scan(g.Key);

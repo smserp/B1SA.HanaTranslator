@@ -2,9 +2,9 @@ using Antlr.Runtime;
 
 namespace B1SA.HanaTranslator
 {
-    class CommentedTokenStream : CommonTokenStream
+    internal class CommentedTokenStream : CommonTokenStream
     {
-        List<IToken> _commentTokens = new List<IToken>();
+        private List<IToken> _commentTokens = [];
 
         public static class TokenChannels
         {
@@ -13,13 +13,11 @@ namespace B1SA.HanaTranslator
             public const int Hidden = Antlr.Runtime.TokenChannels.Hidden;
         }
 
-        public CommentedTokenStream(ITokenSource tokenSource)
-            : this(tokenSource, TokenChannels.Default)
+        public CommentedTokenStream(ITokenSource tokenSource) : this(tokenSource, TokenChannels.Default)
         {
         }
 
-        public CommentedTokenStream(ITokenSource tokenSource, int defaultChannel)
-            : base(tokenSource, defaultChannel)
+        public CommentedTokenStream(ITokenSource tokenSource, int defaultChannel) : base(tokenSource, defaultChannel)
         {
         }
 
@@ -38,10 +36,10 @@ namespace B1SA.HanaTranslator
             _p = SkipOffTokenChannels(_p);
         }
 
-        void RaisePrecedingCommentsEvent()
+        private void RaisePrecedingCommentsEvent()
         {
             if (PrecedingComments != null) {
-                int commentStart = _p;
+                var commentStart = _p;
 
                 // Find start of the block of comments preceding current token.
                 while (commentStart > 0 && _tokens[commentStart - 1].Channel == TokenChannels.Comment) {
@@ -53,8 +51,8 @@ namespace B1SA.HanaTranslator
                     return;
                 }
 
-                List<IToken> comments = new List<IToken>();
-                for (int commentIndex = commentStart; commentIndex < _p; commentIndex++) {
+                var comments = new List<IToken>();
+                for (var commentIndex = commentStart; commentIndex < _p; commentIndex++) {
                     comments.Add(_tokens[commentIndex]);
                 }
 

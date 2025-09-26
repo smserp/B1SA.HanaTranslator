@@ -73,8 +73,8 @@ namespace B1SA.HanaTranslator
 
         public override void HandleComments(GrammarNode node)
         {
-            foreach (Comment comment in node.Comments) {
-                bool isMultiline = false;
+            foreach (var comment in node.Comments) {
+                var isMultiline = false;
                 if (comment.NewLine && !Statement.EndsWith(Environment.NewLine)) {
                     Statement += Environment.NewLine;
                 }

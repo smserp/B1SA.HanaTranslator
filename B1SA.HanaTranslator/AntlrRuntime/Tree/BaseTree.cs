@@ -1,35 +1,3 @@
-﻿/*
- * [The "BSD license"]
- * Copyright (c) 2011 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2011 Sam Harwell, Tunnel Vision Laboratories, LLC
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime.Tree
 {
     using System;
@@ -45,7 +13,7 @@ namespace Antlr.Runtime.Tree
      *  non-null node is called "nil".
      *  </summary>
      */
-    [System.Serializable]
+    [Serializable]
     [System.Diagnostics.DebuggerTypeProxy(typeof(AntlrRuntime_BaseTreeDebugView))]
     public abstract class BaseTree : ITree
     {
@@ -61,7 +29,7 @@ namespace Antlr.Runtime.Tree
          *  be copied as the children are not considered part of this node. 
          *  </summary>
          */
-        public BaseTree( ITree node )
+        public BaseTree(ITree node)
         {
         }
 
@@ -70,26 +38,21 @@ namespace Antlr.Runtime.Tree
          *  the list, do so at your own risk.
          *  </summary>
          */
-        public virtual IList<ITree> Children
-        {
-            get
-            {
+        public virtual IList<ITree> Children {
+            get {
                 return _children;
             }
 
-            private set
-            {
+            private set {
                 _children = value;
             }
         }
 
         #region ITree Members
 
-        public virtual int ChildCount
-        {
-            get
-            {
-                if ( Children == null )
+        public virtual int ChildCount {
+            get {
+                if (Children == null)
                     return 0;
 
                 return Children.Count;
@@ -97,91 +60,76 @@ namespace Antlr.Runtime.Tree
         }
 
         /** <summary>BaseTree doesn't track parent pointers.</summary> */
-        public virtual ITree Parent
-        {
-            get
-            {
+        public virtual ITree Parent {
+            get {
                 return null;
             }
-            set
-            {
+            set {
             }
         }
 
         /** <summary>BaseTree doesn't track child indexes.</summary> */
-        public virtual int ChildIndex
-        {
-            get
-            {
+        public virtual int ChildIndex {
+            get {
                 return 0;
             }
-            set
-            {
+            set {
             }
         }
 
-        public virtual bool IsNil
-        {
-            get
-            {
+        public virtual bool IsNil {
+            get {
                 return false;
             }
         }
 
-        public abstract int TokenStartIndex
-        {
+        public abstract int TokenStartIndex {
             get;
             set;
         }
 
-        public abstract int TokenStopIndex
-        {
+        public abstract int TokenStopIndex {
             get;
             set;
         }
 
-        public abstract int Type
-        {
+        public abstract int Type {
             get;
             set;
         }
 
-        public abstract string Text
-        {
+        public abstract string Text {
             get;
             set;
         }
 
-        public virtual int Line
-        {
+        public virtual int Line {
             get;
             set;
         }
 
-        public virtual int CharPositionInLine
-        {
+        public virtual int CharPositionInLine {
             get;
             set;
         }
 
         #endregion
 
-        public virtual ITree GetChild( int i )
+        public virtual ITree GetChild(int i)
         {
             if (i < 0)
                 throw new ArgumentOutOfRangeException();
 
-            if ( Children == null || i >= Children.Count )
+            if (Children == null || i >= Children.Count)
                 return null;
 
             return Children[i];
         }
 
-        public virtual ITree GetFirstChildWithType( int type )
+        public virtual ITree GetFirstChildWithType(int type)
         {
-            foreach ( ITree child in Children )
-            {
-                if ( child.Type == type )
+            foreach (var child in Children) {
+                if (child.Type == type)
                     return child;
             }
 
@@ -196,43 +144,36 @@ namespace Antlr.Runtime.Tree
          *  t.children = child.children; i.e., without copying the array.
          *  </remarks>
          */
-        public virtual void AddChild( ITree t )
+        public virtual void AddChild(ITree t)
         {
             //System.out.println("add child "+t.toStringTree()+" "+this.toStringTree());
             //System.out.println("existing children: "+children);
-            if ( t == null )
-            {
+            if (t == null) {
                 return; // do nothing upon addChild(null)
             }
-            if ( t.IsNil )
-            {
+            if (t.IsNil) {
                 // t is an empty node possibly with children
-                BaseTree childTree = t as BaseTree;
-                if ( childTree != null && this.Children != null && this.Children == childTree.Children )
-                {
-                    throw new Exception( "attempt to add child list to itself" );
+                var childTree = t as BaseTree;
+                if (childTree != null && this.Children != null && this.Children == childTree.Children) {
+                    throw new Exception("attempt to add child list to itself");
                 }
                 // just add all of childTree's children to this
-                if ( t.ChildCount > 0 )
-                {
-                    if ( this.Children != null || childTree == null )
-                    {
-                        if ( this.Children == null )
+                if (t.ChildCount > 0) {
+                    if (this.Children != null || childTree == null) {
+                        if (this.Children == null)
                             this.Children = CreateChildrenList();
 
                         // must copy, this has children already
-                        int n = t.ChildCount;
-                        for ( int i = 0; i < n; i++ )
-                        {
-                            ITree c = t.GetChild( i );
-                            this.Children.Add( c );
+                        var n = t.ChildCount;
+                        for (var i = 0; i < n; i++) {
+                            var c = t.GetChild(i);
+                            this.Children.Add(c);
                             // handle double-link stuff for each child of nil root
                             c.Parent = this;
                             c.ChildIndex = Children.Count - 1;
                         }
                     }
-                    else
-                    {
+                    else {
                         // no children for this but t is a BaseTree with children;
                         // just set pointer call general freshener routine
                         this.Children = childTree.Children;
@@ -240,14 +181,12 @@ namespace Antlr.Runtime.Tree
                     }
                 }
             }
-            else
-            {
+            else {
                 // child is not nil (don't care about children)
-                if ( Children == null )
-                {
+                if (Children == null) {
                     Children = CreateChildrenList(); // create children list on demand
                 }
-                Children.Add( t );
+                Children.Add(t);
                 t.Parent = this;
                 t.ChildIndex = Children.Count - 1;
             }
@@ -255,30 +194,27 @@ namespace Antlr.Runtime.Tree
         }
 
         /** <summary>Add all elements of kids list as children of this node</summary> */
-        public virtual void AddChildren( IEnumerable<ITree> kids )
+        public virtual void AddChildren(IEnumerable<ITree> kids)
         {
             if (kids == null)
                 throw new ArgumentNullException("kids");
 
-            foreach ( ITree t in kids )
-                AddChild( t );
+            foreach (var t in kids)
+                AddChild(t);
         }
 
-        public virtual void SetChild( int i, ITree t )
+        public virtual void SetChild(int i, ITree t)
         {
             if (i < 0)
                 throw new ArgumentOutOfRangeException("i");
 
-            if ( t == null )
-            {
+            if (t == null) {
                 return;
             }
-            if ( t.IsNil )
-            {
-                throw new ArgumentException( "Can't set single child to a list" );
+            if (t.IsNil) {
+                throw new ArgumentException("Can't set single child to a list");
             }
-            if ( Children == null )
-            {
+            if (Children == null) {
                 Children = CreateChildrenList();
             }
             Children[i] = t;
@@ -297,8 +233,7 @@ namespace Antlr.Runtime.Tree
             if (i > ChildCount)
                 throw new ArgumentException();
 
-            if (i == ChildCount)
-            {
+            if (i == ChildCount) {
                 AddChild(t);
                 return;
             }
@@ -310,20 +245,20 @@ namespace Antlr.Runtime.Tree
             this.FreshenParentAndChildIndexes(i);
         }
 
-        public virtual object DeleteChild( int i )
+        public virtual object DeleteChild(int i)
         {
             if (i < 0)
                 throw new ArgumentOutOfRangeException("i");
             if (i >= ChildCount)
                 throw new ArgumentException();
 
-            if ( Children == null )
+            if (Children == null)
                 return null;
 
-            ITree killed = Children[i];
-            Children.RemoveAt( i );
+            var killed = Children[i];
+            Children.RemoveAt(i);
             // walk rest and decrement their child indexes
-            this.FreshenParentAndChildIndexes( i );
+            this.FreshenParentAndChildIndexes(i);
             return killed;
         }
 
@@ -334,7 +269,7 @@ namespace Antlr.Runtime.Tree
          *  children to set their childindex; could be slow.
          *  </summary>
          */
-        public virtual void ReplaceChildren( int startChildIndex, int stopChildIndex, object t )
+        public virtual void ReplaceChildren(int startChildIndex, int stopChildIndex, object t)
         {
             if (startChildIndex < 0)
                 throw new ArgumentOutOfRangeException();
@@ -350,81 +285,67 @@ namespace Antlr.Runtime.Tree
                                " with "+((BaseTree)t).toStringTree());
             System.out.println("in="+toStringTree());
             */
-            if ( Children == null )
-            {
-                throw new ArgumentException( "indexes invalid; no children in list" );
+            if (Children == null) {
+                throw new ArgumentException("indexes invalid; no children in list");
             }
-            int replacingHowMany = stopChildIndex - startChildIndex + 1;
+            var replacingHowMany = stopChildIndex - startChildIndex + 1;
             int replacingWithHowMany;
-            ITree newTree = (ITree)t;
+            var newTree = (ITree) t;
             IList<ITree> newChildren = null;
             // normalize to a list of children to add: newChildren
-            if ( newTree.IsNil )
-            {
-                BaseTree baseTree = newTree as BaseTree;
-                if ( baseTree != null && baseTree.Children != null )
-                {
+            if (newTree.IsNil) {
+                var baseTree = newTree as BaseTree;
+                if (baseTree != null && baseTree.Children != null) {
                     newChildren = baseTree.Children;
                 }
-                else
-                {
+                else {
                     newChildren = CreateChildrenList();
-                    int n = newTree.ChildCount;
-                    for ( int i = 0; i < n; i++ )
-                        newChildren.Add( newTree.GetChild( i ) );
+                    var n = newTree.ChildCount;
+                    for (var i = 0; i < n; i++)
+                        newChildren.Add(newTree.GetChild(i));
                 }
             }
-            else
-            {
-                newChildren = new List<ITree>( 1 );
-                newChildren.Add( newTree );
+            else {
+                newChildren = [newTree];
             }
             replacingWithHowMany = newChildren.Count;
-            int numNewChildren = newChildren.Count;
-            int delta = replacingHowMany - replacingWithHowMany;
+            var numNewChildren = newChildren.Count;
+            var delta = replacingHowMany - replacingWithHowMany;
             // if same number of nodes, do direct replace
-            if ( delta == 0 )
-            {
-                int j = 0; // index into new children
-                for ( int i = startChildIndex; i <= stopChildIndex; i++ )
-                {
-                    ITree child = newChildren[j];
+            if (delta == 0) {
+                var j = 0; // index into new children
+                for (var i = startChildIndex; i <= stopChildIndex; i++) {
+                    var child = newChildren[j];
                     Children[i] = child;
                     child.Parent = this;
                     child.ChildIndex = i;
                     j++;
                 }
             }
-            else if ( delta > 0 )
-            {
+            else if (delta > 0) {
                 // fewer new nodes than there were
                 // set children and then delete extra
-                for ( int j = 0; j < numNewChildren; j++ )
-                {
+                for (var j = 0; j < numNewChildren; j++) {
                     Children[startChildIndex + j] = newChildren[j];
                 }
-                int indexToDelete = startChildIndex + numNewChildren;
-                for ( int c = indexToDelete; c <= stopChildIndex; c++ )
-                {
+                var indexToDelete = startChildIndex + numNewChildren;
+                for (var c = indexToDelete; c <= stopChildIndex; c++) {
                     // delete same index, shifting everybody down each time
-                    Children.RemoveAt( indexToDelete );
+                    Children.RemoveAt(indexToDelete);
                 }
-                FreshenParentAndChildIndexes( startChildIndex );
+                FreshenParentAndChildIndexes(startChildIndex);
             }
-            else
-            {
+            else {
                 // more new nodes than were there before
                 // fill in as many children as we can (replacingHowMany) w/o moving data
-                for ( int j = 0; j < replacingHowMany; j++ )
-                {
+                for (var j = 0; j < replacingHowMany; j++) {
                     Children[startChildIndex + j] = newChildren[j];
                 }
-                int numToInsert = replacingWithHowMany - replacingHowMany;
-                for ( int j = replacingHowMany; j < replacingWithHowMany; j++ )
-                {
-                    Children.Insert( startChildIndex + j, newChildren[j] );
+                var numToInsert = replacingWithHowMany - replacingHowMany;
+                for (var j = replacingHowMany; j < replacingWithHowMany; j++) {
+                    Children.Insert(startChildIndex + j, newChildren[j]);
                 }
-                FreshenParentAndChildIndexes( startChildIndex );
+                FreshenParentAndChildIndexes(startChildIndex);
             }
             //System.out.println("out="+toStringTree());
         }
@@ -432,21 +353,20 @@ namespace Antlr.Runtime.Tree
         /** <summary>Override in a subclass to change the impl of children list</summary> */
         protected virtual IList<ITree> CreateChildrenList()
         {
-            return new List<ITree>();
+            return [];
         }
 
         /** <summary>Set the parent and child index values for all child of t</summary> */
         public virtual void FreshenParentAndChildIndexes()
         {
-            FreshenParentAndChildIndexes( 0 );
+            FreshenParentAndChildIndexes(0);
         }
 
-        public virtual void FreshenParentAndChildIndexes( int offset )
+        public virtual void FreshenParentAndChildIndexes(int offset)
         {
-            int n = ChildCount;
-            for ( int c = offset; c < n; c++ )
-            {
-                ITree child = GetChild( c );
+            var n = ChildCount;
+            for (var c = offset; c < n; c++) {
+                var child = GetChild(c);
                 child.ChildIndex = c;
                 child.Parent = this;
             }
@@ -459,13 +379,12 @@ namespace Antlr.Runtime.Tree
 
         public virtual void FreshenParentAndChildIndexesDeeply(int offset)
         {
-            int n = ChildCount;
-            for (int c = offset; c < n; c++)
-            {
-                ITree child = GetChild(c);
+            var n = ChildCount;
+            for (var c = offset; c < n; c++) {
+                var child = GetChild(c);
                 child.ChildIndex = c;
                 child.Parent = this;
-                BaseTree baseTree = child as BaseTree;
+                var baseTree = child as BaseTree;
                 if (baseTree != null)
                     baseTree.FreshenParentAndChildIndexesDeeply();
             }
@@ -473,41 +392,37 @@ namespace Antlr.Runtime.Tree
 
         public virtual void SanityCheckParentAndChildIndexes()
         {
-            SanityCheckParentAndChildIndexes( null, -1 );
+            SanityCheckParentAndChildIndexes(null, -1);
         }
 
-        public virtual void SanityCheckParentAndChildIndexes( ITree parent, int i )
+        public virtual void SanityCheckParentAndChildIndexes(ITree parent, int i)
         {
-            if ( parent != this.Parent )
-            {
-                throw new InvalidOperationException( "parents don't match; expected " + parent + " found " + this.Parent );
+            if (parent != this.Parent) {
+                throw new InvalidOperationException("parents don't match; expected " + parent + " found " + this.Parent);
             }
-            if ( i != this.ChildIndex )
-            {
-                throw new InvalidOperationException( "child indexes don't match; expected " + i + " found " + this.ChildIndex );
+            if (i != this.ChildIndex) {
+                throw new InvalidOperationException("child indexes don't match; expected " + i + " found " + this.ChildIndex);
             }
-            int n = this.ChildCount;
-            for ( int c = 0; c < n; c++ )
-            {
-                BaseTree child = (BaseTree)this.GetChild( c );
-                child.SanityCheckParentAndChildIndexes( this, c );
+            var n = this.ChildCount;
+            for (var c = 0; c < n; c++) {
+                var child = (BaseTree) this.GetChild(c);
+                child.SanityCheckParentAndChildIndexes(this, c);
             }
         }
 
         /** <summary>Walk upwards looking for ancestor with this token type.</summary> */
-        public virtual bool HasAncestor( int ttype )
+        public virtual bool HasAncestor(int ttype)
         {
-            return GetAncestor( ttype ) != null;
+            return GetAncestor(ttype) != null;
         }
 
         /** <summary>Walk upwards and get first ancestor with this token type.</summary> */
-        public virtual ITree GetAncestor( int ttype )
+        public virtual ITree GetAncestor(int ttype)
         {
             ITree t = this;
             t = t.Parent;
-            while ( t != null )
-            {
-                if ( t.Type == ttype )
+            while (t != null) {
+                if (t.Type == ttype)
                     return t;
                 t = t.Parent;
             }
@@ -521,15 +436,14 @@ namespace Antlr.Runtime.Tree
          */
         public virtual IList<ITree> GetAncestors()
         {
-            if ( Parent == null )
+            if (Parent == null)
                 return null;
 
-            List<ITree> ancestors = new List<ITree>();
+            var ancestors = new List<ITree>();
             ITree t = this;
             t = t.Parent;
-            while ( t != null )
-            {
-                ancestors.Insert( 0, t ); // insert at start
+            while (t != null) {
+                ancestors.Insert(0, t); // insert at start
                 t = t.Parent;
             }
             return ancestors;
@@ -538,29 +452,24 @@ namespace Antlr.Runtime.Tree
         /** <summary>Print out a whole tree not just a node</summary> */
         public virtual string ToStringTree()
         {
-            if ( Children == null || Children.Count == 0 )
-            {
+            if (Children == null || Children.Count == 0) {
                 return this.ToString();
             }
-            StringBuilder buf = new StringBuilder();
-            if ( !IsNil )
-            {
-                buf.Append( "(" );
-                buf.Append( this.ToString() );
-                buf.Append( ' ' );
+            var buf = new StringBuilder();
+            if (!IsNil) {
+                buf.Append("(");
+                buf.Append(this.ToString());
+                buf.Append(' ');
             }
-            for ( int i = 0; Children != null && i < Children.Count; i++ )
-            {
-                ITree t = Children[i];
-                if ( i > 0 )
-                {
-                    buf.Append( ' ' );
+            for (var i = 0; Children != null && i < Children.Count; i++) {
+                var t = Children[i];
+                if (i > 0) {
+                    buf.Append(' ');
                 }
-                buf.Append( t.ToStringTree() );
+                buf.Append(t.ToStringTree());
             }
-            if ( !IsNil )
-            {
-                buf.Append( ")" );
+            if (!IsNil) {
+                buf.Append(")");
             }
             return buf.ToString();
         }

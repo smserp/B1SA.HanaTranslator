@@ -97,7 +97,7 @@ namespace B1SA.HanaTranslator
             if (msg != string.Empty) {
                 if ((value % 10) == 0 || value == 1) {
                     writer.WriteLine();
-                    string padStr = (value < 10) ? "  " : " ";
+                    var padStr = (value < 10) ? "  " : " ";
                     if (value >= 100) {
                         padStr = "";
                     }
@@ -134,7 +134,7 @@ namespace B1SA.HanaTranslator
         {
             inputQueries = rootStatement;
 
-            Scanner sc = new Scanner();
+            var sc = new Scanner();
             sc.Scan(inputQueries);
             numInQueries = StatusReporter.GetCount();
 

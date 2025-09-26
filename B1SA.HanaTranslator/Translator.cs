@@ -67,7 +67,7 @@ namespace B1SA.HanaTranslator
             if (tokenizer.OnlyTokenInput() == false) {
                 var statements = ParseStatements(input);
 
-                TranslateStatements(statements, infoWriter, out Statement translatedStatement);
+                TranslateStatements(statements, infoWriter, out var translatedStatement);
 
                 if (writer != null) {
                     PrintOutput(translatedStatement, writer, tokenizer);
@@ -190,12 +190,12 @@ namespace B1SA.HanaTranslator
 
             var ns = ScanNotes(writer, StatusReporter.OutputQueries);
 
-            var msgs = new Dictionary<string, string>();
-
-            msgs[Note.CASEFIXER] = Resources.MSG_CORRECTED_IDENTIFIERS;
-            msgs[Note.ERR_CASEFIXER] = Resources.MSG_COLUMNS_NOT_FOUND;
-            msgs[Note.STRINGIFIER] = Resources.MSG_SUMINFO_UNSUPPORTED_FEATURES;
-            msgs[Note.ERR_MODIFIER] = Resources.MSG_ERRORS_LIMITATIONS;
+            var msgs = new Dictionary<string, string> {
+                [Note.CASEFIXER] = Resources.MSG_CORRECTED_IDENTIFIERS,
+                [Note.ERR_CASEFIXER] = Resources.MSG_COLUMNS_NOT_FOUND,
+                [Note.STRINGIFIER] = Resources.MSG_SUMINFO_UNSUPPORTED_FEATURES,
+                [Note.ERR_MODIFIER] = Resources.MSG_ERRORS_LIMITATIONS
+            };
 
             writer.WriteLine("\n------------------------------------");
             ns.DisplaySummaryInfo(writer, msgs);
@@ -235,7 +235,7 @@ namespace B1SA.HanaTranslator
         // last one is the "real" consumption.
         // So we have to remember where we have put each comment, and if we see the same comment again,
         // remove it from the previous node and put it to current one.
-        private static Dictionary<int, GrammarNode> commentedNodes = new Dictionary<int, GrammarNode>();
+        private static Dictionary<int, GrammarNode> commentedNodes = [];
 
         private static void SetupCommentHandling(CommentedTokenStream tokens)
         {
@@ -253,7 +253,7 @@ namespace B1SA.HanaTranslator
                     lastWasNewLine = true;
                 }
                 else {
-                    if (commentedNodes.TryGetValue(comment.TokenIndex, out GrammarNode commentedNode)) {
+                    if (commentedNodes.TryGetValue(comment.TokenIndex, out var commentedNode)) {
                         // The comment was already used, re-attach it.
                         commentedNode.RemoveComment(comment);
                     }

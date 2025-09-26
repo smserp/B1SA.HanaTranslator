@@ -1,35 +1,3 @@
-﻿/*
- * [The "BSD license"]
- * Copyright (c) 2011 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2011 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime.Tree
 {
     using System.Collections.Generic;
@@ -37,7 +5,7 @@ namespace Antlr.Runtime.Tree
 
     using StringBuilder = System.Text.StringBuilder;
 
-    [System.Serializable]
+    [Serializable]
     public class CommonTreeNodeStream : LookaheadStream<object>, ITreeNodeStream, IPositionTrackingStream
     {
         public const int DEFAULT_INITIAL_BUFFER_SIZE = 100;
@@ -50,7 +18,7 @@ namespace Antlr.Runtime.Tree
         protected ITokenStream tokens;
 
         /** <summary>What tree adaptor was used to build these trees</summary> */
-        [System.NonSerialized]
+        [NonSerialized]
         private ITreeAdaptor _adaptor;
 
         /** The tree iterator we are using */
@@ -76,74 +44,61 @@ namespace Antlr.Runtime.Tree
          */
         private object _previousLocationElement;
 
-        public CommonTreeNodeStream( object tree )
-            : this( new CommonTreeAdaptor(), tree )
+        public CommonTreeNodeStream(object tree)
+            : this(new CommonTreeAdaptor(), tree)
         {
         }
 
-        public CommonTreeNodeStream( ITreeAdaptor adaptor, object tree )
+        public CommonTreeNodeStream(ITreeAdaptor adaptor, object tree)
         {
             this._root = tree;
             this._adaptor = adaptor;
-            _it = new TreeIterator( adaptor, _root );
+            _it = new TreeIterator(adaptor, _root);
         }
 
         #region Properties
 
-        public virtual string SourceName
-        {
-            get
-            {
-                if ( TokenStream == null )
+        public virtual string SourceName {
+            get {
+                if (TokenStream == null)
                     return null;
 
                 return TokenStream.SourceName;
             }
         }
 
-        public virtual ITokenStream TokenStream
-        {
-            get
-            {
+        public virtual ITokenStream TokenStream {
+            get {
                 return tokens;
             }
 
-            set
-            {
+            set {
                 tokens = value;
             }
         }
 
-        public virtual ITreeAdaptor TreeAdaptor
-        {
-            get
-            {
+        public virtual ITreeAdaptor TreeAdaptor {
+            get {
                 return _adaptor;
             }
 
-            set
-            {
+            set {
                 _adaptor = value;
             }
         }
 
-        public virtual object TreeSource
-        {
-            get
-            {
+        public virtual object TreeSource {
+            get {
                 return _root;
             }
         }
 
-        public virtual bool UniqueNavigationNodes
-        {
-            get
-            {
+        public virtual bool UniqueNavigationNodes {
+            get {
                 return false;
             }
 
-            set
-            {
+            set {
             }
         }
 
@@ -156,31 +111,27 @@ namespace Antlr.Runtime.Tree
             _hasNilRoot = false;
             _level = 0;
             _previousLocationElement = null;
-            if ( _calls != null )
+            if (_calls != null)
                 _calls.Clear();
         }
 
         public override object NextElement()
         {
             _it.MoveNext();
-            object t = _it.Current;
+            var t = _it.Current;
             //System.out.println("pulled "+adaptor.getType(t));
-            if ( t == _it.up )
-            {
+            if (t == _it.up) {
                 _level--;
-                if ( _level == 0 && _hasNilRoot )
-                {
+                if (_level == 0 && _hasNilRoot) {
                     _it.MoveNext();
                     return _it.Current; // don't give last UP; get EOF
                 }
             }
-            else if ( t == _it.down )
-            {
+            else if (t == _it.down) {
                 _level++;
             }
 
-            if ( _level == 0 && TreeAdaptor.IsNil( t ) )
-            {
+            if (_level == 0 && TreeAdaptor.IsNil(t)) {
                 // if nil root, scarf nil, DOWN
                 _hasNilRoot = true;
                 _it.MoveNext();
@@ -195,7 +146,7 @@ namespace Antlr.Runtime.Tree
 
         public override object Dequeue()
         {
-            object result = base.Dequeue();
+            var result = base.Dequeue();
             if (_p == 0 && HasPositionInformation(PreviousElement))
                 _previousLocationElement = PreviousElement;
 
@@ -207,21 +158,21 @@ namespace Antlr.Runtime.Tree
             return TreeAdaptor.GetType(o) == CharStreamConstants.EndOfFile;
         }
 
-        public virtual int LA( int i )
+        public virtual int LA(int i)
         {
-            return TreeAdaptor.GetType( LT( i ) );
+            return TreeAdaptor.GetType(LT(i));
         }
 
         /** Make stream jump to a new location, saving old location.
          *  Switch back with pop().
          */
-        public virtual void Push( int index )
+        public virtual void Push(int index)
         {
-            if ( _calls == null )
+            if (_calls == null)
                 _calls = new Stack<int>();
 
-            _calls.Push( _p ); // save current index
-            Seek( index );
+            _calls.Push(_p); // save current index
+            Seek(index);
         }
 
         /** Seek back to previous index saved during last push() call.
@@ -229,8 +180,8 @@ namespace Antlr.Runtime.Tree
          */
         public virtual int Pop()
         {
-            int ret = _calls.Pop();
-            Seek( ret );
+            var ret = _calls.Pop();
+            Seek(ret);
             return ret;
         }
 
@@ -243,15 +194,14 @@ namespace Antlr.Runtime.Tree
          */
         public object GetKnownPositionElement(bool allowApproximateLocation)
         {
-            object node = _data[_p];
+            var node = _data[_p];
             if (HasPositionInformation(node))
                 return node;
 
             if (!allowApproximateLocation)
                 return null;
 
-            for (int index = _p - 1; index >= 0; index--)
-            {
+            for (var index = _p - 1; index >= 0; index--) {
                 node = _data[index];
                 if (HasPositionInformation(node))
                     return node;
@@ -262,7 +212,7 @@ namespace Antlr.Runtime.Tree
 
         public bool HasPositionInformation(object node)
         {
-            IToken token = TreeAdaptor.GetToken(node);
+            var token = TreeAdaptor.GetToken(node);
             if (token == null)
                 return false;
 
@@ -274,17 +224,16 @@ namespace Antlr.Runtime.Tree
 
         #region Tree rewrite interface
 
-        public virtual void ReplaceChildren( object parent, int startChildIndex, int stopChildIndex, object t )
+        public virtual void ReplaceChildren(object parent, int startChildIndex, int stopChildIndex, object t)
         {
-            if ( parent != null )
-            {
-                TreeAdaptor.ReplaceChildren( parent, startChildIndex, stopChildIndex, t );
+            if (parent != null) {
+                TreeAdaptor.ReplaceChildren(parent, startChildIndex, stopChildIndex, t);
             }
         }
 
         #endregion
 
-        public virtual string ToString( object start, object stop )
+        public virtual string ToString(object start, object stop)
         {
             // we'll have to walk from start to stop in tree; we're not keeping
             // a complete node stream buffer
@@ -295,16 +244,15 @@ namespace Antlr.Runtime.Tree
         public virtual string ToTokenTypeString()
         {
             Reset();
-            StringBuilder buf = new StringBuilder();
-            object o = LT( 1 );
-            int type = TreeAdaptor.GetType( o );
-            while ( type != TokenTypes.EndOfFile )
-            {
-                buf.Append( " " );
-                buf.Append( type );
+            var buf = new StringBuilder();
+            var o = LT(1);
+            var type = TreeAdaptor.GetType(o);
+            while (type != TokenTypes.EndOfFile) {
+                buf.Append(" ");
+                buf.Append(type);
                 Consume();
-                o = LT( 1 );
-                type = TreeAdaptor.GetType( o );
+                o = LT(1);
+                type = TreeAdaptor.GetType(o);
             }
             return buf.ToString();
         }

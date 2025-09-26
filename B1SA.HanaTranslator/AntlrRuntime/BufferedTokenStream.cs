@@ -1,35 +1,3 @@
-/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime
 {
     using System.Collections.Generic;
@@ -49,7 +17,7 @@ namespace Antlr.Runtime
      *  This is not a subclass of UnbufferedTokenStream because I don't want
      *  to confuse small moving window of tokens it uses for the full buffer.
      */
-    [System.Serializable]
+    [Serializable]
     public class BufferedTokenStream : ITokenStream, ITokenStreamInformation
     {
         private ITokenSource _tokenSource;
@@ -80,24 +48,19 @@ namespace Antlr.Runtime
             this._tokenSource = tokenSource;
         }
 
-        public virtual ITokenSource TokenSource
-        {
-            get
-            {
+        public virtual ITokenSource TokenSource {
+            get {
                 return _tokenSource;
             }
-            set
-            {
+            set {
                 this._tokenSource = value;
                 _tokens.Clear();
                 _p = -1;
             }
         }
 
-        public virtual int Index
-        {
-            get
-            {
+        public virtual int Index {
+            get {
                 return _p;
             }
         }
@@ -105,44 +68,34 @@ namespace Antlr.Runtime
         /// <summary>
         /// How deep have we gone?
         /// </summary>
-        public virtual int Range
-        {
+        public virtual int Range {
             get;
             protected set;
         }
 
-        public virtual int Count
-        {
-            get
-            {
+        public virtual int Count {
+            get {
                 return _tokens.Count;
             }
         }
 
-        public virtual string SourceName
-        {
-            get
-            {
+        public virtual string SourceName {
+            get {
                 return _tokenSource.SourceName;
             }
         }
 
-        public virtual IToken LastToken
-        {
-            get
-            {
+        public virtual IToken LastToken {
+            get {
                 return LB(1);
             }
         }
 
-        public virtual IToken LastRealToken
-        {
-            get
-            {
-                int i = 0;
+        public virtual IToken LastRealToken {
+            get {
+                var i = 0;
                 IToken token;
-                do
-                {
+                do {
                     i++;
                     token = LB(i);
                 } while (token != null && token.Line <= 0);
@@ -151,10 +104,8 @@ namespace Antlr.Runtime
             }
         }
 
-        public virtual int MaxLookBehind
-        {
-            get
-            {
+        public virtual int MaxLookBehind {
+            get {
                 return int.MaxValue;
             }
         }
@@ -211,7 +162,7 @@ namespace Antlr.Runtime
         /** Make sure index i in tokens has a token. */
         protected virtual void Sync(int i)
         {
-            int n = i - _tokens.Count + 1; // how many more elements we need?
+            var n = i - _tokens.Count + 1; // how many more elements we need?
             if (n > 0)
                 Fetch(n);
         }
@@ -219,9 +170,8 @@ namespace Antlr.Runtime
         /** add n elements to buffer */
         protected virtual void Fetch(int n)
         {
-            for (int i = 0; i < n; i++)
-            {
-                IToken t = TokenSource.NextToken();
+            for (var i = 0; i < n; i++) {
+                var t = TokenSource.NextToken();
                 t.TokenIndex = _tokens.Count;
                 _tokens.Add(t);
                 if (t.Type == CharStreamConstants.EndOfFile)
@@ -231,8 +181,7 @@ namespace Antlr.Runtime
 
         public virtual IToken Get(int i)
         {
-            if (i < 0 || i >= _tokens.Count)
-            {
+            if (i < 0 || i >= _tokens.Count) {
                 throw new IndexOutOfRangeException("token index " + i + " out of range 0.." + (_tokens.Count - 1));
             }
             return _tokens[i];
@@ -290,10 +239,9 @@ namespace Antlr.Runtime
             if (k < 0)
                 return LB(-k);
 
-            int i = _p + k - 1;
+            var i = _p + k - 1;
             Sync(i);
-            if (i >= _tokens.Count)
-            {
+            if (i >= _tokens.Count) {
                 // EOF must be last token
                 return _tokens[_tokens.Count - 1];
             }
@@ -336,17 +284,14 @@ namespace Antlr.Runtime
                 return null;
 
             // list = tokens[start:stop]:{Token t, t.getType() in types}
-            List<IToken> filteredTokens = new List<IToken>();
-            for (int i = start; i <= stop; i++)
-            {
-                IToken t = _tokens[i];
-                if (types == null || types.Member(t.Type))
-                {
+            var filteredTokens = new List<IToken>();
+            for (var i = start; i <= stop; i++) {
+                var t = _tokens[i];
+                if (types == null || types.Member(t.Type)) {
                     filteredTokens.Add(t);
                 }
             }
-            if (filteredTokens.Count == 0)
-            {
+            if (filteredTokens.Count == 0) {
                 filteredTokens = null;
             }
             return filteredTokens;
@@ -380,10 +325,9 @@ namespace Antlr.Runtime
             if (stop >= _tokens.Count)
                 stop = _tokens.Count - 1;
 
-            StringBuilder buf = new StringBuilder();
-            for (int i = start; i <= stop; i++)
-            {
-                IToken t = _tokens[i];
+            var buf = new StringBuilder();
+            for (var i = start; i <= stop; i++) {
+                var t = _tokens[i];
                 if (t.Type == CharStreamConstants.EndOfFile)
                     break;
                 buf.Append(t.Text);
@@ -394,8 +338,7 @@ namespace Antlr.Runtime
 
         public virtual string ToString(IToken start, IToken stop)
         {
-            if (start != null && stop != null)
-            {
+            if (start != null && stop != null) {
                 return ToString(start.TokenIndex, stop.TokenIndex);
             }
             return null;
@@ -409,10 +352,9 @@ namespace Antlr.Runtime
             if (_tokens[_p].Type == CharStreamConstants.EndOfFile)
                 return;
 
-            int i = _p + 1;
+            var i = _p + 1;
             Sync(i);
-            while (_tokens[i].Type != CharStreamConstants.EndOfFile)
-            {
+            while (_tokens[i].Type != CharStreamConstants.EndOfFile) {
                 i++;
                 Sync(i);
             }

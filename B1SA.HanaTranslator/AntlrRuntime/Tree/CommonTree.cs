@@ -1,38 +1,6 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2011 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2011 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime.Tree
 {
-    using ArgumentNullException = System.ArgumentNullException;
+    using ArgumentNullException = ArgumentNullException;
 
     /** <summary>
      *  A tree node that is wrapper for a Token object.  After 3.0 release
@@ -42,7 +10,7 @@ namespace Antlr.Runtime.Tree
      *  fields, it's easy to cut them out in your own BaseTree subclass.
      *  </summary>
      */
-    [System.Serializable]
+    [Serializable]
     public class CommonTree : BaseTree
     {
         /** <summary>A single token is the payload</summary> */
@@ -57,17 +25,17 @@ namespace Antlr.Runtime.Tree
         protected int stopIndex = -1;
 
         /** <summary>Who is the parent node of this node; if null, implies node is root</summary> */
-        CommonTree parent;
+        private CommonTree parent;
 
         /** <summary>What index is this node in the child list? Range: 0..n-1</summary> */
-        int childIndex = -1;
+        private int childIndex = -1;
 
         public CommonTree()
         {
         }
 
-        public CommonTree( CommonTree node )
-            : base( node )
+        public CommonTree(CommonTree node)
+            : base(node)
         {
             if (node == null)
                 throw new ArgumentNullException("node");
@@ -77,20 +45,17 @@ namespace Antlr.Runtime.Tree
             this.stopIndex = node.stopIndex;
         }
 
-        public CommonTree( IToken t )
+        public CommonTree(IToken t)
         {
             this.Token = t;
         }
 
         #region Properties
 
-        public override int CharPositionInLine
-        {
-            get
-            {
-                if ( Token == null || Token.CharPositionInLine == -1 )
-                {
-                    if ( ChildCount > 0 )
+        public override int CharPositionInLine {
+            get {
+                if (Token == null || Token.CharPositionInLine == -1) {
+                    if (ChildCount > 0)
                         return Children[0].CharPositionInLine;
 
                     return 0;
@@ -98,40 +63,31 @@ namespace Antlr.Runtime.Tree
                 return Token.CharPositionInLine;
             }
 
-            set
-            {
+            set {
                 base.CharPositionInLine = value;
             }
         }
 
-        public override int ChildIndex
-        {
-            get
-            {
+        public override int ChildIndex {
+            get {
                 return childIndex;
             }
 
-            set
-            {
+            set {
                 childIndex = value;
             }
         }
 
-        public override bool IsNil
-        {
-            get
-            {
+        public override bool IsNil {
+            get {
                 return Token == null;
             }
         }
 
-        public override int Line
-        {
-            get
-            {
-                if ( Token == null || Token.Line == 0 )
-                {
-                    if ( ChildCount > 0 )
+        public override int Line {
+            get {
+                if (Token == null || Token.Line == 0) {
+                    if (ChildCount > 0)
                         return Children[0].Line;
 
                     return 0;
@@ -140,98 +96,78 @@ namespace Antlr.Runtime.Tree
                 return Token.Line;
             }
 
-            set
-            {
+            set {
                 base.Line = value;
             }
         }
 
-        public override ITree Parent
-        {
-            get
-            {
+        public override ITree Parent {
+            get {
                 return parent;
             }
 
-            set
-            {
-                parent = (CommonTree)value;
+            set {
+                parent = (CommonTree) value;
             }
         }
 
-        public override string Text
-        {
-            get
-            {
-                if ( Token == null )
+        public override string Text {
+            get {
+                if (Token == null)
                     return null;
 
                 return Token.Text;
             }
 
-            set
-            {
+            set {
             }
         }
 
-        public IToken Token
-        {
-            get
-            {
+        public IToken Token {
+            get {
                 return _token;
             }
 
-            set
-            {
+            set {
                 _token = value;
             }
         }
 
-        public override int TokenStartIndex
-        {
-            get
-            {
-                if ( startIndex == -1 && Token != null )
+        public override int TokenStartIndex {
+            get {
+                if (startIndex == -1 && Token != null)
                     return Token.TokenIndex;
 
                 return startIndex;
             }
 
-            set
-            {
+            set {
                 startIndex = value;
             }
         }
 
-        public override int TokenStopIndex
-        {
-            get
-            {
-                if ( stopIndex == -1 && Token != null )
-                {
+        public override int TokenStopIndex {
+            get {
+                if (stopIndex == -1 && Token != null) {
                     return Token.TokenIndex;
                 }
                 return stopIndex;
             }
 
-            set
-            {
+            set {
                 stopIndex = value;
             }
         }
 
-        public override int Type
-        {
-            get
-            {
-                if ( Token == null )
+        public override int Type {
+            get {
+                if (Token == null)
                     return TokenTypes.Invalid;
 
                 return Token.Type;
             }
 
-            set
-            {
+            set {
             }
         }
 
@@ -239,7 +175,7 @@ namespace Antlr.Runtime.Tree
 
         public override ITree DupNode()
         {
-            return new CommonTree( this );
+            return new CommonTree(this);
         }
 
         /** <summary>
@@ -250,30 +186,27 @@ namespace Antlr.Runtime.Tree
          */
         public virtual void SetUnknownTokenBoundaries()
         {
-            if ( Children == null )
-            {
-                if ( startIndex < 0 || stopIndex < 0 )
+            if (Children == null) {
+                if (startIndex < 0 || stopIndex < 0)
                     startIndex = stopIndex = Token.TokenIndex;
 
                 return;
             }
 
-            foreach (ITree childTree in Children)
-            {
-                CommonTree commonTree = childTree as CommonTree;
+            foreach (var childTree in Children) {
+                var commonTree = childTree as CommonTree;
                 if (commonTree == null)
                     continue;
 
                 commonTree.SetUnknownTokenBoundaries();
             }
 
-            if ( startIndex >= 0 && stopIndex >= 0 )
+            if (startIndex >= 0 && stopIndex >= 0)
                 return; // already set
 
-            if ( Children.Count > 0 )
-            {
-                ITree firstChild = Children[0];
-                ITree lastChild = Children[Children.Count - 1];
+            if (Children.Count > 0) {
+                var firstChild = Children[0];
+                var lastChild = Children[Children.Count - 1];
                 startIndex = firstChild.TokenStartIndex;
                 stopIndex = lastChild.TokenStopIndex;
             }

@@ -1,41 +1,9 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime
 {
     using System.Collections.Generic;
-    using ArgumentException = System.ArgumentException;
-    using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
-    using ArgumentNullException = System.ArgumentNullException;
+    using ArgumentException = ArgumentException;
+    using ArgumentNullException = ArgumentNullException;
+    using ArgumentOutOfRangeException = ArgumentOutOfRangeException;
 
     /** <summary>
      *  A pretty quick CharStream that pulls all data from an array
@@ -43,7 +11,7 @@ namespace Antlr.Runtime
      *  strings aren't very good so I'm avoiding.
      *  </summary>
      */
-    [System.Serializable]
+    [Serializable]
     public class ANTLRStringStream : ICharStream
     {
         /** <summary>The data being scanned</summary> */
@@ -56,10 +24,10 @@ namespace Antlr.Runtime
         protected int p = 0;
 
         /** <summary>line number 1..n within the input</summary> */
-        int line = 1;
+        private int line = 1;
 
         /** <summary>The index of the character relative to the beginning of the line 0..n-1</summary> */
-        int charPositionInLine = 0;
+        private int charPositionInLine = 0;
 
         /** <summary>tracks how deep mark() calls are nested</summary> */
         protected int markDepth = 0;
@@ -80,23 +48,23 @@ namespace Antlr.Runtime
         public string name;
 
         /** <summary>Copy data in string to a local char array</summary> */
-        public ANTLRStringStream( string input )
-            : this( input, null )
+        public ANTLRStringStream(string input)
+            : this(input, null)
         {
         }
 
-        public ANTLRStringStream( string input, string sourceName )
-            : this( input.ToCharArray(), input.Length, sourceName )
+        public ANTLRStringStream(string input, string sourceName)
+            : this(input.ToCharArray(), input.Length, sourceName)
         {
         }
 
         /** <summary>This is the preferred constructor as no data is copied</summary> */
-        public ANTLRStringStream( char[] data, int numberOfActualCharsInArray )
-            : this( data, numberOfActualCharsInArray, null )
+        public ANTLRStringStream(char[] data, int numberOfActualCharsInArray)
+            : this(data, numberOfActualCharsInArray, null)
         {
         }
 
-        public ANTLRStringStream( char[] data, int numberOfActualCharsInArray, string sourceName )
+        public ANTLRStringStream(char[] data, int numberOfActualCharsInArray, string sourceName)
         {
             if (data == null)
                 throw new ArgumentNullException("data");
@@ -121,32 +89,24 @@ namespace Antlr.Runtime
          *  be returned from LA(1).
          *  </summary>
          */
-        public virtual int Index
-        {
-            get
-            {
+        public virtual int Index {
+            get {
                 return p;
             }
         }
-        public virtual int Line
-        {
-            get
-            {
+        public virtual int Line {
+            get {
                 return line;
             }
-            set
-            {
+            set {
                 line = value;
             }
         }
-        public virtual int CharPositionInLine
-        {
-            get
-            {
+        public virtual int CharPositionInLine {
+            get {
                 return charPositionInLine;
             }
-            set
-            {
+            set {
                 charPositionInLine = value;
             }
         }
@@ -168,11 +128,9 @@ namespace Antlr.Runtime
         public virtual void Consume()
         {
             //System.out.println("prev p="+p+", c="+(char)data[p]);
-            if ( p < n )
-            {
+            if (p < n) {
                 charPositionInLine++;
-                if ( data[p] == '\n' )
-                {
+                if (data[p] == '\n') {
                     /*
                     System.out.println("newline char found on line: "+line+
                                        "@ pos="+charPositionInLine);
@@ -185,23 +143,19 @@ namespace Antlr.Runtime
             }
         }
 
-        public virtual int LA( int i )
+        public virtual int LA(int i)
         {
-            if ( i == 0 )
-            {
+            if (i == 0) {
                 return 0; // undefined
             }
-            if ( i < 0 )
-            {
+            if (i < 0) {
                 i++; // e.g., translate LA(-1) to use offset i=0; then data[p+0-1]
-                if ( ( p + i - 1 ) < 0 )
-                {
+                if ((p + i - 1) < 0) {
                     return CharStreamConstants.EndOfFile; // invalid; no char before first char
                 }
             }
 
-            if ( ( p + i - 1 ) >= n )
-            {
+            if ((p + i - 1) >= n) {
                 //System.out.println("char LA("+i+")=EOF; p="+p);
                 return CharStreamConstants.EndOfFile;
             }
@@ -210,35 +164,32 @@ namespace Antlr.Runtime
             return data[p + i - 1];
         }
 
-        public virtual int LT( int i )
+        public virtual int LT(int i)
         {
-            return LA( i );
+            return LA(i);
         }
 
-        public virtual int Count
-        {
-            get
-            {
+        public virtual int Count {
+            get {
                 return n;
             }
         }
 
         public virtual int Mark()
         {
-            if ( markers == null )
-            {
-                markers = new List<CharStreamState>();
-                markers.Add( null ); // depth 0 means no backtracking, leave blank
+            if (markers == null) {
+                markers =
+                [
+                    null,  // depth 0 means no backtracking, leave blank
+                ];
             }
             markDepth++;
             CharStreamState state = null;
-            if ( markDepth >= markers.Count )
-            {
+            if (markDepth >= markers.Count) {
                 state = new CharStreamState();
-                markers.Add( state );
+                markers.Add(state);
             }
-            else
-            {
+            else {
                 state = markers[markDepth];
             }
             state.p = Index;
@@ -248,7 +199,7 @@ namespace Antlr.Runtime
             return markDepth;
         }
 
-        public virtual void Rewind( int m )
+        public virtual void Rewind(int m)
         {
             if (m < 0)
                 throw new ArgumentOutOfRangeException();
@@ -256,20 +207,20 @@ namespace Antlr.Runtime
             //if (m > markDepth)
             //    throw new ArgumentException();
 
-            CharStreamState state = markers[m];
+            var state = markers[m];
             // restore stream state
-            Seek( state.p );
+            Seek(state.p);
             line = state.line;
             charPositionInLine = state.charPositionInLine;
-            Release( m );
+            Release(m);
         }
 
         public virtual void Rewind()
         {
-            Rewind( lastMarker );
+            Rewind(lastMarker);
         }
 
-        public virtual void Release( int marker )
+        public virtual void Release(int marker)
         {
             // unwind any other markers made after m and release m
             markDepth = marker;
@@ -282,21 +233,19 @@ namespace Antlr.Runtime
          *  update line and charPositionInLine.
          *  </summary>
          */
-        public virtual void Seek( int index )
+        public virtual void Seek(int index)
         {
-            if ( index <= p )
-            {
+            if (index <= p) {
                 p = index; // just jump; don't update stream state (line, ...)
                 return;
             }
             // seek forward, consume until p hits index
-            while ( p < index )
-            {
+            while (p < index) {
                 Consume();
             }
         }
 
-        public virtual string Substring( int start, int length )
+        public virtual string Substring(int start, int length)
         {
             if (start < 0)
                 throw new ArgumentOutOfRangeException();
@@ -308,13 +257,11 @@ namespace Antlr.Runtime
             if (length == 0)
                 return string.Empty;
 
-            return new string( data, start, length );
+            return new string(data, start, length);
         }
 
-        public virtual string SourceName
-        {
-            get
-            {
+        public virtual string SourceName {
+            get {
                 return name;
             }
         }

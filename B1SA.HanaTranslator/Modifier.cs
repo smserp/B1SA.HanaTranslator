@@ -18,7 +18,7 @@ namespace B1SA.HanaTranslator
 
         public Object Pop()
         {
-            Object ret = this.Last();
+            var ret = this.Last();
             this.Remove(ret);
             return ret;
         }
@@ -26,8 +26,8 @@ namespace B1SA.HanaTranslator
 
     public class VariablesPool
     {
-        const string strBase = "temp_var_";
-        int id = 0;
+        private const string strBase = "temp_var_";
+        private int id = 0;
 
         public VariablesPool()
         {
@@ -42,8 +42,8 @@ namespace B1SA.HanaTranslator
 
     public class ProceduresPool
     {
-        const string strBase = "temp_procedure_";
-        int id = 0;
+        private const string strBase = "temp_procedure_";
+        private int id = 0;
 
         public ProceduresPool()
         {
@@ -57,18 +57,18 @@ namespace B1SA.HanaTranslator
     }
     public class Modifier : Scanner
     {
-        delegate GrammarNode CreateNewExprDelegate();
+        private delegate GrammarNode CreateNewExprDelegate();
 
         #region Constants
-        const string ZERO_TIMESTAMP = "1900-01-01 00:00:00.000";
+        private const string ZERO_TIMESTAMP = "1900-01-01 00:00:00.000";
         #endregion
 
         #region Properties
         public BlockStatement Statement = null;
 
-        ModifiedList _NewParrent = new ModifiedList();
-        Stack<object> _OldParrent = new Stack<object>();
-        VariablesPool VarPool = new VariablesPool();
+        private ModifiedList _NewParrent = [];
+        private Stack<object> _OldParrent = new Stack<object>();
+        private VariablesPool VarPool = new VariablesPool();
         public ProceduresPool ProcPool = new ProceduresPool();
         private Config config;
         #endregion
@@ -78,9 +78,9 @@ namespace B1SA.HanaTranslator
             config = configuration;
         }
 
-        CreateAlterProcedureStatement GetNearestProcedure()
+        private CreateAlterProcedureStatement GetNearestProcedure()
         {
-            foreach (object obj in _NewParrent.Reverse<Object>()) {
+            foreach (var obj in _NewParrent.Reverse<Object>()) {
                 if (obj is CreateAlterProcedureStatement) {
                     return (obj as CreateAlterProcedureStatement);
                 }
@@ -88,9 +88,9 @@ namespace B1SA.HanaTranslator
             return null;
         }
 
-        BlockStatement GetNearestFather()
+        private BlockStatement GetNearestFather()
         {
-            foreach (object obj in _NewParrent.Reverse<Object>()) {
+            foreach (var obj in _NewParrent.Reverse<Object>()) {
                 if (obj is BlockStatement) {
                     return (obj as BlockStatement);
                 }
@@ -101,9 +101,9 @@ namespace B1SA.HanaTranslator
             return null;
         }
 
-        Statement GetNearestStatement()
+        private Statement GetNearestStatement()
         {
-            foreach (object obj in _NewParrent.Reverse<Object>()) {
+            foreach (var obj in _NewParrent.Reverse<Object>()) {
                 if (obj is Statement) {
                     return (obj as Statement);
                 }
@@ -111,7 +111,7 @@ namespace B1SA.HanaTranslator
             return null;
         }
 
-        void MoveAllCommentsToNearestStatement(GrammarNode node)
+        private void MoveAllCommentsToNearestStatement(GrammarNode node)
         {
             if (node is Statement)
                 return;
@@ -119,7 +119,7 @@ namespace B1SA.HanaTranslator
             if (node.Comments.Count == 0)
                 return;
 
-            Statement stmt = GetNearestStatement();
+            var stmt = GetNearestStatement();
             if (stmt != null) {
                 stmt.MoveCommentsFrom(node);
             }
@@ -132,8 +132,8 @@ namespace B1SA.HanaTranslator
             }
 
             // Clone node
-            object newParrent = _NewParrent.Count > 0 ? _NewParrent.Peek() : null;
-            object oldParrent = _OldParrent.Count > 0 ? _OldParrent.Peek() : null;
+            var newParrent = _NewParrent.Count > 0 ? _NewParrent.Peek() : null;
+            var oldParrent = _OldParrent.Count > 0 ? _OldParrent.Peek() : null;
             object nodeClone = null;
 
             if (Statement == null && node is BlockStatement) {
@@ -141,16 +141,16 @@ namespace B1SA.HanaTranslator
                 Statement = (nodeClone as BlockStatement);
             }
             else {
-                FieldInfo fiListParrent = newParrent.GetType().GetField("List");
+                var fiListParrent = newParrent.GetType().GetField("List");
                 if (fiListParrent != null || newParrent is IList) {
-                    Type nodeType = node.GetType();
-                    bool toClone = true;
+                    var nodeType = node.GetType();
+                    var toClone = true;
 
                     if (nodeType.IsGenericType) {
                         if (nodeType.GetGenericTypeDefinition().Name.Contains("GrammarNodeList")) {
-                            Type innerType = GetTemplateType(nodeType);
-                            Type clonedTypeList = typeof(List<>);
-                            Type i2 = clonedTypeList.MakeGenericType(innerType);
+                            var innerType = GetTemplateType(nodeType);
+                            var clonedTypeList = typeof(List<>);
+                            var i2 = clonedTypeList.MakeGenericType(innerType);
                             nodeClone = Activator.CreateInstance(i2, null);
                             toClone = false;
                         }
@@ -167,21 +167,21 @@ namespace B1SA.HanaTranslator
                     else {
                         list = newParrent;
                     }
-                    MethodInfo mListToArray = list.GetType().GetMethod("Add");
+                    var mListToArray = list.GetType().GetMethod("Add");
                     mListToArray.Invoke(list, new object[] { nodeClone });
                 }
                 else {
-                    FieldInfo fiList = node.GetType().GetField("List");
+                    var fiList = node.GetType().GetField("List");
                     if (fiList != null || node is IList) {
-                        Type[] argType = fiList.FieldType.GetGenericArguments();
-                        Type innerType = argType[0];
-                        Type generic = typeof(List<>);
+                        var argType = fiList.FieldType.GetGenericArguments();
+                        var innerType = argType[0];
+                        var generic = typeof(List<>);
                         Type lType = null;
 
                         if (innerType.IsGenericType) {
-                            Type innerListType = GetTemplateType(innerType);
-                            Type g2 = typeof(List<>);
-                            Type i2 = g2.MakeGenericType(innerListType);
+                            var innerListType = GetTemplateType(innerType);
+                            var g2 = typeof(List<>);
+                            var i2 = g2.MakeGenericType(innerListType);
 
                             lType = generic.MakeGenericType(i2);
                         }
@@ -191,13 +191,13 @@ namespace B1SA.HanaTranslator
 
                         nodeClone = Activator.CreateInstance(lType, null);
 
-                        MethodInfo mi = newParrent.GetType().GetMethod(ChildInfo.Setter);
+                        var mi = newParrent.GetType().GetMethod(ChildInfo.Setter);
                         mi.Invoke(newParrent, new object[] { nodeClone });
                     }
                     else {
                         nodeClone = node.Clone();
 
-                        MethodInfo mi = newParrent.GetType().GetMethod(ChildInfo.Setter);
+                        var mi = newParrent.GetType().GetMethod(ChildInfo.Setter);
                         mi.Invoke(newParrent, new object[] { nodeClone });
                     }
                 }
@@ -219,9 +219,9 @@ namespace B1SA.HanaTranslator
         private Type CreateListItemType(Type genericType)
         {
             if (genericType.IsGenericType) {
-                Type generic = typeof(List<>);
-                Type tType = GetTemplateType(genericType);
-                Type finalType = CreateListItemType(tType);
+                var generic = typeof(List<>);
+                var tType = GetTemplateType(genericType);
+                var finalType = CreateListItemType(tType);
 
                 return (finalType == null) ? null : generic.MakeGenericType(finalType);
             }
@@ -234,7 +234,7 @@ namespace B1SA.HanaTranslator
 
         private Type GetTemplateType(Type template)
         {
-            Type[] argType = template.GetGenericArguments();
+            var argType = template.GetGenericArguments();
             return argType[0];
         }
 
@@ -250,7 +250,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PostAction(CreateScalarFunctionStatement node)
         {
-            CreateProcedureStatement newNode = _NewParrent.Peek() as CreateProcedureStatement;
+            var newNode = _NewParrent.Peek() as CreateProcedureStatement;
 
             if (newNode == null) {
                 //some error occured!!!
@@ -268,7 +268,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PostAction(CreateFunctionStatement node)
         {
-            CreateProcedureStatement newNode = _NewParrent.Peek() as CreateProcedureStatement;
+            var newNode = _NewParrent.Peek() as CreateProcedureStatement;
 
             if (newNode == null) {
                 //some error occured!!!
@@ -290,9 +290,9 @@ namespace B1SA.HanaTranslator
             }
 
             if (node.Options != null) {
-                IList<ProcedureOption> toRemove = new List<ProcedureOption>();
-                foreach (ProcedureOption opt in node.Options) {
-                    SimpleProcedureOption spo = opt as SimpleProcedureOption;
+                IList<ProcedureOption> toRemove = [];
+                foreach (var opt in node.Options) {
+                    var spo = opt as SimpleProcedureOption;
 
                     if (spo != null) {
                         if (spo.Type == SimpleProcedureOptionType.Encryption) {
@@ -312,7 +312,7 @@ namespace B1SA.HanaTranslator
                     }
                 }
 
-                foreach (ProcedureOption po in toRemove) {
+                foreach (var po in toRemove) {
                     node.Options.Remove(po);
                 }
             }
@@ -323,8 +323,8 @@ namespace B1SA.HanaTranslator
         virtual public bool Action(DatepartFunctionExpression exp)
         {
             CreateNewExprDelegate create = delegate {
-                string ident = string.Empty;
-                bool needDateConversion = false;
+                var ident = string.Empty;
+                var needDateConversion = false;
                 switch (exp.Part.Name.ToLowerInvariant()) {
                     case "year":
                     case "yyyy":
@@ -360,13 +360,13 @@ namespace B1SA.HanaTranslator
                         // These children should be probably skipped for ScanChildren in ReplaceExpression,
                         // but probably its no harm, as they should be already HANA compliant
 
-                        List<Expression> args = new List<Expression>(new Expression[] { exp.Target });
+                        var args = new List<Expression>(new Expression[] { exp.Target });
                         if (args[0] is StringConstantExpression) {
                             args[0] = new DateFormatExpression(args[0] as StringConstantExpression, DateFormatExpressionType.WithSeparator);
                         }
-                        GenericScalarFunctionExpression dwExp = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, ident), args);
+                        var dwExp = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, ident), args);
 
-                        IntegerConstantExpression oneExp = new IntegerConstantExpression(1);
+                        var oneExp = new IntegerConstantExpression(1);
 
                         return new BinaryAddExpression(dwExp, BinaryAddOperatorType.Plus, oneExp);
                     case "hour":
@@ -391,12 +391,12 @@ namespace B1SA.HanaTranslator
                         break;
                 }
                 if (string.IsNullOrEmpty(ident)) {
-                    HANANotSupportedExpression ns = new HANANotSupportedExpression();
+                    var ns = new HANANotSupportedExpression();
                     ns.AddNote(Note.ERR_MODIFIER, Resources.NO_FUNCTION_DATEPART);
                     return ns;
                 }
                 else {
-                    List<Expression> args = new List<Expression>(new Expression[] { exp.Target });
+                    var args = new List<Expression>(new Expression[] { exp.Target });
                     if (needDateConversion && args[0] is StringConstantExpression) {
                         args[0] = new DateFormatExpression(args[0] as StringConstantExpression, DateFormatExpressionType.WithSeparator);
                     }
@@ -450,7 +450,7 @@ namespace B1SA.HanaTranslator
                         return new SecondFunctionExpression(exp.Target);
                 }
 
-                HANANotSupportedExpression ns = new HANANotSupportedExpression();
+                var ns = new HANANotSupportedExpression();
                 ns.AddNote(Note.ERR_MODIFIER, Resources.NO_FUNCTION_DATENAME);
                 return ns;
             };
@@ -473,8 +473,9 @@ namespace B1SA.HanaTranslator
         virtual public bool Action(CreateTableValuedFunctionStatement stmt)
         {
             CreateNewExprDelegate create = delegate {
-                List<Statement> lst = new List<Statement>();
-                lst.Add(stmt.QueryStatement);
+                var lst = new List<Statement> {
+                    stmt.QueryStatement
+                };
 
                 GrammarNode gn = new CreateProcedureStatement(stmt.Name, -1, stmt.FunctionParams, null, false, lst);
 
@@ -500,7 +501,7 @@ namespace B1SA.HanaTranslator
             }
 
             if (exp is CastFunctionExpression) {
-                DataType dType = (exp as CastFunctionExpression).Type;
+                var dType = (exp as CastFunctionExpression).Type;
 
                 if (dType is SimpleBuiltinDataType) {
                     if ((dType as SimpleBuiltinDataType).Type == SimpleBuiltinDataTypeType.Date || (dType as SimpleBuiltinDataType).Type == SimpleBuiltinDataTypeType.DateTime) {
@@ -518,12 +519,12 @@ namespace B1SA.HanaTranslator
 
         virtual protected GrammarNode ActionDateDiff(GenericScalarFunctionExpression exp)
         {
-            Stringifier str = new Stringifier(config);
-            string identDateDiff = string.Empty;
+            var str = new Stringifier(config);
+            var identDateDiff = string.Empty;
             int div = 1, multi = 1;
             str.Clear();
             (exp.Arguments[0] as DbObjectExpression).Assembly(str);
-            string datePartId = str.Statement.ToLowerInvariant().Replace("\"", "");
+            var datePartId = str.Statement.ToLowerInvariant().Replace("\"", "");
 
             switch (datePartId) {
                 case "year":
@@ -590,12 +591,12 @@ namespace B1SA.HanaTranslator
                     break;
             }
             if (string.IsNullOrEmpty(identDateDiff)) {
-                HANANotSupportedExpression ns = new HANANotSupportedExpression();
+                var ns = new HANANotSupportedExpression();
                 ns.AddNote(Note.ERR_MODIFIER, Resources.NO_FUNCTION_DATEDIFF);
                 return ns;
             }
 
-            List<Expression> args = new List<Expression>();
+            var args = new List<Expression>();
             bool noteFunction = false, noteInteger = false;
             if (exp.Arguments.Count > 1) {
                 args.AddRange(exp.Arguments.Skip(1));
@@ -613,11 +614,11 @@ namespace B1SA.HanaTranslator
                 }
                 if (!ExpressionReturnsDate(args[0])) {
                     args[0] = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_DAYS"),
-                        new List<Expression> { new DateTimeConstantExpression(ZERO_TIMESTAMP), args[0] });
+                        [new DateTimeConstantExpression(ZERO_TIMESTAMP), args[0]]);
                 }
                 if (args.Count > 1 && !ExpressionReturnsDate(args[1])) {
                     args[1] = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_DAYS"),
-                        new List<Expression> { new DateTimeConstantExpression(ZERO_TIMESTAMP), args[1] });
+                        [new DateTimeConstantExpression(ZERO_TIMESTAMP), args[1]]);
                 }
 
                 noteInteger = args[0] is IntegerConstantExpression;
@@ -630,10 +631,10 @@ namespace B1SA.HanaTranslator
             GrammarNode ret = null;
 
             if (identDateDiff.Equals("YEAR")) {
-                GenericScalarFunctionExpression arg1 = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "YEAR"),
-                            new List<Expression> { args[0] });
-                GenericScalarFunctionExpression arg2 = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "YEAR"),
-                            new List<Expression> { args[1] });
+                var arg1 = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "YEAR"),
+                            [args[0]]);
+                var arg2 = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "YEAR"),
+                            [args[1]]);
 
                 ret = new BinaryAddExpression(arg2, BinaryAddOperatorType.Minus, arg1);
             }
@@ -641,10 +642,10 @@ namespace B1SA.HanaTranslator
                 ret = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, identDateDiff), args);
                 if (div > 1) {
                     ret = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "FLOOR"),
-                        new List<Expression> { new MultiplyExpression((Expression) ret, MultiplyOperatorType.Divide, new IntegerConstantExpression(div)) });
+                        [new MultiplyExpression((Expression) ret, MultiplyOperatorType.Divide, new IntegerConstantExpression(div))]);
                 }
                 else if (multi > 1) {
-                    IntegerConstantExpression hundredExp = new IntegerConstantExpression(multi);
+                    var hundredExp = new IntegerConstantExpression(multi);
                     ret = new MultiplyExpression(new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, identDateDiff), args), MultiplyOperatorType.Multiply, hundredExp);
                 }
             }
@@ -660,12 +661,12 @@ namespace B1SA.HanaTranslator
 
         virtual protected GrammarNode ActionDateAdd(GenericScalarFunctionExpression exp)
         {
-            Stringifier str = new Stringifier(config);
-            string identDateAdd = string.Empty;
-            int multi = 1;
+            var str = new Stringifier(config);
+            var identDateAdd = string.Empty;
+            var multi = 1;
 
             (exp.Arguments[0] as DbObjectExpression).Assembly(str);
-            string datePartId = str.Statement.ToLowerInvariant().Replace("\"", "");
+            var datePartId = str.Statement.ToLowerInvariant().Replace("\"", "");
             switch (datePartId) {
                 case "day":
                 case "dd":
@@ -718,12 +719,12 @@ namespace B1SA.HanaTranslator
                     break;
             }
             if (string.IsNullOrEmpty(identDateAdd)) {
-                HANANotSupportedExpression ns = new HANANotSupportedExpression();
+                var ns = new HANANotSupportedExpression();
                 ns.AddNote(Note.ERR_MODIFIER, Resources.NO_FUNCTION_DATEADD);
                 return ns;
             }
             else {
-                List<Expression> args = new List<Expression>();
+                var args = new List<Expression>();
                 bool noteFunction = false, noteInteger = false;
                 if (exp.Arguments.Count > 1) {
                     args.AddRange(exp.Arguments.Skip(1).Reverse());
@@ -738,7 +739,7 @@ namespace B1SA.HanaTranslator
                         }
 
                         args[0] = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_DAYS"),
-                            new List<Expression> { new DateTimeConstantExpression(ZERO_TIMESTAMP), args[0] });
+                            [new DateTimeConstantExpression(ZERO_TIMESTAMP), args[0]]);
                     }
                 }
 
@@ -795,77 +796,77 @@ namespace B1SA.HanaTranslator
                         return new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "LN"), exp.Arguments);
                     case "LOG10":
                         return new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "LOG"),
-                            new List<Expression> { new IntegerConstantExpression(10), exp.Arguments[0] });
+                            [new IntegerConstantExpression(10), exp.Arguments[0]]);
                     case "ISNULL":
                         return new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "IFNULL"), exp.Arguments);
                     case "SPACE":
                         return new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "LPAD"),
-                            new List<Expression> { new StringConstantExpression(new StringLiteral(StringLiteralType.ASCII, " ")), exp.Arguments[0] });
+                            [new StringConstantExpression(new StringLiteral(StringLiteralType.ASCII, " ")), exp.Arguments[0]]);
                     case "SQUARE":
                         return new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "POWER"),
-                            new List<Expression> { exp.Arguments[0], new IntegerConstantExpression(2) });
+                            [exp.Arguments[0], new IntegerConstantExpression(2)]);
                     case "PI":
                         return new DecimalConstantExpression(3.14159265358979m);
                     case "RAND": {
-                        GenericScalarFunctionExpression ns = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "RAND"), null);
+                        var ns = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "RAND"), null);
                         ns.AddNote(Note.MODIFIER, Resources.NO_RAND_WITH_SEED);
                         return ns;
                     }
                     case "RADIANS": {
                         // Rad = Deg * PI / 180
-                        ParensExpression ns = new ParensExpression(new MultiplyExpression(exp.Arguments[0], MultiplyOperatorType.Multiply, new DecimalConstantExpression(0.01745329252m)));
+                        var ns = new ParensExpression(new MultiplyExpression(exp.Arguments[0], MultiplyOperatorType.Multiply, new DecimalConstantExpression(0.01745329252m)));
                         ns.AddNote(Note.MODIFIER, Resources.NO_RAD_DEG_FUNCTIONS);
                         return ns;
                     }
                     case "DEGREES": {
                         // Deg = Rad * 180 / PI
-                        ParensExpression ns = new ParensExpression(new MultiplyExpression(exp.Arguments[0], MultiplyOperatorType.Multiply, new DecimalConstantExpression(57.295779513083m)));
+                        var ns = new ParensExpression(new MultiplyExpression(exp.Arguments[0], MultiplyOperatorType.Multiply, new DecimalConstantExpression(57.295779513083m)));
                         ns.AddNote(Note.MODIFIER, Resources.NO_RAD_DEG_FUNCTIONS);
                         return ns;
                     }
                     case "ATN2":
                         return new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ATAN2"), exp.Arguments);
                     case "ROUND":
-                        List<Expression> argsRound = new List<Expression>(exp.Arguments);
+                        var argsRound = new List<Expression>(exp.Arguments);
                         if (argsRound.Count > 2) {
                             argsRound.RemoveRange(2, argsRound.Count - 2);
                         }
                         return new GenericScalarFunctionExpression(exp.Name, argsRound);
                     case "CHARINDEX":
-                        List<Expression> argsLocate = new List<Expression>(exp.Arguments);
+                        var argsLocate = new List<Expression>(exp.Arguments);
                         if (argsLocate.Count > 2) {
                             argsLocate.RemoveRange(2, argsLocate.Count - 2);
                         }
 
                         //swap order of arguments
-                        Expression tmpExp = argsLocate[0];
+                        var tmpExp = argsLocate[0];
                         argsLocate[0] = argsLocate[1];
                         argsLocate[1] = tmpExp;
 
                         return new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "LOCATE"), argsLocate);
                     case "GROUPING": {
-                        HANANotSupportedExpression ns = new HANANotSupportedExpression();
+                        var ns = new HANANotSupportedExpression();
                         ns.AddNote(Note.ERR_MODIFIER, Resources.NO_FUNCTION_GROUPING);
                         return ns;
                     }
                     case "EOMONTH": {
-                        List<Expression> args = new List<Expression>();
-                        IntegerConstantExpression offset = new IntegerConstantExpression(0);
+                        var args = new List<Expression>();
+                        var offset = new IntegerConstantExpression(0);
 
                         args.Add(new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_MONTHS"),
-                                    new List<Expression> { new DateFormatExpression(exp.Arguments[0] as StringConstantExpression, DateFormatExpressionType.WithoutSeparator) }));
+                                    [new DateFormatExpression(exp.Arguments[0] as StringConstantExpression, DateFormatExpressionType.WithoutSeparator)]));
                         args.Add(new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "- DAYOFMONTH"),
-                                    new List<Expression> { new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_MONTHS"),
-                                        new List<Expression> { new DateFormatExpression(exp.Arguments[0] as StringConstantExpression,DateFormatExpressionType.WithoutSeparator) })}));
+                                    [ new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_MONTHS"),
+                                        [new DateFormatExpression(exp.Arguments[0] as StringConstantExpression,DateFormatExpressionType.WithoutSeparator)])]));
                         if (exp.Arguments.Count > 1 && exp.Arguments[1] is IntegerConstantExpression) {
                             offset = new IntegerConstantExpression((exp.Arguments[1] as IntegerConstantExpression).Value);
                             offset.Value++;
                         }
                         args[0] = (new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_MONTHS"),
-                                new List<Expression> { new DateFormatExpression(exp.Arguments[0] as StringConstantExpression, DateFormatExpressionType.WithoutSeparator), offset }));
+                                [new DateFormatExpression(exp.Arguments[0] as StringConstantExpression, DateFormatExpressionType.WithoutSeparator), offset]));
                         args[1] = (new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "- DAYOFMONTH"),
-                                    new List<Expression> { new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_MONTHS"),
-                                        new List<Expression> { new DateFormatExpression(exp.Arguments[0] as StringConstantExpression, DateFormatExpressionType.WithoutSeparator), offset })}));
+                                    [ new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_MONTHS"),
+                                        [new DateFormatExpression(exp.Arguments[0] as StringConstantExpression, DateFormatExpressionType.WithoutSeparator), offset])]));
 
                         return new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "ADD_DAYS"), args);
                     }
@@ -879,7 +880,7 @@ namespace B1SA.HanaTranslator
         virtual public bool Action(CollationExpression exp)
         {
             CreateNewExprDelegate create = delegate {
-                Expression newExp = (Expression) exp.Expression.Clone();
+                var newExp = (Expression) exp.Expression.Clone();
                 newExp.AddNote(Note.ERR_MODIFIER, Resources.NO_COLLATE_SPECIFICATION);
                 return newExp;
             };
@@ -890,8 +891,9 @@ namespace B1SA.HanaTranslator
         virtual public bool Action(IifFunctionExpression exp)
         {
             CreateNewExprDelegate create = delegate {
-                List<CaseWhenClause> list = new List<CaseWhenClause>();
-                list.Add(new CaseWhenClause(exp.BooleanExpression, exp.TrueExpression));
+                var list = new List<CaseWhenClause> {
+                    new CaseWhenClause(exp.BooleanExpression, exp.TrueExpression)
+                };
                 Expression newExp = new CaseFunctionExpression(null, list, exp.FalseExpression);
                 return newExp;
             };
@@ -901,9 +903,10 @@ namespace B1SA.HanaTranslator
         virtual public bool Action(ChooseFunctionExpression exp)
         {
             CreateNewExprDelegate create = delegate {
-                List<CaseWhenClause> list = new List<CaseWhenClause>();
-                list.Add(new CaseWhenClause(new ComparisonExpression(exp.IndexExpression, ComparisonOperatorType.Equal, new IntegerConstantExpression(1)), exp.FirstMandatoryOption));
-                for (int i = 2; i <= exp.RestOfOptions.Count() + 1; i++) {
+                var list = new List<CaseWhenClause> {
+                    new CaseWhenClause(new ComparisonExpression(exp.IndexExpression, ComparisonOperatorType.Equal, new IntegerConstantExpression(1)), exp.FirstMandatoryOption)
+                };
+                for (var i = 2; i <= exp.RestOfOptions.Count() + 1; i++) {
                     list.Add(new CaseWhenClause(new ComparisonExpression(exp.IndexExpression, ComparisonOperatorType.Equal, new IntegerConstantExpression(i)), exp.RestOfOptions.ElementAt(i - 2)));
                 }
                 Expression newExp = new CaseFunctionExpression(null, list, new NullConstantExpression());
@@ -917,7 +920,7 @@ namespace B1SA.HanaTranslator
             switch (exp.Type) {
                 case SimpleAggregateFunctionType.StDev:
                     CreateNewExprDelegate createHANAStDev = delegate {
-                        SimpleAggregateFunctionExpression newExp = new SimpleAggregateFunctionExpression(
+                        var newExp = new SimpleAggregateFunctionExpression(
                             SimpleAggregateFunctionType.HANAStDev, exp.IsDistinct, exp.Target, exp.OverClause
                             );
                         newExp.AddNote(Note.MODIFIER, Resources.MOD_STDEV_TO_STDDEV);
@@ -931,7 +934,7 @@ namespace B1SA.HanaTranslator
                     goto case SimpleAggregateFunctionType.StDevP;
                 case SimpleAggregateFunctionType.StDevP:
                     CreateNewExprDelegate createHANANotSupp = delegate {
-                        string funcName = string.Empty;
+                        var funcName = string.Empty;
                         switch (exp.Type) {
                             case SimpleAggregateFunctionType.ChecksumAgg:
                                 funcName = "CHECKSUM_AGG";
@@ -943,7 +946,7 @@ namespace B1SA.HanaTranslator
                                 funcName = "VARP";
                                 break;
                         }
-                        HANANotSupportedExpression ns = new HANANotSupportedExpression();
+                        var ns = new HANANotSupportedExpression();
                         ns.AddNote(Note.ERR_MODIFIER, string.Format(Resources.NO_FUNCTION_SIMPLE_AGGR, funcName));
                         return ns;
                     };
@@ -978,7 +981,7 @@ namespace B1SA.HanaTranslator
 
             if (exp is CastFunctionExpression) {
                 if ((exp as CastFunctionExpression).Type is StringWithLengthDataType) {
-                    StringWithLengthDataType sType = (StringWithLengthDataType) (exp as CastFunctionExpression).Type;
+                    var sType = (StringWithLengthDataType) (exp as CastFunctionExpression).Type;
 
                     if (sType.Type == StringWithLengthDataTypeType.Char || sType.Type == StringWithLengthDataTypeType.NChar ||
                         sType.Type == StringWithLengthDataTypeType.VarChar || sType.Type == StringWithLengthDataTypeType.NVarChar) {
@@ -994,10 +997,10 @@ namespace B1SA.HanaTranslator
             }
 
             if (exp is StringConstantExpression) {
-                StringConstantExpression strExp = (StringConstantExpression) exp;
-                string strToTest = strExp.Value.String;
+                var strExp = (StringConstantExpression) exp;
+                var strToTest = strExp.Value.String;
 
-                Match match = Regex.Match(strToTest, @"[-+]?\d+");
+                var match = Regex.Match(strToTest, @"[-+]?\d+");
                 if (match.Success && match.Value.Length == strToTest.Trim().Length) {
                     return false;
                 }
@@ -1006,7 +1009,7 @@ namespace B1SA.HanaTranslator
             }
 
             if (exp is BinaryAddExpression) {
-                BinaryAddExpression bae = (BinaryAddExpression) exp;
+                var bae = (BinaryAddExpression) exp;
                 return bae.Operator == BinaryAddOperatorType.Plus && (ExpressionReturnsString(bae.LeftExpression) || ExpressionReturnsString(bae.RightExpression));
             }
 
@@ -1054,7 +1057,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool Action(RankingFunctionExpression exp)
         {
-            string name = "";
+            var name = "";
             switch (exp.Type) {
                 case RankingFunctionType.Rank:
                     name = "RANK";
@@ -1088,8 +1091,10 @@ namespace B1SA.HanaTranslator
             if (qsp.FromClause == null) {
                 qsp.AddNote(Note.MODIFIER, Resources.WARN_DUMMY_TABLE);
 
-                (_NewParrent.Peek() as QuerySpecification).FromClause = new List<TableSource>();
-                (_NewParrent.Peek() as QuerySpecification).FromClause.Add(new DbObjectTableSource(new DbObject(new Identifier(IdentifierType.Plain, "DUMMY")), null, null, null));
+                (_NewParrent.Peek() as QuerySpecification).FromClause =
+                [
+                    new DbObjectTableSource(new DbObject(new Identifier(IdentifierType.Plain, "DUMMY")), null, null, null),
+                ];
             }
             return true;
         }
@@ -1111,7 +1116,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool Action(DeleteStatement statement)
         {
-            DeleteStatement stmt = _NewParrent.Peek() as DeleteStatement;
+            var stmt = _NewParrent.Peek() as DeleteStatement;
 
             if (statement.FromClause != null) {
                 stmt.AddNote(Note.ERR_MODIFIER, Resources.NO_FROM_CLAUSE);
@@ -1141,7 +1146,7 @@ namespace B1SA.HanaTranslator
         virtual public bool Action(DbObjectTableSource tableSource)
         {
             if (tableSource.Hints != null || tableSource.TableSampleClause != null) {
-                DbObjectTableSource newTable = new DbObjectTableSource(tableSource.DbObject, tableSource.Alias, null, null);
+                var newTable = new DbObjectTableSource(tableSource.DbObject, tableSource.Alias, null, null);
 
                 if (tableSource.Hints != null) {
                     newTable.AddNote(Note.MODIFIER, Resources.NO_TABLE_HINTS);
@@ -1168,7 +1173,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool Action(DeallocateStatement node)
         {
-            DeallocateStatement stmt = _NewParrent.Peek() as DeallocateStatement;
+            var stmt = _NewParrent.Peek() as DeallocateStatement;
             stmt.Hide = true;
             stmt.Terminate = false;
             stmt.AddNote(Note.ERR_MODIFIER, Resources.NO_DEALLOCATE_STATEMENT);
@@ -1181,8 +1186,8 @@ namespace B1SA.HanaTranslator
         {
             CreateNewExprDelegate create = delegate {
                 if (exp.Operator == MultiplyOperatorType.Modulo) {
-                    GenericScalarFunctionExpression ns = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "MOD"),
-                            new List<Expression> { exp.LeftExpression, exp.RightExpression });
+                    var ns = new GenericScalarFunctionExpression(new Identifier(IdentifierType.Plain, "MOD"),
+                            [exp.LeftExpression, exp.RightExpression]);
                     return ns;
                 }
                 return null;
@@ -1215,7 +1220,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PostAction(CreateViewStatement node)
         {
-            CreateViewStatement newNode = (CreateViewStatement) _NewParrent.Peek();
+            var newNode = (CreateViewStatement) _NewParrent.Peek();
 
             if (node.CheckOption) {
                 newNode.CheckOption = false;
@@ -1241,13 +1246,13 @@ namespace B1SA.HanaTranslator
         virtual public bool PostAction(DropViewStatement node)
         {
             if (node.Views.Count > 1) {
-                DropViewStatement newNode = (DropViewStatement) _NewParrent.Peek();
-                IList<DbObject> views = newNode.Views;
+                var newNode = (DropViewStatement) _NewParrent.Peek();
+                var views = newNode.Views;
 
                 //split one drop to several drop statements
-                BlockStatement statement = GetNearestFather();
-                foreach (DbObject view in views) {
-                    DropViewStatement singleDrop = new DropViewStatement(new List<DbObject>() { view });
+                var statement = GetNearestFather();
+                foreach (var view in views) {
+                    var singleDrop = new DropViewStatement([view]);
                     if (view == views.Last()) {
                         singleDrop.AddNote(Note.MODIFIER, Resources.WARN_DROP_VIEW_DIVIDED);
                     }
@@ -1263,14 +1268,14 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PostAction(DropIndexStatement node)
         {
-            DropIndexStatement newNode = (DropIndexStatement) _NewParrent.Peek();
-            IList<DropIndexAction> actions = newNode.Actions;
+            var newNode = (DropIndexStatement) _NewParrent.Peek();
+            var actions = newNode.Actions;
 
             if (actions.Count > 1) {
                 //split insert into several insert statemnts
-                BlockStatement statement = GetNearestFather();
-                foreach (DropIndexAction action in actions) {
-                    DropIndexStatement singleDrop = new DropIndexStatement(new List<DropIndexAction>() { action });
+                var statement = GetNearestFather();
+                foreach (var action in actions) {
+                    var singleDrop = new DropIndexStatement([action]);
                     if (action == actions.Last()) {
                         singleDrop.AddNote(Note.MODIFIER, Resources.WARN_DROP_INDEX_DIVIDED);
                         if (GetNearestProcedure() != null) {
@@ -1310,7 +1315,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PostAction(AlterIndexStatement node)
         {
-            AlterIndexStatement newNode = (AlterIndexStatement) _NewParrent.Peek();
+            var newNode = (AlterIndexStatement) _NewParrent.Peek();
 
             if (node.TableSource != null) {
                 newNode.TableSource = null;
@@ -1337,7 +1342,7 @@ namespace B1SA.HanaTranslator
             }
 
             if (node.Action is RebuildAlterIndexAction) {
-                RebuildAlterIndexAction rebuild = (RebuildAlterIndexAction) newNode.Action;
+                var rebuild = (RebuildAlterIndexAction) newNode.Action;
 
                 if (rebuild.Options != null) {
                     rebuild.AddNote(Note.ERR_MODIFIER, String.Format(Resources.NO_OPTION_ALLOWED_IN_REBUILD, "WITH"));
@@ -1355,7 +1360,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PostAction(UpdateStatement statement)
         {
-            UpdateStatement ret = _NewParrent.Peek() as UpdateStatement;
+            var ret = _NewParrent.Peek() as UpdateStatement;
 
             if (statement.TopClause != null) {
                 ret.AddNote(Note.ERR_MODIFIER, Resources.NO_TOP_CLAUSE);
@@ -1381,14 +1386,14 @@ namespace B1SA.HanaTranslator
         virtual public bool PostAction(DropTableStatement node)
         {
             //divide statement into multiple statements
-            DropTableStatement newNode = (DropTableStatement) _NewParrent.Peek();
-            List<DbObjectTableSource> tableSources = (List<DbObjectTableSource>) newNode.TableSources;
+            var newNode = (DropTableStatement) _NewParrent.Peek();
+            var tableSources = (List<DbObjectTableSource>) newNode.TableSources;
 
             if (tableSources.Count > 1) {
                 //split insert into several insert statemnts
-                BlockStatement statement = GetNearestFather();
-                foreach (DbObjectTableSource tableSource in tableSources) {
-                    DropTableStatement rowStatement = new DropTableStatement(new List<DbObjectTableSource> { (DbObjectTableSource) tableSource.Clone() });
+                var statement = GetNearestFather();
+                foreach (var tableSource in tableSources) {
+                    var rowStatement = new DropTableStatement([(DbObjectTableSource) tableSource.Clone()]);
                     if (tableSource == tableSources.Last()) {
                         rowStatement.AddNote(Note.MODIFIER, Resources.WARN_DROP_DIVIDED);
                     }
@@ -1405,11 +1410,11 @@ namespace B1SA.HanaTranslator
         {
             if ((stmt.QueryExpression is QuerySpecification) &&
                 ((stmt.QueryExpression as QuerySpecification).IntoClause != null)) {
-                SelectStatement newStmt = (_NewParrent.Peek() as SelectStatement);
+                var newStmt = (_NewParrent.Peek() as SelectStatement);
 
-                BlockStatement statement = GetNearestFather();
-                QuerySpecification qsp = (newStmt.QueryExpression as QuerySpecification);
-                CreateTableStatement create = new CreateTableStatement(qsp.IntoClause, false, null, null, null, null, null, qsp);
+                var statement = GetNearestFather();
+                var qsp = (newStmt.QueryExpression as QuerySpecification);
+                var create = new CreateTableStatement(qsp.IntoClause, false, null, null, null, null, null, qsp);
                 statement.AddStatement(create);
 
                 // remove old statement
@@ -1418,10 +1423,10 @@ namespace B1SA.HanaTranslator
             }
             if (stmt.QueryExpression is QuerySpecification) {
                 if ((stmt.QueryExpression as QuerySpecification).SelectClause.SelectItems.Where(s => s is SelectVariableItem).Count() > 0) {
-                    BlockStatement father = GetNearestFather();
-                    SelectStatement oStmt = _NewParrent.Peek() as SelectStatement;
-                    List<SelectVariableItem> list = new List<SelectVariableItem>();
-                    foreach (SelectItem itm in (oStmt.QueryExpression as QuerySpecification).SelectClause.SelectItems.Where(s => s is SelectVariableItem)) {
+                    var father = GetNearestFather();
+                    var oStmt = _NewParrent.Peek() as SelectStatement;
+                    var list = new List<SelectVariableItem>();
+                    foreach (var itm in (oStmt.QueryExpression as QuerySpecification).SelectClause.SelectItems.Where(s => s is SelectVariableItem)) {
                         list.Add(itm as SelectVariableItem);
                     }
                     SelectVariableStatement nStmt;
@@ -1433,7 +1438,7 @@ namespace B1SA.HanaTranslator
                     }
 
                     //remove VariableItems
-                    foreach (SelectVariableItem itm in list) {
+                    foreach (var itm in list) {
                         (oStmt.QueryExpression as QuerySpecification).SelectClause.SelectItems.Remove(itm);
                     }
 
@@ -1472,21 +1477,21 @@ namespace B1SA.HanaTranslator
 
         virtual public bool Action(UseStatement stmt)
         {
-            HANASetSchemaStatement ret = new HANASetSchemaStatement(stmt.Database);
+            var ret = new HANASetSchemaStatement(stmt.Database);
             GetNearestFather().ReplaceStatement(_NewParrent.Peek() as Statement, ret);
             return true;
         }
 
         virtual public bool PostAction(TriggerAction act)
         {
-            List<Statement> toRemove = new List<Statement>();
-            TriggerAction nAct = _NewParrent.Peek() as TriggerAction;
-            foreach (Statement stmt in nAct.Statements.Statements) {
+            var toRemove = new List<Statement>();
+            var nAct = _NewParrent.Peek() as TriggerAction;
+            foreach (var stmt in nAct.Statements.Statements) {
                 if (stmt is SelectStatement) {
                     toRemove.Add(stmt);
                 }
             }
-            foreach (Statement stmt in toRemove) {
+            foreach (var stmt in toRemove) {
                 Statement nStmt = new HANANotSupportSimpleStatementinTriggers();
                 nStmt.AddNote(Note.MODIFIER, Resources.NO_SIMPLE_STATEMENTS_IN_TRIGGERS);
                 nAct.Statements.ReplaceStatement(stmt, nStmt);
@@ -1512,7 +1517,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool Action(InsertStatement statement)
         {
-            InsertStatement ret = _NewParrent.Peek() as InsertStatement;
+            var ret = _NewParrent.Peek() as InsertStatement;
 
             if (statement.TopClause != null) {
                 ret.AddNote(Note.ERR_MODIFIER, Resources.NO_TOP_CLAUSE);
@@ -1525,7 +1530,7 @@ namespace B1SA.HanaTranslator
             }
 
             if (statement.ValuesClause is ValuesClauseExec) {
-                ValuesClauseExec valuesclause = (ValuesClauseExec) statement.ValuesClause;
+                var valuesclause = (ValuesClauseExec) statement.ValuesClause;
                 if (valuesclause.ExecStatement is ExecStatementSP) {
                     ret.InsertTarget.AddNote(Note.ERR_MODIFIER, Resources.NO_EXEC_SP_IN_INSERT);
                     (ret.ValuesClause as ValuesClauseExec).ExecStatement.Terminate = false;
@@ -1543,14 +1548,14 @@ namespace B1SA.HanaTranslator
         {
             //divide statement into multiple statements
             if (node.ValuesClause is ValuesClauseValues) {
-                InsertStatement newNode = (InsertStatement) _NewParrent.Peek();
-                ValuesClauseValues values = (ValuesClauseValues) newNode.ValuesClause;
+                var newNode = (InsertStatement) _NewParrent.Peek();
+                var values = (ValuesClauseValues) newNode.ValuesClause;
 
                 if (values.Values.Count > 1) {
                     //split insert into several insert statemnts
-                    BlockStatement statement = GetNearestFather();
-                    foreach (List<Expression> row in values.Values) {
-                        InsertStatement rowStatement = new InsertStatement(newNode.TopClause, newNode.InsertTarget, newNode.ColumnList, newNode.OutputClause, null);
+                    var statement = GetNearestFather();
+                    foreach (var row in values.Values) {
+                        var rowStatement = new InsertStatement(newNode.TopClause, newNode.InsertTarget, newNode.ColumnList, newNode.OutputClause, null);
                         rowStatement.ValuesClause = new ValuesClauseValues(row);
                         if (row == values.Values.Last()) {
                             rowStatement.AddNote(Note.MODIFIER, Resources.WARN_INSERT_DIVIDED);
@@ -1568,17 +1573,17 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PostAction(CreateTableStatement stmto)
         {
-            CreateTableStatement stmt = _NewParrent.Peek() as CreateTableStatement;
-            List<CreateTableDefinition> toRemove = new List<CreateTableDefinition>();
+            var stmt = _NewParrent.Peek() as CreateTableStatement;
+            var toRemove = new List<CreateTableDefinition>();
             if (stmt.Definitions != null) {
-                foreach (CreateTableDefinition def in stmt.Definitions) {
+                foreach (var def in stmt.Definitions) {
                     if (def is PrimaryKeyTableConstraint) {
-                        BlockStatement father = GetNearestFather();
-                        AlterTableStatement nStmt = new AlterTableStatement(new DbObjectTableSource(stmt.Name, null, null, null),
-                            new AddAlterTableAction(null, new List<CreateTableDefinition>
-                            {
+                        var father = GetNearestFather();
+                        var nStmt = new AlterTableStatement(new DbObjectTableSource(stmt.Name, null, null, null),
+                            new AddAlterTableAction(null,
+                            [
                                 def
-                            }));
+                            ]));
 
                         // Can do that now, because there is no replacement done in Action
                         Action(nStmt.Action as AddAlterTableAction);
@@ -1587,7 +1592,7 @@ namespace B1SA.HanaTranslator
                         toRemove.Add(def);
                     }
                 }
-                foreach (CreateTableDefinition def in toRemove) {
+                foreach (var def in toRemove) {
                     stmt.Definitions.Remove(def);
                 }
             }
@@ -1610,7 +1615,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PreAction(TryStatement stmt)
         {
-            CreateAlterProcedureStatement proc = GetNearestProcedure();
+            var proc = GetNearestProcedure();
             if (proc != null) {
                 GetNearestFather().RemoveStatement(_NewParrent.Peek() as Statement);
                 proc.Statements.AddStatement(_NewParrent.Peek() as Statement);
@@ -1644,7 +1649,7 @@ namespace B1SA.HanaTranslator
         virtual public bool PostAction(DeclareStatement stmt)
         {
             BlockStatement statement;
-            CreateAlterProcedureStatement proc = GetNearestProcedure();
+            var proc = GetNearestProcedure();
             if (proc != null) {
                 statement = proc.Declarations;
                 proc.Declarations.AddStatement(_NewParrent.Peek() as Statement);
@@ -1661,22 +1666,23 @@ namespace B1SA.HanaTranslator
 
             if (stmt.Declarations.Count > 1) {
                 //split insert into several insert statemnts
-                foreach (VariableDeclaration decl in stmt.Declarations) {
+                foreach (var decl in stmt.Declarations) {
                     if (decl is TableVariableDeclaration) {
-                        TableVariableDeclaration dec = decl as TableVariableDeclaration;
-                        CreateTableTypeStatement stmtCT = new CreateTableTypeStatement(new DbObject(new Identifier(IdentifierType.Plain, dec.Variable.Value + "_TYPE")), dec.Definition);
+                        var dec = decl as TableVariableDeclaration;
+                        var stmtCT = new CreateTableTypeStatement(new DbObject(new Identifier(IdentifierType.Plain, dec.Variable.Value + "_TYPE")), dec.Definition);
                         statement.AddStatement(stmtCT);
                     }
-                    List<VariableDeclaration> list = new List<VariableDeclaration>();
-                    list.Add(decl);
-                    DeclareStatement nStmt = new DeclareStatement(list);
+                    var list = new List<VariableDeclaration> {
+                        decl
+                    };
+                    var nStmt = new DeclareStatement(list);
                     statement.AddStatement(nStmt);
                 }
                 statement.RemoveStatement(_NewParrent.Peek() as Statement);
             }
             else if (stmt.Declarations[0] is TableVariableDeclaration) {
-                TableVariableDeclaration dec = stmt.Declarations[0] as TableVariableDeclaration;
-                CreateTableTypeStatement stmtCT = new CreateTableTypeStatement(new DbObject(new Identifier(IdentifierType.Plain, dec.Variable.Value + "_TYPE")), dec.Definition);
+                var dec = stmt.Declarations[0] as TableVariableDeclaration;
+                var stmtCT = new CreateTableTypeStatement(new DbObject(new Identifier(IdentifierType.Plain, dec.Variable.Value + "_TYPE")), dec.Definition);
                 statement.InsertBefore(_NewParrent.Peek() as Statement, stmtCT);
             }
             else if (stmt.Declarations[0] is CursorVariableDeclaration) {
@@ -1718,8 +1724,8 @@ namespace B1SA.HanaTranslator
 
         virtual public bool Action(SetSpecialStatement stmt)
         {
-            string settingName = stmt.Type.ToString();
-            string msg = Resources.NO_TSQL_SETTINGS_SUPPORTED;
+            var settingName = stmt.Type.ToString();
+            var msg = Resources.NO_TSQL_SETTINGS_SUPPORTED;
 
             if (stmt.Type >= SetOptionType.ANSI_WARNINGS && stmt.Type <= SetOptionType.XACT_ABORT) {
                 msg = String.Format(Resources.NO_SETTING_SUPPORTED, stmt.Type.ToString());
@@ -1743,10 +1749,10 @@ namespace B1SA.HanaTranslator
             if (stmt.Variable != null)
                 stmt.Variable.IsArgument = false;
 
-            CreateAlterProcedureStatement proc = GetNearestProcedure();
+            var proc = GetNearestProcedure();
 
             if (proc != null && stmt.Variable != null) {
-                foreach (ProcedureParameter param in proc.Parameters) {
+                foreach (var param in proc.Parameters) {
                     if (param is DataTypeProcedureParameter) {
                         if ((param as DataTypeProcedureParameter).Name == stmt.Variable.Value) {
                             (param as DataTypeProcedureParameter).InOut = true;
@@ -1761,7 +1767,7 @@ namespace B1SA.HanaTranslator
         virtual public bool PostAction(SetStatement stmt)
         {
             if (stmt.Expression is SubqueryExpression) {
-                SelectVariableStatement nStmt = new SelectVariableStatement(new List<SelectVariableItem> { new SelectVariableItem(stmt.Variable, stmt.Operator, stmt.Expression) });
+                var nStmt = new SelectVariableStatement([new SelectVariableItem(stmt.Variable, stmt.Operator, stmt.Expression)]);
                 GetNearestFather().ReplaceStatement(_NewParrent.Peek() as Statement, nStmt);
             }
 
@@ -1786,61 +1792,61 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PreAction(IfStatement stmt)
         {
-            CreateAlterProcedureStatement proc = GetNearestProcedure();
+            var proc = GetNearestProcedure();
 
             if (stmt.Condition is ComparisonExpression) {
                 if ((stmt.Condition as ComparisonExpression).LeftExpression is SubqueryExpression) {
-                    BlockStatement statement = GetNearestFather();
-                    string variableName = VarPool.GetNewVariableName();
-                    VariableExpression vExp = new VariableExpression(variableName);
+                    var statement = GetNearestFather();
+                    var variableName = VarPool.GetNewVariableName();
+                    var vExp = new VariableExpression(variableName);
                     vExp.IsArgument = false;
-                    ScalarVariableDeclaration dec = new ScalarVariableDeclaration(vExp, new SimpleBuiltinDataType(SimpleBuiltinDataTypeType.Int), null);
-                    DeclareStatement decStmt = new DeclareStatement(new List<VariableDeclaration> { dec as VariableDeclaration });
+                    var dec = new ScalarVariableDeclaration(vExp, new SimpleBuiltinDataType(SimpleBuiltinDataTypeType.Int), null);
+                    var decStmt = new DeclareStatement([dec as VariableDeclaration]);
                     if (proc != null) {
                         proc.Declarations.AddStatement(decStmt);
                     }
                     else {
                         statement.InsertBefore((_NewParrent.Peek() as Statement), decStmt);
                     }
-                    VariableExpression vExp2 = new VariableExpression(variableName);
-                    SelectVariableItem item = new SelectVariableItem(vExp, AssignmentType.Assign, (stmt.Condition as ComparisonExpression).LeftExpression);
-                    SelectVariableStatement sStmt = new SelectVariableStatement(new List<SelectVariableItem> { item });
+                    var vExp2 = new VariableExpression(variableName);
+                    var item = new SelectVariableItem(vExp, AssignmentType.Assign, (stmt.Condition as ComparisonExpression).LeftExpression);
+                    var sStmt = new SelectVariableStatement([item]);
                     statement.InsertBefore((_NewParrent.Peek() as Statement), sStmt);
                     (stmt.Condition as ComparisonExpression).LeftExpression = vExp2;
                 }
             }
             else if (stmt.Condition is ExistsExpression) {
-                string variableName = VarPool.GetNewVariableName();
-                VariableExpression var1 = new VariableExpression(variableName);
+                var variableName = VarPool.GetNewVariableName();
+                var var1 = new VariableExpression(variableName);
                 var1.IsArgument = false;
-                DeclareStatement decStmt = new DeclareStatement(new List<VariableDeclaration> { new ScalarVariableDeclaration(var1, new SimpleBuiltinDataType(SimpleBuiltinDataTypeType.Int), null) });
+                var decStmt = new DeclareStatement([new ScalarVariableDeclaration(var1, new SimpleBuiltinDataType(SimpleBuiltinDataTypeType.Int), null)]);
                 if (proc != null) {
                     proc.Declarations.AddStatement(decStmt);
                 }
                 else {
                     GetNearestFather().InsertBefore((_NewParrent.Peek() as Statement), decStmt);
                 }
-                SelectStatement select = new SelectStatement((stmt.Condition as ExistsExpression).Query, null, ForClauseType.None, null);
-                SubqueryExpression sub = new SubqueryExpression(select);
-                SelectVariableStatement nStmt = new SelectVariableStatement(new List<SelectVariableItem> { new SelectVariableItem(var1, AssignmentType.Assign, sub) });
+                var select = new SelectStatement((stmt.Condition as ExistsExpression).Query, null, ForClauseType.None, null);
+                var sub = new SubqueryExpression(select);
+                var nStmt = new SelectVariableStatement([new SelectVariableItem(var1, AssignmentType.Assign, sub)]);
                 GetNearestFather().InsertBefore(_NewParrent.Peek() as Statement, nStmt);
-                VariableExpression var2 = new VariableExpression(variableName);
+                var var2 = new VariableExpression(variableName);
                 stmt.Condition = new ComparisonExpression(var2, ComparisonOperatorType.GreaterThan, new IntegerConstantExpression(0));
             }
             else if (stmt.Condition is IsNullExpression) {
-                string variableName = VarPool.GetNewVariableName();
-                VariableExpression var1 = new VariableExpression(variableName);
+                var variableName = VarPool.GetNewVariableName();
+                var var1 = new VariableExpression(variableName);
                 var1.IsArgument = false;
-                DeclareStatement decStmt = new DeclareStatement(new List<VariableDeclaration> { new ScalarVariableDeclaration(var1, new SimpleBuiltinDataType(SimpleBuiltinDataTypeType.Int), null) });
+                var decStmt = new DeclareStatement([new ScalarVariableDeclaration(var1, new SimpleBuiltinDataType(SimpleBuiltinDataTypeType.Int), null)]);
                 if (proc != null) {
                     proc.Declarations.AddStatement(decStmt);
                 }
                 else {
                     GetNearestFather().InsertBefore((_NewParrent.Peek() as Statement), decStmt);
                 }
-                SelectVariableStatement nStmt = new SelectVariableStatement(new List<SelectVariableItem> { new SelectVariableItem(var1, AssignmentType.Assign, (stmt.Condition as IsNullExpression).Target) });
+                var nStmt = new SelectVariableStatement([new SelectVariableItem(var1, AssignmentType.Assign, (stmt.Condition as IsNullExpression).Target)]);
                 GetNearestFather().InsertBefore(_NewParrent.Peek() as Statement, nStmt);
-                VariableExpression var2 = new VariableExpression(variableName);
+                var var2 = new VariableExpression(variableName);
                 (stmt.Condition as IsNullExpression).Target = var2;
             }
             return false;
@@ -1849,15 +1855,15 @@ namespace B1SA.HanaTranslator
         virtual public bool PostAction(AlterTableStatement stmt)
         {
             if (stmt.Action is AddAlterTableAction) {
-                AlterTableStatement alterStmt = (_NewParrent.Peek() as AlterTableStatement);
-                AddAlterTableAction act = (alterStmt.Action as AddAlterTableAction);
+                var alterStmt = (_NewParrent.Peek() as AlterTableStatement);
+                var act = (alterStmt.Action as AddAlterTableAction);
                 if (act.Definitions.Count > 1) {
-                    List<CreateTableDefinition> toRemove = new List<CreateTableDefinition>();
-                    foreach (CreateTableDefinition def in act.Definitions) {
+                    var toRemove = new List<CreateTableDefinition>();
+                    foreach (var def in act.Definitions) {
                         if (def is PrimaryKeyTableConstraint) {
-                            BlockStatement father = GetNearestFather();
-                            AlterTableStatement nStmt = new AlterTableStatement(alterStmt.TableSource,
-                                new AddAlterTableAction(act.WithCheck, new List<CreateTableDefinition> { def }));
+                            var father = GetNearestFather();
+                            var nStmt = new AlterTableStatement(alterStmt.TableSource,
+                                new AddAlterTableAction(act.WithCheck, [def]));
 
                             // Can do that now, because there is no replacement done in Action
                             Action(nStmt.Action as AddAlterTableAction);
@@ -1866,27 +1872,27 @@ namespace B1SA.HanaTranslator
                             toRemove.Add(def);
                         }
                     }
-                    foreach (CreateTableDefinition def in toRemove) {
+                    foreach (var def in toRemove) {
                         (alterStmt.Action as AddAlterTableAction).Definitions.Remove(def);
                     }
                 }
             }
             if (stmt.Action is DropAlterTableAction) {
-                AlterTableStatement alterStmt = (_NewParrent.Peek() as AlterTableStatement);
-                DropAlterTableAction act = (alterStmt.Action as DropAlterTableAction);
+                var alterStmt = (_NewParrent.Peek() as AlterTableStatement);
+                var act = (alterStmt.Action as DropAlterTableAction);
                 if (act.Definitions.Count > 1) {
-                    List<DropAlterTableDefinition> toRemove = new List<DropAlterTableDefinition>();
-                    foreach (DropAlterTableDefinition def in act.Definitions) {
+                    var toRemove = new List<DropAlterTableDefinition>();
+                    foreach (var def in act.Definitions) {
                         if (def is DropConstraintAlterTableDefinition) {
-                            BlockStatement father = GetNearestFather();
+                            var father = GetNearestFather();
                             Statement nStmt = new AlterTableStatement(alterStmt.TableSource,
-                                new DropAlterTableAction(new List<DropAlterTableDefinition> { def }));
+                                new DropAlterTableAction([def]));
                             father.AddStatement(nStmt);
                             toRemove.Add(def);
                         }
                     }
 
-                    foreach (DropAlterTableDefinition def in toRemove) {
+                    foreach (var def in toRemove) {
                         (alterStmt.Action as DropAlterTableAction).Definitions.Remove(def);
                     }
                 }
@@ -1897,10 +1903,10 @@ namespace B1SA.HanaTranslator
         virtual public bool Action(OrderedColumn col)
         {
             if (col.Direction != OrderDirection.Nothing) {
-                foreach (object o in _OldParrent) {
+                foreach (var o in _OldParrent) {
                     if (o is PrimaryKeyTableConstraint) {
                         CreateNewExprDelegate create = delegate {
-                            OrderedColumn newCol = new OrderedColumn(col.Name, OrderDirection.Nothing);
+                            var newCol = new OrderedColumn(col.Name, OrderDirection.Nothing);
                             newCol.AddNote(Note.MODIFIER, Resources.NO_DESC_FOR_INDEX);
                             return newCol;
                         };
@@ -1914,7 +1920,7 @@ namespace B1SA.HanaTranslator
 
         virtual public bool PostAction(TableConstraint constraint)
         {
-            PrimaryKeyTableConstraint var = _NewParrent.Peek() as PrimaryKeyTableConstraint;
+            var var = _NewParrent.Peek() as PrimaryKeyTableConstraint;
             if (var != null) {
                 if (var.IndexOptions != null) {
                     var.AddNote(Note.MODIFIER, String.Format(Resources.NO_PRIMARY_KEY_TABLE_CONSTRAINT, "WITH clause"));
@@ -1988,22 +1994,22 @@ namespace B1SA.HanaTranslator
             return ReplaceWithHANANotSupportedAlterTableAction(exp, Resources.NO_FILETABLE_CLAUSE);
         }
 
-        bool ReplaceWithHANANotSupportedAlterTableAction(AlterTableAction exp, string note)
+        private bool ReplaceWithHANANotSupportedAlterTableAction(AlterTableAction exp, string note)
         {
             return ReplaceWithEmptyNode(exp, "HANANotSupportedAlterTableAction", Note.MODIFIER, note);
         }
 
-        bool ReplaceWithHANANotSupportedOuputClause(OutputClause outcls, string note)
+        private bool ReplaceWithHANANotSupportedOuputClause(OutputClause outcls, string note)
         {
             return ReplaceWithEmptyNode(outcls, "HANANotSupportedOutputClause", Note.MODIFIER, note);
         }
 
-        bool ReplaceWithHANANotSupportedExecStatementSP(RecompileExecOption execopt, string note)
+        private bool ReplaceWithHANANotSupportedExecStatementSP(RecompileExecOption execopt, string note)
         {
             return ReplaceWithEmptyNode(execopt, "HANANotSupportedExecStatementSP", Note.MODIFIER, note);
         }
 
-        bool ReplaceWithHANANotSupportedAlterProcedureStatement(AlterProcedureStatement alterprocstmt, string note)
+        private bool ReplaceWithHANANotSupportedAlterProcedureStatement(AlterProcedureStatement alterprocstmt, string note)
         {
             return ReplaceWithEmptyNode(alterprocstmt, "HANANotSupportedAlterProcedureStatement", Note.MODIFIER, note);
         }
@@ -2041,18 +2047,18 @@ namespace B1SA.HanaTranslator
             return Action(exp as AlterTableAction);
         }
 
-        bool ReplaceWithEmptyNode(GrammarNode oldNode, string newNodeType, string noteType, string note)
+        private bool ReplaceWithEmptyNode(GrammarNode oldNode, string newNodeType, string noteType, string note)
         {
-            GrammarNode newNode = (GrammarNode) System.Activator.CreateInstance(Type.GetType("Translator." + newNodeType));
+            var newNode = (GrammarNode) System.Activator.CreateInstance(Type.GetType("Translator." + newNodeType));
             newNode.AddNote(noteType, note);
 
             ReplaceNode(newNode);
             return false;
         }
 
-        bool CreateNewExpression(CreateNewExprDelegate create, GrammarNode oldExp)
+        private bool CreateNewExpression(CreateNewExprDelegate create, GrammarNode oldExp)
         {
-            GrammarNode newExpr = create();
+            var newExpr = create();
             if (newExpr != null) {
                 ReplaceNode(newExpr);
                 return false;
@@ -2063,24 +2069,24 @@ namespace B1SA.HanaTranslator
             }
         }
 
-        void ReplaceNode(GrammarNode newExpr)
+        private void ReplaceNode(GrammarNode newExpr)
         {
             if (_NewParrent.Count >= 2) {
                 // Our new parrent is 2 pops away
-                object currParrent = _NewParrent.Count > 0 ? _NewParrent.Pop() : null;
-                object newParrent = _NewParrent.Peek();
+                var currParrent = _NewParrent.Count > 0 ? _NewParrent.Pop() : null;
+                var newParrent = _NewParrent.Peek();
 
                 // Replace expression
                 if (newParrent is IList) {
                     // If list, old node must be replaced
-                    IList list = newParrent as IList;
-                    int idx = list.IndexOf(currParrent);
+                    var list = newParrent as IList;
+                    var idx = list.IndexOf(currParrent);
 
                     //list[ChildInfo.Index] = newExpr;
                     list[idx] = newExpr;
                 }
                 else {
-                    MethodInfo mi = newParrent.GetType().GetMethod(ChildInfo.Setter);
+                    var mi = newParrent.GetType().GetMethod(ChildInfo.Setter);
                     mi.Invoke(newParrent, new object[] { newExpr });
                 }
 

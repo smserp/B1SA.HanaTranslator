@@ -2,13 +2,13 @@ namespace B1SA.HanaTranslator
 {
     public class NotesScanner : Scanner
     {
-        private Dictionary<string, int> info = new Dictionary<string, int>();
+        private Dictionary<string, int> info = [];
         private String[] Filter = null;
         private bool WriteNotes = true;
         public TextWriter Writer = null;
         public List<string> List = null;
-        Stack<object> _Stack = new Stack<object>();
-        Statement RootStatement = null;
+        private Stack<object> _Stack = new Stack<object>();
+        private Statement RootStatement = null;
 
         public NotesScanner(TextWriter writer)
         {
@@ -29,7 +29,7 @@ namespace B1SA.HanaTranslator
 
         private bool IsInFilter(string id)
         {
-            bool ret = true;
+            var ret = true;
             if (Filter.Length > 0) {
                 ret = Array.IndexOf(Filter, id) > -1;
             }
@@ -58,7 +58,7 @@ namespace B1SA.HanaTranslator
                 //infoWritter.WriteLine("No notes/warnings/errors reported to translation of this statements.");
             }
             else {
-                foreach (KeyValuePair<string, int> pair in info) {
+                foreach (var pair in info) {
                     if (IsInFilter(pair.Key)) {
                         if (messages.ContainsKey(pair.Key)) {
                             infoWritter.WriteLine("{0} {1}", messages[pair.Key], pair.Value);
@@ -80,9 +80,9 @@ namespace B1SA.HanaTranslator
             return 0;
         }
 
-        Statement GetNearestStatement()
+        private Statement GetNearestStatement()
         {
-            foreach (object obj in _Stack) {
+            foreach (var obj in _Stack) {
                 if (obj is Statement && (obj as Statement).Terminate)
                     return obj as Statement;
             }
@@ -101,7 +101,7 @@ namespace B1SA.HanaTranslator
 
         public override bool Action(GrammarNode node)
         {
-            foreach (Note note in node.TranslationNotes) {
+            foreach (var note in node.TranslationNotes) {
                 if (IsInFilter(note.ID)) {
                     if (info.ContainsKey(note.ID)) {
                         info[note.ID] += 1;

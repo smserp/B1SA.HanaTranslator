@@ -4,7 +4,7 @@ namespace B1SA.HanaTranslator
     {
         public const string FLAG_HANA_CONCAT = "HANAConcat";
 
-        private HashSet<string> flags = new HashSet<string>();
+        private HashSet<string> flags = [];
 
         abstract public void Clear();
 

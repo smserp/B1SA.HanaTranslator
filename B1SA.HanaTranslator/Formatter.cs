@@ -25,8 +25,8 @@ namespace B1SA.HanaTranslator
         {
             if (statement.Length - statement.LastIndexOf(Environment.NewLine) + toAppend.Length > MAX_LINE_LENGTH) {
                 if (lastBreakable > 0) {
-                    string tmp = Environment.NewLine;
-                    for (int i = 0; i < indentationLevel; i++) {
+                    var tmp = Environment.NewLine;
+                    for (var i = 0; i < indentationLevel; i++) {
                         tmp += INDENTATION;
                     }
                     statement = statement.Insert(lastBreakable, tmp);
@@ -41,8 +41,8 @@ namespace B1SA.HanaTranslator
 
         private string GetIndentationString()
         {
-            string ret = string.Empty;
-            for (int i = 0; i < indentationLevel; i++) {
+            var ret = string.Empty;
+            for (var i = 0; i < indentationLevel; i++) {
                 ret += INDENTATION;
             }
             return ret;
@@ -116,7 +116,7 @@ namespace B1SA.HanaTranslator
                 if (notes.EndsWith(Environment.NewLine)) {
                     notes = notes.TrimEnd();
                 }
-                string newStr = Environment.NewLine + GetIndentationString();
+                var newStr = Environment.NewLine + GetIndentationString();
                 notes = notes.Replace(Environment.NewLine, newStr);
                 statement += notes;
             }
@@ -124,7 +124,7 @@ namespace B1SA.HanaTranslator
 
         override public void Add(Statement stmt)
         {
-            string notes = string.Empty;
+            var notes = string.Empty;
             stmt.Assembly(this);
             if (stmt.Terminate) {
                 if (!stmt.Hide)
@@ -152,8 +152,8 @@ namespace B1SA.HanaTranslator
 
         override public void HandleComments(GrammarNode node)
         {
-            foreach (Comment comment in node.Comments) {
-                bool isMultiline = false;
+            foreach (var comment in node.Comments) {
+                var isMultiline = false;
                 if (comment.NewLine) {
                     NewLine();
                 }

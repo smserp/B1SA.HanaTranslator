@@ -1,35 +1,3 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime
 {
     /** <summary>
@@ -41,24 +9,24 @@ namespace Antlr.Runtime
      *  new strings.
      *  </summary>
      */
-    [System.Serializable]
+    [Serializable]
     public class ClassicToken : IToken
     {
-        string text;
-        int type;
-        int line;
-        int charPositionInLine;
-        int channel = TokenChannels.Default;
+        private string text;
+        private int type;
+        private int line;
+        private int charPositionInLine;
+        private int channel = TokenChannels.Default;
 
         /** <summary>What token number is this from 0..n-1 tokens</summary> */
-        int index;
+        private int index;
 
-        public ClassicToken( int type )
+        public ClassicToken(int type)
         {
             this.type = type;
         }
 
-        public ClassicToken( IToken oldToken )
+        public ClassicToken(IToken oldToken)
         {
             text = oldToken.Text;
             type = oldToken.Type;
@@ -67,13 +35,13 @@ namespace Antlr.Runtime
             channel = oldToken.Channel;
         }
 
-        public ClassicToken( int type, string text )
+        public ClassicToken(int type, string text)
         {
             this.type = type;
             this.text = text;
         }
 
-        public ClassicToken( int type, string text, int channel )
+        public ClassicToken(int type, string text, int channel)
         {
             this.type = type;
             this.text = text;
@@ -81,108 +49,81 @@ namespace Antlr.Runtime
         }
 
         #region IToken Members
-        public string Text
-        {
-            get
-            {
+        public string Text {
+            get {
                 return text;
             }
-            set
-            {
+            set {
                 text = value;
             }
         }
 
-        public int Type
-        {
-            get
-            {
+        public int Type {
+            get {
                 return type;
             }
-            set
-            {
+            set {
                 type = value;
             }
         }
 
-        public int Line
-        {
-            get
-            {
+        public int Line {
+            get {
                 return line;
             }
-            set
-            {
+            set {
                 line = value;
             }
         }
 
-        public int CharPositionInLine
-        {
-            get
-            {
+        public int CharPositionInLine {
+            get {
                 return charPositionInLine;
             }
-            set
-            {
+            set {
                 charPositionInLine = value;
             }
         }
 
-        public int Channel
-        {
-            get
-            {
+        public int Channel {
+            get {
                 return channel;
             }
-            set
-            {
+            set {
                 channel = value;
             }
         }
 
-        public int StartIndex
-        {
-            get
-            {
+        public int StartIndex {
+            get {
                 return -1;
             }
-            set
-            {
+            set {
             }
         }
 
-        public int StopIndex
-        {
-            get
-            {
+        public int StopIndex {
+            get {
                 return -1;
             }
-            set
-            {
+            set {
             }
         }
 
-        public int TokenIndex
-        {
-            get
-            {
+        public int TokenIndex {
+            get {
                 return index;
             }
-            set
-            {
+            set {
                 index = value;
             }
         }
 
-        public ICharStream InputStream
-        {
-            get
-            {
+        public ICharStream InputStream {
+            get {
                 return null;
             }
-            set
-            {
+            set {
             }
         }
 
@@ -190,20 +131,17 @@ namespace Antlr.Runtime
 
         public override string ToString()
         {
-            string channelStr = "";
-            if ( channel > 0 )
-            {
+            var channelStr = "";
+            if (channel > 0) {
                 channelStr = ",channel=" + channel;
             }
-            string txt = Text;
-            if ( txt != null )
-            {
-                txt = txt.Replace( "\n", "\\\\n" );
-                txt = txt.Replace( "\r", "\\\\r" );
-                txt = txt.Replace( "\t", "\\\\t" );
+            var txt = Text;
+            if (txt != null) {
+                txt = txt.Replace("\n", "\\\\n");
+                txt = txt.Replace("\r", "\\\\r");
+                txt = txt.Replace("\t", "\\\\t");
             }
-            else
-            {
+            else {
                 txt = "<no text>";
             }
             return "[@" + TokenIndex + ",'" + txt + "',<" + type + ">" + channelStr + "," + line + ":" + CharPositionInLine + "]";

@@ -1,14 +1,13 @@
 namespace B1SA.HanaTranslator
 {
-    class IdentifierTokenizer : TokenHandler
+    internal class IdentifierTokenizer : TokenHandler
     {
         static new public string TokenName()
         {
             return "IdToken";
         }
 
-        public IdentifierTokenizer()
-            : base()
+        public IdentifierTokenizer()            : base()
         {
             // empty
         }

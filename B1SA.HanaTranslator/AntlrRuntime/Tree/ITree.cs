@@ -1,35 +1,3 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime.Tree
 {
     using System.Collections.Generic;
@@ -51,26 +19,24 @@ namespace Antlr.Runtime.Tree
     public interface ITree
     {
 
-        ITree GetChild( int i );
+        ITree GetChild(int i);
 
-        int ChildCount
-        {
+        int ChildCount {
             get;
         }
 
         // Tree tracks parent and child index now > 3.0
 
-        ITree Parent
-        {
+        ITree Parent {
             get;
             set;
         }
 
         /** <summary>Is there is a node above with token type ttype?</summary> */
-        bool HasAncestor( int ttype );
+        bool HasAncestor(int ttype);
 
         /** <summary>Walk upwards and get first ancestor with this token type.</summary> */
-        ITree GetAncestor( int ttype );
+        ITree GetAncestor(int ttype);
 
         /** <summary>
          *  Return a list of all ancestors of this node.  The first node of
@@ -80,8 +46,7 @@ namespace Antlr.Runtime.Tree
         IList<ITree> GetAncestors();
 
         /** <summary>This node is what child index? 0..n-1</summary> */
-        int ChildIndex
-        {
+        int ChildIndex {
             get;
             set;
         }
@@ -94,12 +59,12 @@ namespace Antlr.Runtime.Tree
          *  is nil, add all children of t to this' children.
          *  </summary>
          */
-        void AddChild( ITree t );
+        void AddChild(ITree t);
 
         /** <summary>Set ith child (0..n-1) to t; t must be non-null and non-nil node</summary> */
-        void SetChild( int i, ITree t );
+        void SetChild(int i, ITree t);
 
-        object DeleteChild( int i );
+        object DeleteChild(int i);
 
         /** <summary>
          *  Delete children from start to stop and replace with t even if t is
@@ -108,15 +73,14 @@ namespace Antlr.Runtime.Tree
          *  children to set their childindex; could be slow.
          *  </summary>
          */
-        void ReplaceChildren( int startChildIndex, int stopChildIndex, object t );
+        void ReplaceChildren(int startChildIndex, int stopChildIndex, object t);
 
         /** <summary>
          *  Indicates the node is a nil node but may still have children, meaning
          *  the tree is a flat list.
          *  </summary>
          */
-        bool IsNil
-        {
+        bool IsNil {
             get;
         }
 
@@ -125,8 +89,7 @@ namespace Antlr.Runtime.Tree
          *  and its children?
          *  </summary>
          */
-        int TokenStartIndex
-        {
+        int TokenStartIndex {
             get;
             set;
         }
@@ -136,8 +99,7 @@ namespace Antlr.Runtime.Tree
          *  and its children?
          *  </summary>
          */
-        int TokenStopIndex
-        {
+        int TokenStopIndex {
             get;
             set;
         }
@@ -145,24 +107,20 @@ namespace Antlr.Runtime.Tree
         ITree DupNode();
 
         /** <summary>Return a token type; needed for tree parsing</summary> */
-        int Type
-        {
+        int Type {
             get;
         }
 
-        string Text
-        {
+        string Text {
             get;
         }
 
         /** <summary>In case we don't have a token payload, what is the line for errors?</summary> */
-        int Line
-        {
+        int Line {
             get;
         }
 
-        int CharPositionInLine
-        {
+        int CharPositionInLine {
             get;
         }
 

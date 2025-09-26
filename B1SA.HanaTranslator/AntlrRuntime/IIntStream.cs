@@ -1,35 +1,3 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime
 {
 
@@ -49,7 +17,7 @@ namespace Antlr.Runtime
          *  yield -1, invalid char / EOF.
          *  </summary>
          */
-        int LA( int i );
+        int LA(int i);
 
         /** <summary>
          *  Tell the stream to start buffering if it hasn't already.  Return
@@ -68,8 +36,7 @@ namespace Antlr.Runtime
          *  read not the most recently read symbol.
          *  </summary>
          */
-        int Index
-        {
+        int Index {
             get;
         }
 
@@ -83,7 +50,7 @@ namespace Antlr.Runtime
          *  was created.
          *  </summary>
          */
-        void Rewind( int marker );
+        void Rewind(int marker);
 
         /** <summary>
          *  Rewind to the input position of the last marker.
@@ -108,7 +75,7 @@ namespace Antlr.Runtime
          *  you have to release resources for depths 2..5.
          *  </summary>
          */
-        void Release( int marker );
+        void Release(int marker);
 
         /** <summary>
          *  Set the input cursor to the position indicated by index.  This is
@@ -134,7 +101,7 @@ namespace Antlr.Runtime
          *  first element in the stream. 
          *  </remarks>
          */
-        void Seek( int index );
+        void Seek(int index);
 
         /** <summary>
          *  Only makes sense for streams that buffer everything up probably, but
@@ -142,8 +109,7 @@ namespace Antlr.Runtime
          *  value includes a single EOF.
          *  </summary>
          */
-        int Count
-        {
+        int Count {
             get;
         }
 
@@ -153,8 +119,7 @@ namespace Antlr.Runtime
          *  for the file name or whatever.
          *  </summary>
          */
-        string SourceName
-        {
+        string SourceName {
             get;
         }
     }

@@ -40,7 +40,7 @@ namespace B1SA.HanaTranslator
     public abstract class GrammarNode : ICloneable
     {
         private IList<KeyValuePair<GrammarNode, GrammarNodeInfo>> childrenList = null;
-        public List<Note> TranslationNotes = new List<Note>();
+        public List<Note> TranslationNotes = [];
 
         // Last created grammar node. This is used to add SQL comments to the most recently parsed grammar node.
         public static GrammarNode LastGrammarNode { get; private set; }
@@ -53,7 +53,7 @@ namespace B1SA.HanaTranslator
         public GrammarNode()
         {
             LastGrammarNode = this;
-            Comments = new List<Comment>();
+            Comments = [];
         }
 
         // Comments that are immediately after this statement.
@@ -122,7 +122,7 @@ namespace B1SA.HanaTranslator
 
         private void CreateChildrenList()
         {
-            childrenList = new List<KeyValuePair<GrammarNode, GrammarNodeInfo>>();
+            childrenList = [];
 
             foreach (var property in GetType().GetProperties()) {
                 var getter = property.GetGetMethod(false);

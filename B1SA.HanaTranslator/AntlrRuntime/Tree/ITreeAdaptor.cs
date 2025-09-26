@@ -1,35 +1,3 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2011 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2011 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime.Tree
 {
 
@@ -122,7 +90,7 @@ namespace Antlr.Runtime.Tree
         object DupNode(int type, object treeNode, string text);
 
         /** <summary>Duplicate tree recursively, using dupNode() for each node</summary> */
-        object DupTree( object tree );
+        object DupTree(object tree);
 
         /** <summary>
          *  Return a nil node (an empty but non-null node) that can hold
@@ -150,10 +118,10 @@ namespace Antlr.Runtime.Tree
          *  succeed.
          *  </remarks>
          */
-        object ErrorNode( ITokenStream input, IToken start, IToken stop, RecognitionException e );
+        object ErrorNode(ITokenStream input, IToken start, IToken stop, RecognitionException e);
 
         /** <summary>Is tree considered a nil node used to make lists of child nodes?</summary> */
-        bool IsNil( object tree );
+        bool IsNil(object tree);
 
         /** <summary>
          *  Add a child to the tree t.  If child is a flat tree (a list), make all
@@ -164,7 +132,7 @@ namespace Antlr.Runtime.Tree
          *  ASTs.  Do nothing if t or child is null.
          *  </summary>
          */
-        void AddChild( object t, object child );
+        void AddChild(object t, object child);
 
         /** <summary>
          *  If oldRoot is a nil root, just copy or move the children to newRoot.
@@ -196,7 +164,7 @@ namespace Antlr.Runtime.Tree
          *  efficiency.
          *  </remarks>
          */
-        object BecomeRoot( object newRoot, object oldRoot );
+        object BecomeRoot(object newRoot, object oldRoot);
 
         /** <summary>
          *  Given the root of the subtree created for this rule, post process
@@ -215,7 +183,7 @@ namespace Antlr.Runtime.Tree
          *  before setTokenBoundaries().
          *  </remarks>
          */
-        object RulePostProcessing( object root );
+        object RulePostProcessing(object root);
 
         /** <summary>For identifying trees.</summary>
          *
@@ -225,7 +193,7 @@ namespace Antlr.Runtime.Tree
          *  usually.
          *  </remarks>
          */
-        int GetUniqueID( object node );
+        int GetUniqueID(object node);
 
 
         // R e w r i t e  R u l e s
@@ -247,7 +215,7 @@ namespace Antlr.Runtime.Tree
          *  to not inherits from the TreeAdaptor.
          *  </remarks>
          */
-        object BecomeRoot( IToken newRoot, object oldRoot );
+        object BecomeRoot(IToken newRoot, object oldRoot);
 
         #endregion
 
@@ -255,15 +223,15 @@ namespace Antlr.Runtime.Tree
         #region Content
 
         /** <summary>For tree parsing, I need to know the token type of a node</summary> */
-        int GetType( object t );
+        int GetType(object t);
 
         /** <summary>Node constructors can set the type of a node</summary> */
-        void SetType( object t, int type );
+        void SetType(object t, int type);
 
-        string GetText( object t );
+        string GetText(object t);
 
         /** <summary>Node constructors can set the text of a node</summary> */
-        void SetText( object t, string text );
+        void SetText(object t, string text);
 
         /** <summary>
          *  Return the token object from which this node was created.
@@ -276,7 +244,7 @@ namespace Antlr.Runtime.Tree
          *  BaseRecognizer.getErrorMessage().
          *  </summary>
          */
-        IToken GetToken( object t );
+        IToken GetToken(object t);
 
         /** <summary>
          *  Where are the bounds in the input token stream for this node and
@@ -286,13 +254,13 @@ namespace Antlr.Runtime.Tree
          *  That node would contain the start/stop indexes then.
          *  </summary>
          */
-        void SetTokenBoundaries( object t, IToken startToken, IToken stopToken );
+        void SetTokenBoundaries(object t, IToken startToken, IToken stopToken);
 
         /** <summary>Get the token start index for this subtree; return -1 if no such index</summary> */
-        int GetTokenStartIndex( object t );
+        int GetTokenStartIndex(object t);
 
         /** <summary>Get the token stop index for this subtree; return -1 if no such index</summary> */
-        int GetTokenStopIndex( object t );
+        int GetTokenStopIndex(object t);
 
         #endregion
 
@@ -300,16 +268,16 @@ namespace Antlr.Runtime.Tree
         #region Navigation / Tree Parsing
 
         /** <summary>Get a child 0..n-1 node</summary> */
-        object GetChild( object t, int i );
+        object GetChild(object t, int i);
 
         /** <summary>Set ith child (0..n-1) to t; t must be non-null and non-nil node</summary> */
-        void SetChild( object t, int i, object child );
+        void SetChild(object t, int i, object child);
 
         /** <summary>Remove ith child and shift children down from right.</summary> */
-        object DeleteChild( object t, int i );
+        object DeleteChild(object t, int i);
 
         /** <summary>How many children?  If 0, then this is a leaf node</summary> */
-        int GetChildCount( object t );
+        int GetChildCount(object t);
 
         /** <summary>
          *  Who is the parent node of this node; if null, implies node is root.
@@ -317,8 +285,8 @@ namespace Antlr.Runtime.Tree
          *  in tree parsers need this functionality.
          *  </summary>
          */
-        object GetParent( object t );
-        void SetParent( object t, object parent );
+        object GetParent(object t);
+        void SetParent(object t, object parent);
 
         /** <summary>
          *  What index is this node in the child list? Range: 0..n-1
@@ -326,8 +294,8 @@ namespace Antlr.Runtime.Tree
          *  in tree parsers need this functionality.
          *  </summary>
          */
-        int GetChildIndex( object t );
-        void SetChildIndex( object t, int index );
+        int GetChildIndex(object t);
+        void SetChildIndex(object t, int index);
 
         /** <summary>
          *  Replace from start to stop child index of parent with t, which might
@@ -339,7 +307,7 @@ namespace Antlr.Runtime.Tree
          *  Can't replace whatever points to the parent externally.  Do nothing.
          *  </remarks>
          */
-        void ReplaceChildren( object parent, int startChildIndex, int stopChildIndex, object t );
+        void ReplaceChildren(object parent, int startChildIndex, int stopChildIndex, object t);
 
         #endregion
     }

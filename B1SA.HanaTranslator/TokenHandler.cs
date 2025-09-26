@@ -1,6 +1,6 @@
 namespace B1SA.HanaTranslator
 {
-    class TokenHandler
+    internal class TokenHandler
     {
         static public string TokenName()
         {

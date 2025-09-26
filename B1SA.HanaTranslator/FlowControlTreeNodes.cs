@@ -209,15 +209,15 @@ namespace B1SA.HanaTranslator
         public BlockStatement(Statement statement)
         {
             if (statement != null)
-                Statements = new List<Statement> { statement };
+                Statements = [statement];
             else
-                Statements = new List<Statement>();
+                Statements = [];
             Terminate = false;
         }
 
         public BlockStatement()
         {
-            Statements = new List<Statement>();
+            Statements = [];
             Terminate = false;
         }
 
@@ -225,7 +225,7 @@ namespace B1SA.HanaTranslator
         {
             asm.Begin(this);
             if (Statements != null) {
-                foreach (Statement stmt in Statements) {
+                foreach (var stmt in Statements) {
                     asm.Add(stmt);
                     if (stmt != Statements.Last()) {
                         asm.NewLine();
@@ -237,7 +237,7 @@ namespace B1SA.HanaTranslator
 
         public void InsertBefore(Statement refStmt, Statement inStmt)
         {
-            int index = Statements.IndexOf(refStmt);
+            var index = Statements.IndexOf(refStmt);
             Statements.Insert(index, inStmt);
         }
 
@@ -248,7 +248,7 @@ namespace B1SA.HanaTranslator
 
         public void ReplaceStatement(Statement original, Statement newOne)
         {
-            int index = Statements.IndexOf(original);
+            var index = Statements.IndexOf(original);
             if (index != -1) {
                 if (original.Comments.Count != 0) {
                     newOne.MoveCommentsFrom(original);
@@ -259,7 +259,7 @@ namespace B1SA.HanaTranslator
 
         public void RemoveStatement(Statement stmt)
         {
-            int index = Statements.IndexOf(stmt);
+            var index = Statements.IndexOf(stmt);
 
             if (index > -1) {
                 if (stmt.Comments.Count != 0) {

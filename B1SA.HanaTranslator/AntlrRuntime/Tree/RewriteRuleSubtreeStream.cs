@@ -1,56 +1,24 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime.Tree
 {
     using IList = System.Collections.IList;
 
-    [System.Serializable]
+    [Serializable]
     public class RewriteRuleSubtreeStream : RewriteRuleElementStream
     {
-        public RewriteRuleSubtreeStream( ITreeAdaptor adaptor, string elementDescription )
-            : base( adaptor, elementDescription )
+        public RewriteRuleSubtreeStream(ITreeAdaptor adaptor, string elementDescription)
+            : base(adaptor, elementDescription)
         {
         }
 
         /** <summary>Create a stream with one element</summary> */
-        public RewriteRuleSubtreeStream( ITreeAdaptor adaptor, string elementDescription, object oneElement )
-            : base( adaptor, elementDescription, oneElement )
+        public RewriteRuleSubtreeStream(ITreeAdaptor adaptor, string elementDescription, object oneElement)
+            : base(adaptor, elementDescription, oneElement)
         {
         }
 
         /** <summary>Create a stream, but feed off an existing list</summary> */
-        public RewriteRuleSubtreeStream( ITreeAdaptor adaptor, string elementDescription, IList elements )
-            : base( adaptor, elementDescription, elements )
+        public RewriteRuleSubtreeStream(ITreeAdaptor adaptor, string elementDescription, IList elements)
+            : base(adaptor, elementDescription, elements)
         {
         }
 
@@ -74,26 +42,25 @@ namespace Antlr.Runtime.Tree
         public virtual object NextNode()
         {
             //System.Console.WriteLine("nextNode: elements={0}, singleElement={1}", elements, ((ITree)singleElement).ToStringTree());
-            int n = Count;
-            if ( dirty || ( cursor >= n && n == 1 ) )
-            {
+            var n = Count;
+            if (dirty || (cursor >= n && n == 1)) {
                 // if out of elements and size is 1, dup (at most a single node
                 // since this is for making root nodes).
-                object el = NextCore();
-                return adaptor.DupNode( el );
+                var el = NextCore();
+                return adaptor.DupNode(el);
             }
             // test size above then fetch
-            object tree = NextCore();
+            var tree = NextCore();
             while (adaptor.IsNil(tree) && adaptor.GetChildCount(tree) == 1)
                 tree = adaptor.GetChild(tree, 0);
             //System.Console.WriteLine("_next={0}", ((ITree)tree).ToStringTree());
-            object el2 = adaptor.DupNode(tree); // dup just the root (want node here)
+            var el2 = adaptor.DupNode(tree); // dup just the root (want node here)
             return el2;
         }
 
-        protected override object Dup( object el )
+        protected override object Dup(object el)
         {
-            return adaptor.DupTree( el );
+            return adaptor.DupTree(el);
         }
     }
 }

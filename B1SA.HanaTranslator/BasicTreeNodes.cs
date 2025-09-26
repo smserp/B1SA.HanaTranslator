@@ -102,7 +102,7 @@ namespace B1SA.HanaTranslator
 
         public RealLiteral(string str)
         {
-            string[] parts = str.Split('e', 'E');
+            var parts = str.Split('e', 'E');
             Value = Decimal.Parse(parts[0]);
             Exponent = parts.Length > 1 ? Int32.Parse(parts[1]) : 0;
         }
@@ -127,12 +127,12 @@ namespace B1SA.HanaTranslator
 
         public DbObject()
         {
-            Identifiers = new List<Identifier>();
+            Identifiers = [];
         }
 
         public DbObject(Identifier identifier)
         {
-            Identifiers = new List<Identifier> { identifier };
+            Identifiers = [identifier];
         }
 
         public DbObject(List<Identifier> identifiers)
@@ -143,7 +143,7 @@ namespace B1SA.HanaTranslator
         override public void Assembly(Assembler asm)
         {
             asm.Begin(this);
-            foreach (Identifier i in Identifiers) {
+            foreach (var i in Identifiers) {
                 asm.Add(i);
                 if (i != Identifiers.Last()) {
                     asm.AddToken(".");

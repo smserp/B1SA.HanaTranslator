@@ -4,35 +4,35 @@ using System.Text;
 
 namespace B1SA.HanaTranslator
 {
-    static class TreePrinter
+    internal static class TreePrinter
     {
         public static string Print(string name, object value)
         {
-            StringBuilder output = new StringBuilder();
-            Print(output, name, value, 0, new Dictionary<int, bool>());
+            var output = new StringBuilder();
+            Print(output, name, value, 0, []);
             return output.ToString();
         }
 
-        static Type[] PrintableTypes =
+        private static Type[] PrintableTypes =
         {
             typeof(bool), typeof(byte), typeof(char), typeof(DateTime), typeof(decimal),
             typeof(double), typeof(float), typeof(int), typeof(long), typeof(sbyte),
             typeof(short), typeof(string), typeof(uint), typeof(ulong), typeof(ushort)
         };
 
-        static void Print(StringBuilder output, string name, object value, int level, Dictionary<int, bool> isLast)
+        private static void Print(StringBuilder output, string name, object value, int level, Dictionary<int, bool> isLast)
         {
             PrintLine(output, name, value, level, isLast);
 
             if (value != null) {
-                IEnumerable enumerable = value as IEnumerable;
+                var enumerable = value as IEnumerable;
                 if (enumerable != null && !(value is String)) {
-                    IEnumerator enumerator = enumerable.GetEnumerator();
-                    int index = 0;
+                    var enumerator = enumerable.GetEnumerator();
+                    var index = 0;
 
-                    bool hasMore = enumerator.MoveNext();
+                    var hasMore = enumerator.MoveNext();
                     while (hasMore) {
-                        object current = enumerator.Current;
+                        var current = enumerator.Current;
                         hasMore = enumerator.MoveNext();
 
                         isLast[level + 1] = !hasMore;
@@ -43,26 +43,26 @@ namespace B1SA.HanaTranslator
                 else if (!(value is ValueType) && !(value is String)) {
                     PropertyInfo lastProperty = null;
 
-                    foreach (PropertyInfo property in value.GetType().GetProperties()) {
-                        object[] attrs = property.GetCustomAttributes(typeof(ExcludeFromChildrenListAttribute), true);
+                    foreach (var property in value.GetType().GetProperties()) {
+                        var attrs = property.GetCustomAttributes(typeof(ExcludeFromChildrenListAttribute), true);
                         if (attrs.Length > 0) {
                             continue;
                         }
 
-                        MethodInfo getter = property.GetGetMethod(false);
+                        var getter = property.GetGetMethod(false);
                         if (getter != null && getter.GetParameters().Length == 0 &&
                             getter.GetGenericArguments().Length == 0) {
                             lastProperty = property;
                         }
                     }
 
-                    foreach (PropertyInfo property in value.GetType().GetProperties()) {
-                        object[] attrs = property.GetCustomAttributes(typeof(ExcludeFromChildrenListAttribute), true);
+                    foreach (var property in value.GetType().GetProperties()) {
+                        var attrs = property.GetCustomAttributes(typeof(ExcludeFromChildrenListAttribute), true);
                         if (attrs.Length > 0) {
                             continue;
                         }
 
-                        MethodInfo getter = property.GetGetMethod(false);
+                        var getter = property.GetGetMethod(false);
                         if (getter != null && getter.GetParameters().Length == 0 &&
                             getter.GetGenericArguments().Length == 0) {
                             isLast[level + 1] = (property == lastProperty);
@@ -82,9 +82,9 @@ namespace B1SA.HanaTranslator
         //     \- [1]: (null)
         //         \- Property: 42
 
-        static void PrintLine(StringBuilder output, string name, object value, int level, Dictionary<int, bool> isLast)
+        private static void PrintLine(StringBuilder output, string name, object value, int level, Dictionary<int, bool> isLast)
         {
-            for (int indent = 1; indent < level; indent++) {
+            for (var indent = 1; indent < level; indent++) {
                 output.Append(isLast[indent] ? "    " : " |  ");
             }
             if (level > 0) {

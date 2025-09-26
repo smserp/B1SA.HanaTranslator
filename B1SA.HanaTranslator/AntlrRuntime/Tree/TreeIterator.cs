@@ -1,35 +1,3 @@
-﻿/*
- * [The "BSD licence"]
- * Copyright (c) 2005-2008 Terence Parr
- * All rights reserved.
- *
- * Conversion to C#:
- * Copyright (c) 2008-2009 Sam Harwell, Pixel Mine, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 namespace Antlr.Runtime.Tree
 {
     using System.Collections.Generic;
@@ -57,26 +25,25 @@ namespace Antlr.Runtime.Tree
          */
         protected Queue<object> nodes;
 
-        public TreeIterator( CommonTree tree )
-            : this( new CommonTreeAdaptor(), tree )
+        public TreeIterator(CommonTree tree)
+            : this(new CommonTreeAdaptor(), tree)
         {
         }
 
-        public TreeIterator( ITreeAdaptor adaptor, object tree )
+        public TreeIterator(ITreeAdaptor adaptor, object tree)
         {
             this.adaptor = adaptor;
             this.tree = tree;
             this.root = tree;
             nodes = new Queue<object>();
-            down = adaptor.Create( TokenTypes.Down, "DOWN" );
-            up = adaptor.Create( TokenTypes.Up, "UP" );
-            eof = adaptor.Create( TokenTypes.EndOfFile, "EOF" );
+            down = adaptor.Create(TokenTypes.Down, "DOWN");
+            up = adaptor.Create(TokenTypes.Up, "UP");
+            eof = adaptor.Create(TokenTypes.EndOfFile, "EOF");
         }
 
         #region IEnumerator<object> Members
 
-        public object Current
-        {
+        public object Current {
             get;
             private set;
         }
@@ -95,67 +62,55 @@ namespace Antlr.Runtime.Tree
 
         public bool MoveNext()
         {
-            if ( firstTime )
-            {
+            if (firstTime) {
                 // initial condition
                 firstTime = false;
-                if ( adaptor.GetChildCount( tree ) == 0 )
-                {
+                if (adaptor.GetChildCount(tree) == 0) {
                     // single node tree (special)
-                    nodes.Enqueue( eof );
+                    nodes.Enqueue(eof);
                 }
                 Current = tree;
             }
-            else
-            {
+            else {
                 // if any queued up, use those first
-                if ( nodes != null && nodes.Count > 0 )
-                {
+                if (nodes != null && nodes.Count > 0) {
                     Current = nodes.Dequeue();
                 }
-                else
-                {
+                else {
                     // no nodes left?
-                    if ( tree == null )
-                    {
+                    if (tree == null) {
                         Current = eof;
                     }
-                    else
-                    {
+                    else {
                         // next node will be child 0 if any children
-                        if ( adaptor.GetChildCount( tree ) > 0 )
-                        {
-                            tree = adaptor.GetChild( tree, 0 );
-                            nodes.Enqueue( tree ); // real node is next after DOWN
+                        if (adaptor.GetChildCount(tree) > 0) {
+                            tree = adaptor.GetChild(tree, 0);
+                            nodes.Enqueue(tree); // real node is next after DOWN
                             Current = down;
                         }
-                        else
-                        {
+                        else {
                             // if no children, look for next sibling of tree or ancestor
-                            object parent = adaptor.GetParent( tree );
+                            var parent = adaptor.GetParent(tree);
                             // while we're out of siblings, keep popping back up towards root
-                            while ( parent != null &&
-                                    adaptor.GetChildIndex( tree ) + 1 >= adaptor.GetChildCount( parent ) )
-                            {
-                                nodes.Enqueue( up ); // we're moving back up
+                            while (parent != null &&
+                                    adaptor.GetChildIndex(tree) + 1 >= adaptor.GetChildCount(parent)) {
+                                nodes.Enqueue(up); // we're moving back up
                                 tree = parent;
-                                parent = adaptor.GetParent( tree );
+                                parent = adaptor.GetParent(tree);
                             }
 
                             // no nodes left?
-                            if ( parent == null )
-                            {
+                            if (parent == null) {
                                 tree = null; // back at root? nothing left then
-                                nodes.Enqueue( eof ); // add to queue, might have UP nodes in there
+                                nodes.Enqueue(eof); // add to queue, might have UP nodes in there
                                 Current = nodes.Dequeue();
                             }
-                            else
-                            {
+                            else {
                                 // must have found a node with an unvisited sibling
                                 // move to it and return it
-                                int nextSiblingIndex = adaptor.GetChildIndex( tree ) + 1;
-                                tree = adaptor.GetChild( parent, nextSiblingIndex );
-                                nodes.Enqueue( tree ); // add to queue, might have UP nodes in there
+                                var nextSiblingIndex = adaptor.GetChildIndex(tree) + 1;
+                                tree = adaptor.GetChild(parent, nextSiblingIndex);
+                                nodes.Enqueue(tree); // add to queue, might have UP nodes in there
                                 Current = nodes.Dequeue();
                             }
                         }
@@ -163,7 +118,7 @@ namespace Antlr.Runtime.Tree
                 }
             }
 
-            bool result = Current != eof || !reachedEof;
+            var result = Current != eof || !reachedEof;
             reachedEof = Current == eof;
             return result;
         }
