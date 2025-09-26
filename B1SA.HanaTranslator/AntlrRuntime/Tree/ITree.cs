@@ -2,20 +2,18 @@ namespace Antlr.Runtime.Tree
 {
     using System.Collections.Generic;
 
-    /** <summary>
-     *  What does a tree look like?  ANTLR has a number of support classes
-     *  such as CommonTreeNodeStream that work on these kinds of trees.  You
-     *  don't have to make your trees implement this interface, but if you do,
-     *  you'll be able to use more support code.
-     *  </summary>
-     *
-     *  <remarks>
-     *  NOTE: When constructing trees, ANTLR can build any kind of tree; it can
-     *  even use Token objects as trees if you add a child list to your tokens.
-     *
-     *  This is a tree node without any payload; just navigation and factory stuff.
-     *  </remarks>
-     */
+    /// <summary>
+    /// What does a tree look like? ANTLR has a number of support classes
+    /// such as CommonTreeNodeStream that work on these kinds of trees. You
+    /// don't have to make your trees implement this interface, but if you do,
+    /// you'll be able to use more support code.
+    /// </summary>
+    /// <remarks>
+    /// NOTE: When constructing trees, ANTLR can build any kind of tree; it can
+    /// even use Token objects as trees if you add a child list to your tokens.
+    ///
+    /// This is a tree node without any payload; just navigation and factory stuff.
+    /// </remarks>
     public interface ITree
     {
 
@@ -32,73 +30,67 @@ namespace Antlr.Runtime.Tree
             set;
         }
 
-        /** <summary>Is there is a node above with token type ttype?</summary> */
+        /// <summary>Is there is a node above with token type ttype?</summary>
         bool HasAncestor(int ttype);
 
-        /** <summary>Walk upwards and get first ancestor with this token type.</summary> */
+        /// <summary>Walk upwards and get first ancestor with this token type.</summary>
         ITree GetAncestor(int ttype);
 
-        /** <summary>
-         *  Return a list of all ancestors of this node.  The first node of
-         *  list is the root and the last is the parent of this node.
-         *  </summary>
-         */
+        /// <summary>
+        /// Return a list of all ancestors of this node. The first node of
+        /// list is the root and the last is the parent of this node.
+        /// </summary>
         IList<ITree> GetAncestors();
 
-        /** <summary>This node is what child index? 0..n-1</summary> */
+        /// <summary>This node is what child index? 0..n-1</summary>
         int ChildIndex {
             get;
             set;
         }
 
-        /** <summary>Set the parent and child index values for all children</summary> */
+        /// <summary>Set the parent and child index values for all children</summary>
         void FreshenParentAndChildIndexes();
 
-        /** <summary>
-         *  Add t as a child to this node.  If t is null, do nothing.  If t
-         *  is nil, add all children of t to this' children.
-         *  </summary>
-         */
+        /// <summary>
+        /// Add t as a child to this node. If t is null, do nothing. If t
+        /// is nil, add all children of t to this' children.
+        /// </summary>
         void AddChild(ITree t);
 
-        /** <summary>Set ith child (0..n-1) to t; t must be non-null and non-nil node</summary> */
+        /// <summary>Set ith child (0..n-1) to t; t must be non-null and non-nil node</summary>
         void SetChild(int i, ITree t);
 
         object DeleteChild(int i);
 
-        /** <summary>
-         *  Delete children from start to stop and replace with t even if t is
-         *  a list (nil-root tree).  num of children can increase or decrease.
-         *  For huge child lists, inserting children can force walking rest of
-         *  children to set their childindex; could be slow.
-         *  </summary>
-         */
+        /// <summary>
+        /// Delete children from start to stop and replace with t even if t is
+        /// a list (nil-root tree). num of children can increase or decrease.
+        /// For huge child lists, inserting children can force walking rest of
+        /// children to set their childindex; could be slow.
+        /// </summary>
         void ReplaceChildren(int startChildIndex, int stopChildIndex, object t);
 
-        /** <summary>
-         *  Indicates the node is a nil node but may still have children, meaning
-         *  the tree is a flat list.
-         *  </summary>
-         */
+        /// <summary>
+        /// Indicates the node is a nil node but may still have children, meaning
+        /// the tree is a flat list.
+        /// </summary>
         bool IsNil {
             get;
         }
 
-        /** <summary>
-         *  What is the smallest token index (indexing from 0) for this node
-         *  and its children?
-         *  </summary>
-         */
+        /// <summary>
+        /// What is the smallest token index (indexing from 0) for this node
+        /// and its children?
+        /// </summary>
         int TokenStartIndex {
             get;
             set;
         }
 
-        /** <summary>
-         *  What is the largest token index (indexing from 0) for this node
-         *  and its children?
-         *  </summary>
-         */
+        /// <summary>
+        /// What is the largest token index (indexing from 0) for this node
+        /// and its children?
+        /// </summary>
         int TokenStopIndex {
             get;
             set;
@@ -106,7 +98,7 @@ namespace Antlr.Runtime.Tree
 
         ITree DupNode();
 
-        /** <summary>Return a token type; needed for tree parsing</summary> */
+        /// <summary>Return a token type; needed for tree parsing</summary>
         int Type {
             get;
         }
@@ -115,7 +107,7 @@ namespace Antlr.Runtime.Tree
             get;
         }
 
-        /** <summary>In case we don't have a token payload, what is the line for errors?</summary> */
+        /// <summary>In case we don't have a token payload, what is the line for errors?</summary>
         int Line {
             get;
         }

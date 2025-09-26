@@ -7,7 +7,7 @@ namespace B1SA.HanaTranslator
             return "IdToken";
         }
 
-        public IdentifierTokenizer()            : base()
+        public IdentifierTokenizer() : base()
         {
             // empty
         }

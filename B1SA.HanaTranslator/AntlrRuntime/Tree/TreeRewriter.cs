@@ -91,9 +91,10 @@ namespace Antlr.Runtime.Tree
             return null;
         }
 
-        /** Override this if you need transformation tracing to go somewhere
-         *  other than stdout or if you're not using ITree-derived trees.
-         */
+        /// <summary>
+        /// Override this if you need transformation tracing to go somewhere
+        /// other than stdout or if you're not using ITree-derived trees.
+        /// </summary>
         protected virtual void ReportTransformation(object oldTree, object newTree)
         {
             var old = oldTree as ITree;

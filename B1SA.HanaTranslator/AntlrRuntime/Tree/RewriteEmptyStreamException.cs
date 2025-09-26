@@ -2,7 +2,7 @@ namespace Antlr.Runtime.Tree
 {
     using Exception = Exception;
 
-    /** <summary>Ref to ID or expr but no tokens in ID stream or subtrees in expr stream</summary> */
+    /// <summary>Ref to ID or expr but no tokens in ID stream or subtrees in expr stream</summary>
     [Serializable]
     public class RewriteEmptyStreamException : RewriteCardinalityException
     {

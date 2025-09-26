@@ -12,21 +12,20 @@ namespace Antlr.Runtime
         [NonSerialized]
         private ICharStream input;
 
-        /** <summary>
-         *  We need to be able to change the text once in a while.  If
-         *  this is non-null, then getText should return this.  Note that
-         *  start/stop are not affected by changing this.
-         *  </summary>
-          */
+        /// <summary>
+        /// We need to be able to change the text once in a while.  If
+        /// this is non-null, then getText should return this.  Note that
+        /// start/stop are not affected by changing this.
+        /// </summary>
         private string text;
 
-        /** <summary>What token number is this from 0..n-1 tokens; &lt; 0 implies invalid index</summary> */
+        /// <summary>What token number is this from 0..n-1 tokens; &lt; 0 implies invalid index</summary>
         private int index = -1;
 
-        /** <summary>The char position into the input buffer where this token starts</summary> */
+        /// <summary>The char position into the input buffer where this token starts</summary>
         private int start;
 
-        /** <summary>The char position into the input buffer where this token stops</summary> */
+        /// <summary>The char position into the input buffer where this token stops</summary>
         private int stop;
 
         public CommonToken()
@@ -84,11 +83,10 @@ namespace Antlr.Runtime
             }
 
             set {
-                /* Override the text for this token.  getText() will return this text
-                 *  rather than pulling from the buffer.  Note that this does not mean
-                 *  that start/stop indexes are not valid.  It means that that input
-                 *  was converted to a new string in the token object.
-                 */
+                // Override the text for this token.  getText() will return this text
+                // rather than pulling from the buffer.  Note that this does not mean
+                // that start/stop indexes are not valid.  It means that that input
+                // was converted to a new string in the token object.
                 text = value;
             }
         }

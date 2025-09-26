@@ -3,7 +3,7 @@ namespace Antlr.Runtime
     using System.Collections.Generic;
     using Exception = Exception;
 
-    /** <summary>An extra token while parsing a TokenStream</summary> */
+    /// <summary>An extra token while parsing a TokenStream</summary>
     [Serializable]
     public class UnwantedTokenException : MismatchedTokenException
     {

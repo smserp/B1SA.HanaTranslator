@@ -3,40 +3,43 @@ namespace Antlr.Runtime
     using System.Collections.Generic;
     using StringBuilder = System.Text.StringBuilder;
 
-    /** Buffer all input tokens but do on-demand fetching of new tokens from
-     *  lexer. Useful when the parser or lexer has to set context/mode info before
-     *  proper lexing of future tokens. The ST template parser needs this,
-     *  for example, because it has to constantly flip back and forth between
-     *  inside/output templates. E.g., <c>&lt;names:{hi, &lt;it&gt;}&gt;</c> has to parse names
-     *  as part of an expression but "hi, &lt;it&gt;" as a nested template.
-     *
-     *  You can't use this stream if you pass whitespace or other off-channel
-     *  tokens to the parser. The stream can't ignore off-channel tokens.
-     *  (UnbufferedTokenStream is the same way.)
-     *
-     *  This is not a subclass of UnbufferedTokenStream because I don't want
-     *  to confuse small moving window of tokens it uses for the full buffer.
-     */
+    /// <summary>
+    /// Buffer all input tokens but do on-demand fetching of new tokens from
+    /// lexer. Useful when the parser or lexer has to set context/mode info before
+    /// proper lexing of future tokens. The ST template parser needs this,
+    /// for example, because it has to constantly flip back and forth between
+    /// inside/output templates. E.g., <c>&lt;names:{hi, &lt;it&gt;}&gt;</c> has to parse names
+    /// as part of an expression but "hi, &lt;it&gt;" as a nested template.
+    ///
+    /// You can't use this stream if you pass whitespace or other off-channel
+    /// tokens to the parser. The stream can't ignore off-channel tokens.
+    /// (UnbufferedTokenStream is the same way.)
+    ///
+    /// This is not a subclass of UnbufferedTokenStream because I don't want
+    /// to confuse small moving window of tokens it uses for the full buffer.
+    /// </summary>
     [Serializable]
     public class BufferedTokenStream : ITokenStream, ITokenStreamInformation
     {
         private ITokenSource _tokenSource;
 
-        /** Record every single token pulled from the source so we can reproduce
-         *  chunks of it later.  The buffer in LookaheadStream overlaps sometimes
-         *  as its moving window moves through the input.  This list captures
-         *  everything so we can access complete input text.
-         */
+        /// <summary>
+        /// Record every single token pulled from the source so we can reproduce
+        /// chunks of it later. The buffer in LookaheadStream overlaps sometimes
+        /// as its moving window moves through the input. This list captures
+        /// everything so we can access complete input text.
+        /// </summary>
         protected List<IToken> _tokens = new List<IToken>(100);
 
-        /** Track the last mark() call result value for use in rewind(). */
+        /// <summary>Track the last mark() call result value for use in rewind().</summary>
         private int _lastMarker;
 
-        /** The index into the tokens list of the current token (next token
-         *  to consume).  tokens[p] should be LT(1).  p=-1 indicates need
-         *  to initialize with first token.  The ctor doesn't get a token.
-         *  First call to LT(1) or whatever gets the first token and sets p=0;
-         */
+        /// <summary>
+        /// The index into the tokens list of the current token (next token
+        /// to consume). tokens[p] should be LT(1). p=-1 indicates need
+        /// to initialize with first token. The ctor doesn't get a token.
+        /// First call to LT(1) or whatever gets the first token and sets p=0;
+        /// </summary>
         protected int _p = -1;
 
         public BufferedTokenStream()
@@ -144,13 +147,14 @@ namespace Antlr.Runtime
             _p = index;
         }
 
-        /** Move the input pointer to the next incoming token.  The stream
-         *  must become active with LT(1) available.  consume() simply
-         *  moves the input pointer so that LT(1) points at the next
-         *  input symbol. Consume at least one token.
-         *
-         *  Walk past any token not on the channel the parser is listening to.
-         */
+        /// <summary>
+        /// Move the input pointer to the next incoming token. The stream
+        /// must become active with LT(1) available. consume() simply
+        /// moves the input pointer so that LT(1) points at the next
+        /// input symbol. Consume at least one token.
+        ///
+        /// Walk past any token not on the channel the parser is listening to.
+        /// </summary>
         public virtual void Consume()
         {
             if (_p == -1)
@@ -159,7 +163,7 @@ namespace Antlr.Runtime
             Sync(_p);
         }
 
-        /** Make sure index i in tokens has a token. */
+        /// <summary>Make sure index i in tokens has a token.</summary>
         protected virtual void Sync(int i)
         {
             var n = i - _tokens.Count + 1; // how many more elements we need?
@@ -167,7 +171,7 @@ namespace Antlr.Runtime
                 Fetch(n);
         }
 
-        /** add n elements to buffer */
+        /// <summary>Add n elements to buffer.</summary>
         protected virtual void Fetch(int n)
         {
             for (var i = 0; i < n; i++) {
@@ -268,10 +272,11 @@ namespace Antlr.Runtime
             return GetTokens(start, stop, default(BitSet));
         }
 
-        /** Given a start and stop index, return a List of all tokens in
-         *  the token type BitSet.  Return null if no tokens were found.  This
-         *  method looks at both on and off channel tokens.
-         */
+        /// <summary>
+        /// Given a start and stop index, return a List of all tokens in
+        /// the token type BitSet. Return null if no tokens were found. This
+        /// method looks at both on and off channel tokens.
+        /// </summary>
         public virtual List<IToken> GetTokens(int start, int stop, BitSet types)
         {
             if (_p == -1)

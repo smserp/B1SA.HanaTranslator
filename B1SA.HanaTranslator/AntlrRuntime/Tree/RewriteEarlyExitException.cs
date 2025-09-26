@@ -2,7 +2,7 @@ namespace Antlr.Runtime.Tree
 {
     using Exception = Exception;
 
-    /** <summary>No elements within a (...)+ in a rewrite rule</summary> */
+    /// <summary>No elements within a (...)+ in a rewrite rule</summary>
     [Serializable]
     public class RewriteEarlyExitException : RewriteCardinalityException
     {

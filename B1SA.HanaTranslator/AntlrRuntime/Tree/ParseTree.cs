@@ -4,13 +4,12 @@ namespace Antlr.Runtime.Tree
 
     using StringBuilder = System.Text.StringBuilder;
 
-    /** <summary>
-     *  A record of the rules used to match a token sequence.  The tokens
-     *  end up as the leaves of this tree and rule nodes are the interior nodes.
-     *  This really adds no functionality, it is just an alias for CommonTree
-     *  that is more meaningful (specific) and holds a String to display for a node.
-     *  </summary>
-     */
+    /// <summary>
+    /// A record of the rules used to match a token sequence. The tokens
+    /// end up as the leaves of this tree and rule nodes are the interior nodes.
+    /// This really adds no functionality, it is just an alias for CommonTree
+    /// that is more meaningful (specific) and holds a String to display for a node.
+    /// </summary>
     [Serializable]
     public class ParseTree : BaseTree
     {
@@ -70,11 +69,10 @@ namespace Antlr.Runtime.Tree
             return payload.ToString();
         }
 
-        /** <summary>
-         *  Emit a token and all hidden nodes before.  EOF node holds all
-         *  hidden tokens after last real token.
-         *  </summary>
-         */
+        /// <summary>
+        /// Emit a token and all hidden nodes before. EOF node holds all
+        /// hidden tokens after last real token.
+        /// </summary>
         public virtual string ToStringWithHiddenTokens()
         {
             var buf = new StringBuilder();
@@ -90,11 +88,10 @@ namespace Antlr.Runtime.Tree
             return buf.ToString();
         }
 
-        /** <summary>
-         *  Print out the leaves of this tree, which means printing original
-         *  input back out.
-         *  </summary>
-         */
+        /// <summary>
+        /// Print out the leaves of this tree, which means printing original
+        /// input back out.
+        /// </summary>
         public virtual string ToInputString()
         {
             var buf = new StringBuilder();

@@ -2,7 +2,7 @@ namespace Antlr.Runtime.Tree
 {
     using Antlr.Runtime.Misc;
 
-    /** <summary>Do a depth first walk of a tree, applying pre() and post() actions as we go.</summary> */
+    /// <summary>Do a depth first walk of a tree, applying pre() and post() actions as we go.</summary>
     public class TreeVisitor
     {
         protected ITreeAdaptor adaptor;
@@ -16,15 +16,14 @@ namespace Antlr.Runtime.Tree
         {
         }
 
-        /** <summary>
-         *  Visit every node in tree t and trigger an action for each node
-         *  before/after having visited all of its children.  Bottom up walk.
-         *  Execute both actions even if t has no children.  Ignore return
-         *  results from transforming children since they will have altered
-         *  the child list of this node (their parent).  Return result of
-         *  applying post action to this node.
-         *  </summary>
-         */
+        /// <summary>
+        /// Visit every node in tree t and trigger an action for each node
+        /// before/after having visited all of its children. Bottom up walk.
+        /// Execute both actions even if t has no children. Ignore return
+        /// results from transforming children since they will have altered
+        /// the child list of this node (their parent). Return result of
+        /// applying post action to this node.
+        /// </summary>
         public object Visit(object t, ITreeVisitorAction action)
         {
             // System.out.println("visit "+((Tree)t).toStringTree());

@@ -12,19 +12,29 @@ namespace Antlr.Runtime.Tree
         public const int Colon = 6;
         public const int Dot = 7;
 
-        /** <summary>The tree pattern to lex like "(A B C)"</summary> */
+        /// <summary>
+        /// The tree pattern to lex like "(A B C)"
+        /// </summary>
         protected string pattern;
 
-        /** <summary>Index into input string</summary> */
+        /// <summary>
+        /// Index into input string
+        /// </summary>
         protected int p = -1;
 
-        /** <summary>Current char</summary> */
+        /// <summary>
+        /// Current char
+        /// </summary>
         protected int c;
 
-        /** <summary>How long is the pattern in char?</summary> */
+        /// <summary>
+        /// How long is the pattern in char?
+        /// </summary>
         protected int n;
 
-        /** <summary>Set when token type is ID or ARG (name mimics Java's StreamTokenizer)</summary> */
+        /// <summary>
+        /// Set when token type is ID or ARG (name mimics Java's StreamTokenizer)
+        /// </summary>
         public StringBuilder sval = new StringBuilder();
 
         public bool error = false;

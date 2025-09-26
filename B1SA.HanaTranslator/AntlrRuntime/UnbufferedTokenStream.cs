@@ -2,27 +2,27 @@ namespace Antlr.Runtime
 {
     using Antlr.Runtime.Misc;
 
-    /** A token stream that pulls tokens from the code source on-demand and
-     *  without tracking a complete buffer of the tokens. This stream buffers
-     *  the minimum number of tokens possible.  It's the same as
-     *  OnDemandTokenStream except that OnDemandTokenStream buffers all tokens.
-     *
-     *  You can't use this stream if you pass whitespace or other off-channel
-     *  tokens to the parser. The stream can't ignore off-channel tokens.
-     * 
-     *  You can only look backwards 1 token: LT(-1).
-     *
-     *  Use this when you need to read from a socket or other infinite stream.
-     *
-     *  @see BufferedTokenStream
-     *  @see CommonTokenStream
-     */
+    /// <summary>
+    /// A token stream that pulls tokens from the code source on-demand and
+    /// without tracking a complete buffer of the tokens. This stream buffers
+    /// the minimum number of tokens possible. It's the same as
+    /// OnDemandTokenStream except that OnDemandTokenStream buffers all tokens.
+    ///
+    /// You can't use this stream if you pass whitespace or other off-channel
+    /// tokens to the parser. The stream can't ignore off-channel tokens.
+    /// 
+    /// You can only look backwards 1 token: LT(-1).
+    ///
+    /// Use this when you need to read from a socket or other infinite stream.
+    /// </summary>
+    /// <seealso cref="BufferedTokenStream"/>
+    /// <seealso cref="CommonTokenStream"/>
     public class UnbufferedTokenStream : LookaheadStream<IToken>, ITokenStream, ITokenStreamInformation
     {
         protected ITokenSource tokenSource;
         protected int tokenIndex; // simple counter to set token index in tokens
 
-        /** Skip tokens on any channel but this one; this is how we skip whitespace... */
+        /// <summary>Skip tokens on any channel but this one; this is how we skip whitespace...</summary>
         protected int channel = TokenChannels.Default;
 
         private readonly ListStack<IToken> _realTokens = [null];

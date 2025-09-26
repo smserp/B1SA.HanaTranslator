@@ -3,50 +3,48 @@ namespace Antlr.Runtime.Tree
     using System.Collections.Generic;
     using IList = System.Collections.IList;
 
-    /** <summary>
-     *  A generic list of elements tracked in an alternative to be used in
-     *  a -> rewrite rule.  We need to subclass to fill in the next() method,
-     *  which returns either an AST node wrapped around a token payload or
-     *  an existing subtree.
-     *  </summary>
-     *
-     *  <remarks>
-     *  Once you start next()ing, do not try to add more elements.  It will
-     *  break the cursor tracking I believe.
-     *
-     *  TODO: add mechanism to detect/puke on modification after reading from stream
-     *  </remarks>
-     *
-     *  <see cref="RewriteRuleSubtreeStream"/>
-     *  <see cref="RewriteRuleTokenStream"/>
-     */
+    /// <summary>
+    /// A generic list of elements tracked in an alternative to be used in
+    /// a -> rewrite rule. We need to subclass to fill in the next() method,
+    /// which returns either an AST node wrapped around a token payload or
+    /// an existing subtree.
+    /// </summary>
+    /// <remarks>
+    /// Once you start next()ing, do not try to add more elements. It will
+    /// break the cursor tracking I believe.
+    ///
+    /// TODO: add mechanism to detect/puke on modification after reading from stream
+    /// </remarks>
+    /// <see cref="RewriteRuleSubtreeStream"/>
+    /// <see cref="RewriteRuleTokenStream"/>
     [Serializable]
     public abstract class RewriteRuleElementStream
     {
-        /** <summary>
-         *  Cursor 0..n-1.  If singleElement!=null, cursor is 0 until you next(),
-         *  which bumps it to 1 meaning no more elements.
-         *  </summary>
-         */
+        /// <summary>
+        /// Cursor 0..n-1. If singleElement!=null, cursor is 0 until you next(),
+        /// which bumps it to 1 meaning no more elements.
+        /// </summary>
         protected int cursor = 0;
 
-        /** <summary>Track single elements w/o creating a list.  Upon 2nd add, alloc list</summary> */
+        /// <summary>Track single elements w/o creating a list. Upon 2nd add, alloc list</summary>
         protected object singleElement;
 
-        /** <summary>The list of tokens or subtrees we are tracking</summary> */
+        /// <summary>The list of tokens or subtrees we are tracking</summary>
         protected IList elements;
 
-        /** <summary>Once a node / subtree has been used in a stream, it must be dup'd
-         *  from then on.  Streams are reset after subrules so that the streams
-         *  can be reused in future subrules.  So, reset must set a dirty bit.
-         *  If dirty, then next() always returns a dup.</summary>
-         */
+        /// <summary>
+        /// Once a node / subtree has been used in a stream, it must be dup'd
+        /// from then on. Streams are reset after subrules so that the streams
+        /// can be reused in future subrules. So, reset must set a dirty bit.
+        /// If dirty, then next() always returns a dup.
+        /// </summary>
         protected bool dirty = false;
 
-        /** <summary>The element or stream description; usually has name of the token or
-         *  rule reference that this list tracks.  Can include rulename too, but
-         *  the exception would track that info.</summary>
-         */
+        /// <summary>
+        /// The element or stream description; usually has name of the token or
+        /// rule reference that this list tracks. Can include rulename too, but
+        /// the exception would track that info.
+        /// </summary>
         protected string elementDescription;
         protected ITreeAdaptor adaptor;
 
@@ -56,14 +54,14 @@ namespace Antlr.Runtime.Tree
             this.adaptor = adaptor;
         }
 
-        /** <summary>Create a stream with one element</summary> */
+        /// <summary>Create a stream with one element</summary>
         public RewriteRuleElementStream(ITreeAdaptor adaptor, string elementDescription, object oneElement)
             : this(adaptor, elementDescription)
         {
             Add(oneElement);
         }
 
-        /** <summary>Create a stream, but feed off an existing list</summary> */
+        /// <summary>Create a stream, but feed off an existing list</summary>
         public RewriteRuleElementStream(ITreeAdaptor adaptor, string elementDescription, IList elements)
             : this(adaptor, elementDescription)
         {
@@ -71,13 +69,12 @@ namespace Antlr.Runtime.Tree
             this.elements = elements;
         }
 
-        /** <summary>
-         *  Reset the condition of this stream so that it appears we have
-         *  not consumed any of its elements.  Elements themselves are untouched.
-         *  Once we reset the stream, any future use will need duplicates.  Set
-         *  the dirty bit.
-         *  </summary>
-         */
+        /// <summary>
+        /// Reset the condition of this stream so that it appears we have
+        /// not consumed any of its elements. Elements themselves are untouched.
+        /// Once we reset the stream, any future use will need duplicates. Set
+        /// the dirty bit.
+        /// </summary>
         public virtual void Reset()
         {
             cursor = 0;
@@ -106,13 +103,12 @@ namespace Antlr.Runtime.Tree
             elements.Add(el);
         }
 
-        /** <summary>
-         *  Return the next element in the stream.  If out of elements, throw
-         *  an exception unless size()==1.  If size is 1, then return elements[0].
-         *  Return a duplicate node/subtree if stream is out of elements and
-         *  size==1.  If we've already used the element, dup (dirty bit set).
-         *  </summary>
-         */
+        /// <summary>
+        /// Return the next element in the stream. If out of elements, throw
+        /// an exception unless size()==1. If size is 1, then return elements[0].
+        /// Return a duplicate node/subtree if stream is out of elements and
+        /// size==1. If we've already used the element, dup (dirty bit set).
+        /// </summary>
         public virtual object NextTree()
         {
             var n = Count;
@@ -126,14 +122,13 @@ namespace Antlr.Runtime.Tree
             return el2;
         }
 
-        /** <summary>
-         *  Do the work of getting the next element, making sure that it's
-         *  a tree node or subtree.  Deal with the optimization of single-
-         *  element list versus list of size > 1.  Throw an exception
-         *  if the stream is empty or we're out of elements and size>1.
-         *  protected so you can override in a subclass if necessary.
-         *  </summary>
-         */
+        /// <summary>
+        /// Do the work of getting the next element, making sure that it's
+        /// a tree node or subtree. Deal with the optimization of single-
+        /// element list versus list of size > 1. Throw an exception
+        /// if the stream is empty or we're out of elements and size>1.
+        /// protected so you can override in a subclass if necessary.
+        /// </summary>
         protected virtual object NextCore()
         {
             var n = Count;
@@ -158,20 +153,18 @@ namespace Antlr.Runtime.Tree
             return o;
         }
 
-        /** <summary>
-         *  When constructing trees, sometimes we need to dup a token or AST
-         * 	subtree.  Dup'ing a token means just creating another AST node
-         *  around it.  For trees, you must call the adaptor.dupTree() unless
-         *  the element is for a tree root; then it must be a node dup.
-         *  </summary>
-         */
+        /// <summary>
+        /// When constructing trees, sometimes we need to dup a token or AST
+        /// subtree. Dup'ing a token means just creating another AST node
+        /// around it. For trees, you must call the adaptor.dupTree() unless
+        /// the element is for a tree root; then it must be a node dup.
+        /// </summary>
         protected abstract object Dup(object el);
 
-        /** <summary>
-         *  Ensure stream emits trees; tokens must be converted to AST nodes.
-         *  AST nodes can be passed through unmolested.
-         *  </summary>
-         */
+        /// <summary>
+        /// Ensure stream emits trees; tokens must be converted to AST nodes.
+        /// AST nodes can be passed through unmolested.
+        /// </summary>
         protected virtual object ToTree(object el)
         {
             return el;

@@ -2,11 +2,12 @@ namespace Antlr.Runtime.Tree
 {
     using System.Collections.Generic;
 
-    /** Return a node stream from a doubly-linked tree whose nodes
-     *  know what child index they are.  No remove() is supported.
-     *
-     *  Emit navigation nodes (DOWN, UP, and EOF) to let show tree structure.
-     */
+    /// <summary>
+    /// Return a node stream from a doubly-linked tree whose nodes
+    /// know what child index they are. No remove() is supported.
+    ///
+    /// Emit navigation nodes (DOWN, UP, and EOF) to show tree structure.
+    /// </summary>
     public class TreeIterator : IEnumerator<object>
     {
         protected ITreeAdaptor adaptor;
@@ -20,9 +21,10 @@ namespace Antlr.Runtime.Tree
         public object down;
         public object eof;
 
-        /** If we emit UP/DOWN nodes, we need to spit out multiple nodes per
-         *  next() call.
-         */
+        /// <summary>
+        /// If we emit UP/DOWN nodes, we need to spit out multiple nodes per
+        /// MoveNext() call.
+        /// </summary>
         protected Queue<object> nodes;
 
         public TreeIterator(CommonTree tree)

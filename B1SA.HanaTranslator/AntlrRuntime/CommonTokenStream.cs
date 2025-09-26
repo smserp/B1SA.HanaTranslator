@@ -1,18 +1,16 @@
 namespace Antlr.Runtime
 {
-    /** <summary>
-     *  The most common stream of tokens is one where every token is buffered up
-     *  and tokens are prefiltered for a certain channel (the parser will only
-     *  see these tokens and cannot change the filter channel number during the
-     *  parse).
-     *  </summary>
-     *
-     *  <remarks>TODO: how to access the full token stream?  How to track all tokens matched per rule?</remarks>
-     */
+    /// <summary>
+    /// The most common stream of tokens is one where every token is buffered up
+    /// and tokens are prefiltered for a certain channel (the parser will only
+    /// see these tokens and cannot change the filter channel number during the
+    /// parse).
+    /// </summary>
+    /// <remarks>TODO: how to access the full token stream? How to track all tokens matched per rule?</remarks>
     [Serializable]
     public class CommonTokenStream : BufferedTokenStream
     {
-        /** Skip tokens on any channel but this one; this is how we skip whitespace... */
+        /// <summary>Skip tokens on any channel but this one; this is how we skip whitespace...</summary>
         private int _channel;
 
         public CommonTokenStream()
@@ -36,7 +34,7 @@ namespace Antlr.Runtime
             }
         }
 
-        /** Reset this token stream by setting its token source. */
+        /// <summary>Reset this token stream by setting its token source.</summary>
         public override ITokenSource TokenSource {
             get {
                 return base.TokenSource;
@@ -47,7 +45,7 @@ namespace Antlr.Runtime
             }
         }
 
-        /** Always leave p on an on-channel token. */
+        /// <summary>Always leave p on an on-channel token.</summary>
         public override void Consume()
         {
             if (_p == -1)
@@ -97,9 +95,10 @@ namespace Antlr.Runtime
             return _tokens[i];
         }
 
-        /** Given a starting index, return the index of the first on-channel
-         *  token.
-         */
+        /// <summary>
+        /// Given a starting index, return the index of the first on-channel
+        /// token.
+        /// </summary>
         protected virtual int SkipOffTokenChannels(int i)
         {
             Sync(i);

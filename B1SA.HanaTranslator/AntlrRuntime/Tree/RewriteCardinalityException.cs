@@ -2,12 +2,11 @@ namespace Antlr.Runtime.Tree
 {
     using Exception = Exception;
 
-    /** <summary>
-     *  Base class for all exceptions thrown during AST rewrite construction.
-     *  This signifies a case where the cardinality of two or more elements
-     *  in a subrule are different: (ID INT)+ where |ID|!=|INT|
-     *  </summary>
-     */
+    /// <summary>
+    /// Base class for all exceptions thrown during AST rewrite construction.
+    /// This signifies a case where the cardinality of two or more elements
+    /// in a subrule are different: (ID INT)+ where |ID|!=|INT|
+    /// </summary>
     [Serializable]
     public class RewriteCardinalityException : Exception
     {

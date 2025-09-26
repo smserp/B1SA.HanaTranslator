@@ -4,43 +4,41 @@ namespace Antlr.Runtime
 
     using StringBuilder = System.Text.StringBuilder;
 
-    /** <summary>
-     *  A stripped-down version of org.antlr.misc.BitSet that is just
-     *  good enough to handle runtime requirements such as FOLLOW sets
-     *  for automatic error recovery.
-     *  </summary>
-     */
+    /// <summary>
+    /// A stripped-down version of org.antlr.misc.BitSet that is just
+    /// good enough to handle runtime requirements such as FOLLOW sets
+    /// for automatic error recovery.
+    /// </summary>
     [Serializable]
     public sealed class BitSet : ICloneable
     {
         private const int BITS = 64;    // number of bits / long
         private const int LOG_BITS = 6; // 2^6 == 64
 
-        /** <summary>
-         *  We will often need to do a mod operator (i mod nbits).  Its
-         *  turns out that, for powers of two, this mod operation is
-         *  same as (i &amp; (nbits-1)).  Since mod is slow, we use a
-         *  precomputed mod mask to do the mod instead.
-         *  </summary>
-         */
+        /// <summary>
+        /// We will often need to do a mod operator (i mod nbits). Its
+        /// turns out that, for powers of two, this mod operation is
+        /// same as (i &amp; (nbits-1)). Since mod is slow, we use a
+        /// precomputed mod mask to do the mod instead.
+        /// </summary>
         private const int MOD_MASK = BITS - 1;
 
-        /** <summary>The actual data bits</summary> */
+        /// <summary>The actual data bits</summary>
         private ulong[] _bits;
 
-        /** <summary>Construct a bitset of size one word (64 bits)</summary> */
+        /// <summary>Construct a bitset of size one word (64 bits)</summary>
         public BitSet()
             : this(BITS)
         {
         }
 
-        /** <summary>Construction from a static array of longs</summary> */
+        /// <summary>Construction from a static array of longs</summary>
         public BitSet(ulong[] bits)
         {
             _bits = bits;
         }
 
-        /** <summary>Construction from a list of integers</summary> */
+        /// <summary>Construction from a list of integers</summary>
         public BitSet(IEnumerable<int> items)
             : this()
         {
@@ -48,9 +46,10 @@ namespace Antlr.Runtime
                 Add(i);
         }
 
-        /** <summary>Construct a bitset given the size</summary>
-         *  <param name="nbits">The size of the bitset in bits</param>
-         */
+        /// <summary>
+        /// Construct a bitset given the size
+        /// </summary>
+        /// <param name="nbits">The size of the bitset in bits</param>
         public BitSet(int nbits)
         {
             _bits = new ulong[((nbits - 1) >> LOG_BITS) + 1];
@@ -90,7 +89,7 @@ namespace Antlr.Runtime
             return s;
         }
 
-        /** <summary>return this | a in a new set</summary> */
+        /// <summary>Return this | a in a new set</summary>
         public BitSet Or(BitSet a)
         {
             if (a == null) {
@@ -101,7 +100,7 @@ namespace Antlr.Runtime
             return s;
         }
 
-        /** <summary>or this element into this set (grow as necessary to accommodate)</summary> */
+        /// <summary>Or this element into this set (grow as necessary to accommodate)</summary>
         public void Add(int el)
         {
             var n = WordNumber(el);
@@ -111,9 +110,10 @@ namespace Antlr.Runtime
             _bits[n] |= BitMask(el);
         }
 
-        /** <summary>Grows the set to a larger number of bits.</summary>
-         *  <param name="bit">element that must fit in set</param>
-         */
+        /// <summary>
+        /// Grows the set to a larger number of bits.
+        /// </summary>
+        /// <param name="bit">element that must fit in set</param>
         public void GrowToInclude(int bit)
         {
             var newSize = Math.Max(_bits.Length << 1, NumWordsToHold(bit));
@@ -135,9 +135,10 @@ namespace Antlr.Runtime
             }
         }
 
-        /** <summary>Sets the size of a set.</summary>
-         *  <param name="nwords">how many words the new set should be</param>
-         */
+        /// <summary>
+        /// Sets the size of a set.
+        /// </summary>
+        /// <param name="nwords">how many words the new set should be</param>
         private void SetSize(int nwords)
         {
             Array.Resize(ref _bits, nwords);
@@ -251,19 +252,13 @@ namespace Antlr.Runtime
             return _bits.Length << LOG_BITS; // num words * bits per word
         }
 
-        /** <summary>return how much space is being used by the bits array not how many actually have member bits on.</summary> */
+        /// <summary>
+        /// Return how much space is being used by the bits array not how many actually have member bits on.
+        /// </summary>
         public int LengthInLongWords()
         {
             return _bits.Length;
         }
-
-        /**Is this contained within a? */
-        /*
-        public boolean subset(BitSet a) {
-            if (a == null || !(a instanceof BitSet)) return false;
-            return this.and(a).equals(this);
-        }
-        */
 
         public int[] ToArray()
         {

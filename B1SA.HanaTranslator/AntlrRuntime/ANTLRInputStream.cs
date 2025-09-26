@@ -4,11 +4,10 @@ namespace Antlr.Runtime
     using Stream = Stream;
     using StreamReader = StreamReader;
 
-    /** <summary>
-     *  A kind of ReaderStream that pulls from an InputStream.
-     *  Useful for reading from stdin and specifying file encodings etc...
-     *  </summary>
-     */
+    /// <summary>
+    /// A kind of ReaderStream that pulls from an InputStream.
+    /// Useful for reading from stdin and specifying file encodings etc...
+    /// </summary>
     [Serializable]
     public class ANTLRInputStream : ANTLRReaderStream
     {
