@@ -8,18 +8,21 @@ SMS Fork
   - fork date: `2017-11-10`
   - git revision: `e53f0ecce5fabdac2c5787ae1311437a148552e5`
 - Like the original code the changes are licensed under the MIT license as well
-  - The referenced ANTLR library & runtime to parse the SQL is licensed under the BSD license
+  - The used ANTLR libraries are licensed under the BSD license
 
 ### Changes
-- Targeting .NET Standard 2.1
-- Removed UI
-- Removed the DB connectivity and with it all its references, but also the _CaseFixer_ feature
-  - SQL identifiers are not enclosed in double quotes automatically, the correct case is in the responsibility of the library user!
+- Bumped version to `2.x.x` to distinguish from the original code
+- Targeting _.NET Standard 2.1_ (compiled with VS 2022)
+- ANTLR
+  - Based on version `3.5.2-rc1`, which is marked as a _Release Candidate_, but works as expected and seems to stay the last release of the version 3 branch
+  - Integrated & adapted _Antlr3.Runtime_ source to also target _.NET Standard 2.1_
+  - Use official _Antlr3 (Generator)_ package instead of local one. It only supports _.NET Standard 2.0_, but is solely used during build-time to generate the parser and lexer code, which takes a few moments
+- Removed UI project that was just a consumer of the library
+- Removed DB connectivity and with it the automatic case fixing
 - Repository clean up & streamlining for packaging
-- Switch from static file `config.txt` to non-static object configuration
-- Use ANTLR packages instead of local references (only the current release candidate supports .NET Standard 2.0)
-- Switch to the more unique and origin honouring namespace `B1SA.HanaTranslator`
-- Bumped version to `2.1.0`
+- Replaced static file `config.txt` with a non-static `Config` object
+- Moved to the more unique and origin honouring namespace `B1SA.HanaTranslator`
+- Added rudimentary unit tests
 - And many more small improvements...
 
 ### Usage
