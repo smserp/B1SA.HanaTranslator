@@ -1260,14 +1260,19 @@ namespace B1SA.HanaTranslator
                 asm.AddSpace();
             }
 
+            if (SelectItems.Count > 1) {
+                asm.NewLine();
+            }
             foreach (var item in SelectItems) {
                 asm.Add(item);
-                if (item != SelectItems.Last()) {
-                    asm.AddToken(", ");
-                    asm.Breakable();
+                if (item == SelectItems.Last()) {
+                    asm.DecreaseIndentation();
                 }
+                else {
+                    asm.AddToken(",");
+                }
+                asm.NewLine();
             }
-            asm.DecreaseIndentation();
             asm.End(this);
         }
     }
@@ -1644,7 +1649,10 @@ namespace B1SA.HanaTranslator
         {
             asm.Begin(this);
             asm.AddToken("(");
+            asm.NewLine();
             asm.Add(Query);
+            asm.DecreaseIndentation();
+            asm.NewLine();
             asm.AddToken(")");
             if (Alias != null) {
                 asm.AddSpace();
@@ -1670,6 +1678,7 @@ namespace B1SA.HanaTranslator
             TableSampleClause = tableSampleClause;
             Hints = hints;
 
+            // fix quoting
             if (Alias == null) { return; }
             Alias.Type = Alias.Name == Alias.Name.ToUpperInvariant() ? IdentifierType.Plain : IdentifierType.Quoted;
         }

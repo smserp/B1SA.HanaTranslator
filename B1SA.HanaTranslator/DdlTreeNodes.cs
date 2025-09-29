@@ -127,6 +127,7 @@ namespace B1SA.HanaTranslator
 
                 }
             }
+            asm.NewLine();
             asm.End(this);
         }
     }

@@ -718,7 +718,11 @@ namespace B1SA.HanaTranslator
             asm.Begin(this);
             asm.NewLine();
             asm.AddToken("(");
+            asm.NewLine();
+            asm.IncreaseIndentation();
             asm.Add(Query);
+            asm.NewLine();
+            asm.DecreaseIndentation();
             asm.AddToken(")");
             asm.End(this);
         }

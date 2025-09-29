@@ -50,7 +50,7 @@ namespace B1SA.HanaTranslator
 
         override public void NewLine()
         {
-            if (statement.Length != 0) {
+            if (statement.Length != 0 && !statement.TrimEnd(' ').EndsWith(Environment.NewLine)) {
                 statement += Environment.NewLine;
                 statement += GetIndentationString();
             }
